@@ -992,10 +992,22 @@ function renderLibrary() {
 
 item.appendChild(name);
 
-    item.addEventListener("click",() => {
-      addNextCard(card);
-      item.classList.add("selected");
-    });
+// Show card information when hovering
+item.addEventListener("mouseenter",() => {
+  selectCard(card);
+  item.classList.add("selected");
+});
+
+// Show information when navigating with keyboard
+item.addEventListener("focus",() => {
+  selectCard(card);
+});
+
+// Left-click adds card and displays its information
+item.addEventListener("click",() => {
+  addNextCard(card);
+  item.classList.add("selected");
+});
 
     item.addEventListener("contextmenu",event => {
       event.preventDefault();
