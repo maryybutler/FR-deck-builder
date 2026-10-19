@@ -1,0 +1,489 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TCG Deck Builder</title>
+
+<style>
+:root {
+  --bg: #f3f4f6;
+  --panel: #ffffff;
+  --ink: #20242b;
+  --muted: #737b87;
+  --line: #dfe3e8;
+  --accent: #343a46;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, sans-serif;
+}
+header {
+  padding: 22px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+h1 { margin: 0 0 6px; font-size: 28px; }
+h2 { margin: 0 0 14px; font-size: 19px; }
+p { color: var(--muted); }
+header p { margin: 0; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.btn {
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: bold;
+}
+.btn.dark { background: var(--accent); color: white; }
+.layout {
+  display: grid;
+  grid-template-columns: 225px minmax(0, 1fr) 320px;
+  gap: 14px;
+  padding: 16px;
+  align-items: start;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 0;
+}
+.sidebar, .deck { position: sticky; top: 12px; }
+label {
+  display: block;
+  margin: 12px 0 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+input, select {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: white;
+}
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 8px;
+}
+.small { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+  gap: 10px;
+}
+.card {
+  border: 1px solid var(--line);
+  background: white;
+  padding: 7px;
+  border-radius: 9px;
+  text-align: left;
+  min-width: 0;
+  cursor: grab;
+}
+.card.selected { outline: 2px solid var(--accent); }
+.card-art {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border: 1px dashed #c5cbd3;
+  border-radius: 5px;
+  background: #edf0f3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: #737b87;
+  font-size: 11px;
+  text-align: center;
+}
+.card-art img { width: 100%; height: 100%; object-fit: cover; }
+.card-name { font-size: 13px; font-weight: bold; margin: 7px 0 4px; overflow-wrap: anywhere; }
+.card-info { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.deck-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.deck-count { font-weight: bold; font-size: 14px; white-space: nowrap; }
+.progress { height: 5px; background: #e8ebef; margin: 12px 0; border-radius: 9px; overflow: hidden; }
+.progress div { height: 100%; background: var(--accent); width: 0; }
+.deck-slots {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.slot {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 3 / 4;
+  border: 1px dashed #c5cbd3;
+  background: #f8f9fa;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9aa1ab;
+}
+.slot.filled { border-style: solid; background: #e8ebef; color: white; }
+.slot img { width: 100%; height: 100%; object-fit: cover; }
+.slot .placeholder { font-size: 12px; color: #737b87; }
+.slot-name {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, #111d);
+  color: white;
+  text-align: left;
+  padding: 15px 3px 3px;
+  font-size: 9px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+.slot.drag-over { outline: 3px solid #727b89; }
+.deck-buttons { display: flex; gap: 6px; margin-bottom: 12px; }
+.deck-buttons button { flex: 1; padding: 8px 3px; font-size: 11px; }
+.status { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 12px 0; }
+footer { padding: 10px 18px 25px; font-size: 12px; color: var(--muted); }
+@media (max-width: 1050px) {
+  .layout { grid-template-columns: 220px minmax(0, 1fr); }
+  .deck { position: static; grid-column: 1 / -1; }
+  .deck-slots { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+  .layout { display: flex; flex-direction: column; }
+  .panel { width: 100%; }
+  .sidebar, .deck { position: static; }
+  .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .deck-slots { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div>
+    <h1>TCG Deck Builder</h1>
+    <p>Find your cards. Build your 45-card deck.</p>
+  </div>
+  <div>
+    <button class="btn" onclick="clearDeck()">Clear deck</button>
+    <button class="btn dark" onclick="exportDeck()">Export deck</button>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="panel sidebar">
+    <h2>Filters</h2>
+    <label for="search">Search card title</label>
+    <input id="search" placeholder="Type a card name..." oninput="renderCards()">
+
+    <div class="filter-grid">
+      <div><label for="colour">Colour</label><select id="colour" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="cost">Cost</label><select id="cost" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="power">Power</label><select id="power" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="health">Health</label><select id="health" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="card_type">Card type</label><select id="card_type" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="unit_type">Unit type</label><select id="unit_type" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="keyword">Keyword</label><select id="keyword" onchange="renderCards()"><option value="">All</option></select></div>
+      <div><label for="rarity">Rarity</label><select id="rarity" onchange="renderCards()"><option value="">All</option></select></div>
+    </div>
+
+    <button class="btn" style="width:100%;margin-top:15px" onclick="resetFilters()">Reset filters</button>
+    <p class="small">Click a card, then click an empty deck slot. Or drag a card directly into a slot.</p>
+  </aside>
+
+  <section class="panel">
+    <h2>Card library <span id="resultCount" class="small"></span></h2>
+    <div id="cards" class="card-grid"></div>
+  </section>
+
+  <section class="panel deck">
+    <div class="deck-top">
+      <h2>My deck</h2>
+      <span id="deckCount" class="deck-count">0 / 45</span>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="deck-buttons">
+      <button class="btn" onclick="saveDeck()">Save deck</button>
+      <button class="btn" onclick="loadDeck()">Load saved</button>
+    </div>
+    <div id="message" class="status">Choose a card to get started.</div>
+    <div id="slots" class="deck-slots"></div>
+    <p id="deckStatus" class="small"></p>
+  </section>
+</main>
+
+<footer>Starter prototype. Demo cards can be replaced with your real card data later.</footer>
+
+<script>
+const DECK_SIZE = 45;
+
+/*
+  CARD DATA:
+  Replace these examples with your real cards later.
+  Keep each card's ID unique.
+  Keywords should be written as a list.
+*/
+const cards = [
+  {id:"demo-001",title:"Ember Scout",colour:"Red",cost:1,power:2,health:1,card_type:"Unit",unit_type:"Scout",keyword:["Rush"],rarity:"Common"},
+  {id:"demo-002",title:"Mossback Guardian",colour:"Green",cost:3,power:2,health:5,card_type:"Unit",unit_type:"Guardian",keyword:["Guard"],rarity:"Uncommon"},
+  {id:"demo-003",title:"Moonwell Adept",colour:"Blue",cost:2,power:1,health:3,card_type:"Unit",unit_type:"Mage",keyword:["Draw"],rarity:"Rare"},
+  {id:"demo-004",title:"Shatter the Line",colour:"Red",cost:2,power:null,health:null,card_type:"Action",unit_type:"",keyword:["Damage"],rarity:"Common"},
+  {id:"demo-005",title:"Gilded Relic",colour:"Gold",cost:4,power:null,health:null,card_type:"Item",unit_type:"",keyword:["Artifact"],rarity:"Epic"},
+  {id:"demo-006",title:"Tideglass Oracle",colour:"Blue",cost:5,power:4,health:4,card_type:"Unit",unit_type:"Oracle",keyword:["Wisdom","Draw"],rarity:"Legendary"},
+  {id:"demo-007",title:"Bramble Pup",colour:"Green",cost:1,power:1,health:2,card_type:"Unit",unit_type:"Beast",keyword:["Guard"],rarity:"Common"},
+  {id:"demo-008",title:"Ashen Monument",colour:"Grey",cost:3,power:0,health:6,card_type:"Structure",unit_type:"",keyword:["Fortify"],rarity:"Rare"},
+  {id:"demo-009",title:"Quickstep Duelist",colour:"Red",cost:2,power:3,health:1,card_type:"Unit",unit_type:"Duelist",keyword:["Rush","Agile"],rarity:"Uncommon"},
+  {id:"demo-010",title:"Starfall",colour:"Purple",cost:6,power:null,health:null,card_type:"Action",unit_type:"",keyword:["Damage","Area"],rarity:"Epic"},
+  {id:"demo-011",title:"Rootbound Elder",colour:"Green",cost:4,power:3,health:6,card_type:"Unit",unit_type:"Elder",keyword:["Guard","Heal"],rarity:"Legendary"},
+  {id:"demo-012",title:"Copperwing Courier",colour:"Gold",cost:2,power:2,health:2,card_type:"Unit",unit_type:"Bird",keyword:["Draw"],rarity:"Common"}
+];
+
+let deck = Array(DECK_SIZE).fill(null);
+let selected = null;
+let dragged = null;
+
+function slug(text) {
+  return String(text).toLowerCase().trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+function findCard(id) {
+  return cards.find(card => card.id === id);
+}
+function imagePath(card) {
+  return "images/" + slug(card.title) + ".png";
+}
+function makeArt(card, small=false) {
+  const art = document.createElement("div");
+  art.className = small ? "placeholder" : "card-art";
+  if (small) {
+    art.textContent = card.title;
+  } else {
+    art.textContent = "CARD IMAGE";
+  }
+  const img = new Image();
+  img.alt = card.title;
+  img.src = imagePath(card);
+  img.onload = () => {
+    art.textContent = "";
+    art.appendChild(img);
+  };
+  return art;
+}
+function uniqueValues(field) {
+  const values = new Set();
+  cards.forEach(card => {
+    const value = card[field];
+    (Array.isArray(value) ? value : [value]).forEach(v => {
+      if (v !== null && v !== undefined && v !== "") values.add(String(v));
+    });
+  });
+  return [...values].sort((a,b) => a.localeCompare(b,undefined,{numeric:true}));
+}
+function setupFilters() {
+  ["colour","cost","power","health","card_type","unit_type","rarity"].forEach(field => {
+    const select = document.getElementById(field);
+    uniqueValues(field).forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      select.appendChild(option);
+    });
+  });
+  const keywords = new Set();
+  cards.forEach(card => (card.keyword || []).forEach(word => keywords.add(word)));
+  [...keywords].sort().forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    document.getElementById("keyword").appendChild(option);
+  });
+}
+function matches(card) {
+  const query = document.getElementById("search").value.toLowerCase().trim();
+  if (query && !card.title.toLowerCase().includes(query)) return false;
+  for (const field of ["colour","cost","power","health","card_type","unit_type","rarity"]) {
+    const wanted = document.getElementById(field).value;
+    if (wanted && String(card[field] ?? "") !== wanted) return false;
+  }
+  const keyword = document.getElementById("keyword").value;
+  if (keyword && !(card.keyword || []).includes(keyword)) return false;
+  return true;
+}
+function renderCards() {
+  const container = document.getElementById("cards");
+  container.replaceChildren();
+  const found = cards.filter(matches);
+  document.getElementById("resultCount").textContent = "(" + found.length + " results)";
+  found.forEach(card => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "card" + (selected === card.id ? " selected" : "");
+    button.draggable = true;
+    button.onclick = () => {
+      selected = selected === card.id ? null : card.id;
+      document.getElementById("message").textContent = selected
+        ? card.title + " selected. Now click an empty deck slot."
+        : "Selection cleared.";
+      renderCards();
+    };
+    button.ondragstart = event => {
+      dragged = card.id;
+      selected = card.id;
+      event.dataTransfer.setData("text/plain", card.id);
+    };
+    const art = makeArt(card);
+    const name = document.createElement("div");
+    name.className = "card-name";
+    name.textContent = card.title;
+    const info = document.createElement("div");
+    info.className = "card-info";
+    info.textContent = card.colour + " · Cost " + (card.cost ?? "—") +
+      " · P " + (card.power ?? "—") + " / H " + (card.health ?? "—");
+    const type = document.createElement("div");
+    type.className = "card-info";
+    type.textContent = card.card_type + " · " + card.rarity;
+    button.append(art,name,info,type);
+    container.appendChild(button);
+  });
+}
+function renderDeck() {
+  const container = document.getElementById("slots");
+  container.replaceChildren();
+  deck.forEach((id,index) => {
+    const slot = document.createElement("button");
+    slot.type = "button";
+    slot.className = "slot" + (id ? " filled" : "");
+    slot.title = id ? "Click to remove " + findCard(id)?.title : "Empty slot " + (index+1);
+    slot.onclick = () => {
+      if (deck[index]) {
+        const removed = findCard(deck[index]);
+        deck[index] = null;
+        document.getElementById("message").textContent = (removed?.title || "Card") + " removed.";
+        renderDeck();
+      } else if (selected) {
+        putCard(index,selected);
+      } else {
+        document.getElementById("message").textContent = "Select or drag a card into this slot first.";
+      }
+    };
+    slot.ondragover = event => {
+      event.preventDefault();
+      slot.classList.add("drag-over");
+    };
+    slot.ondragleave = () => slot.classList.remove("drag-over");
+    slot.ondrop = event => {
+      event.preventDefault();
+      slot.classList.remove("drag-over");
+      const id = event.dataTransfer.getData("text/plain") || dragged;
+      if (id) putCard(index,id);
+    };
+    if (id) {
+      const card = findCard(id);
+      if (card) {
+        const img = new Image();
+        img.alt = card.title;
+        img.src = imagePath(card);
+        img.onerror = () => { img.remove(); };
+        slot.appendChild(img);
+        const name = document.createElement("span");
+        name.className = "slot-name";
+        name.textContent = card.title;
+        slot.appendChild(name);
+      }
+    } else {
+      slot.textContent = String(index+1).padStart(2,"0") + " +";
+    }
+    container.appendChild(slot);
+  });
+  const count = deck.filter(Boolean).length;
+  document.getElementById("deckCount").textContent = count + " / " + DECK_SIZE;
+  document.getElementById("progressBar").style.width = (count/DECK_SIZE*100) + "%";
+  document.getElementById("deckStatus").textContent =
+    count === DECK_SIZE ? "Deck is full!" : (DECK_SIZE-count) + " spaces available.";
+}
+function putCard(index,id) {
+  if (!findCard(id)) return;
+  deck[index] = id;
+  selected = id;
+  document.getElementById("message").textContent =
+    findCard(id).title + " added to slot " + (index+1) + ".";
+  renderDeck();
+  renderCards();
+}
+function resetFilters() {
+  document.getElementById("search").value = "";
+  ["colour","cost","power","health","card_type","unit_type","keyword","rarity"]
+    .forEach(id => document.getElementById(id).value = "");
+  renderCards();
+}
+function clearDeck() {
+  if (deck.every(id => !id) || confirm("Remove every card from your deck?")) {
+    deck = Array(DECK_SIZE).fill(null);
+    renderDeck();
+    document.getElementById("message").textContent = "Deck cleared.";
+  }
+}
+function exportDeck() {
+  const output = {
+    deckName: "My TCG Deck",
+    cards: deck.map((id,index) => ({
+      slot: index+1,
+      id: id,
+      title: findCard(id)?.title || null
+    })).filter(card => card.id)
+  };
+  const blob = new Blob([JSON.stringify(output,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "my-tcg-deck.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+function saveDeck() {
+  try {
+    localStorage.setItem("tcg-deck",JSON.stringify(deck));
+    document.getElementById("message").textContent = "Deck saved in this browser.";
+  } catch {
+    document.getElementById("message").textContent = "Couldn't save. Please export your deck instead.";
+  }
+}
+function loadDeck() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("tcg-deck") || "null");
+    if (!Array.isArray(saved)) {
+      document.getElementById("message").textContent = "No saved deck found on this device.";
+      return;
+    }
+    deck = Array.from({length:DECK_SIZE},(_,i) => findCard(saved[i]) ? saved[i] : null);
+    renderDeck();
+    document.getElementById("message").textContent = "Saved deck loaded.";
+  } catch {
+    document.getElementById("message").textContent = "Couldn't load saved deck.";
+  }
+}
+setupFilters();
+renderCards();
+renderDeck();
+</script>
+</body>
+</html>
