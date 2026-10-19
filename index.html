@@ -4,86 +4,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fractured Realm Deck Builder</title>
+<title>Fractured Realms Deck Builder</title>
 
 <style>
 :root {
-  --bg:#8a897eed;
   --panel:rgba(35,38,49,.78);
-  --line:#ffffff;
-  --text:#ffffff;
-  --muted:#e3e3e8;
+  --text:#fff;
   --gold:#ffd45c;
 }
-
-* { box-sizing:border-box; }
-
+* {box-sizing:border-box}
 body {
   margin:0;
   min-height:100vh;
   color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
-  background-color:#8a897e;
-  background-image:url("frbackground.png");
-  background-position:center;
-  background-size:cover;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
+  background:#8a897e url("frbackground.png") center/cover fixed no-repeat;
 }
-
-button,input,select { font:inherit; }
-button { cursor:pointer; }
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
+button,input,select {font:inherit}
+button {cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible {
   outline:2px solid white;
   outline-offset:2px;
 }
-
-/* HEADER */
-
 .hero {
   text-align:center;
   padding:25px 20px 22px;
   border-bottom:1px solid white;
   background:rgba(255,255,255,.10);
   backdrop-filter:blur(5px);
-  -webkit-backdrop-filter:blur(5px);
 }
-
 .logo-text {
   display:block;
   width:min(600px,90%);
-  max-width:100%;
   height:auto;
   margin:0 auto;
   object-fit:contain;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));
+  filter:drop-shadow(0 4px 8px #0004);
 }
-
 .hero-subtitle {
   margin:5px 0 0;
   font-family:Georgia,"Times New Roman",serif;
   font-size:clamp(19px,2.5vw,29px);
   font-weight:900;
   letter-spacing:5px;
-  color:#050505;
+  color:#fff;
 }
-
-/* MAIN LAYOUT */
-
 .layout {
   display:grid;
-  grid-template-columns:
-    215px minmax(0,2.2fr) minmax(270px,.85fr);
+  grid-template-columns:215px minmax(0,2.2fr) minmax(270px,.85fr);
   gap:15px;
   max-width:1900px;
   margin:20px auto;
   padding:0 16px;
   align-items:start;
 }
-
 .panel {
   min-width:0;
   padding:16px;
@@ -91,16 +65,9 @@ select:focus-visible {
   border-radius:15px;
   background:var(--panel);
   backdrop-filter:blur(9px);
-  -webkit-backdrop-filter:blur(9px);
-  box-shadow:0 8px 25px rgba(0,0,0,.25);
+  box-shadow:0 8px 25px #0004;
 }
-
-h2 {
-  margin:0 0 12px;
-  color:white;
-  font-size:20px;
-}
-
+h2 {margin:0 0 12px;font-size:20px}
 .section-top {
   display:flex;
   align-items:center;
@@ -108,22 +75,8 @@ h2 {
   gap:8px;
   flex-wrap:wrap;
 }
-
-.count {
-  color:white;
-  font-weight:bold;
-  white-space:nowrap;
-}
-
-/* FILTERS AND BUTTONS */
-
-label {
-  display:block;
-  color:white;
-  font-size:12px;
-  margin:13px 0 5px;
-}
-
+.count {font-weight:bold;white-space:nowrap}
+label {display:block;font-size:12px;margin:13px 0 5px}
 input,select {
   width:100%;
   min-width:0;
@@ -133,14 +86,8 @@ input,select {
   border:1px solid white;
   border-radius:8px;
 }
-
-input::placeholder { color:#dddddf; }
-
-select option {
-  color:white;
-  background:#343641;
-}
-
+input::placeholder {color:#ddd}
+select option {background:#343641;color:white}
 .btn {
   padding:10px 12px;
   border:1px solid white;
@@ -151,78 +98,34 @@ select option {
   font-weight:bold;
   transition:filter .15s,transform .15s;
 }
-
-.btn:hover {
-  filter:brightness(1.2);
-  transform:translateY(-1px);
-}
-
+.btn:hover {filter:brightness(1.2);transform:translateY(-1px)}
 .btn.gold {
   color:#151515;
-  background:linear-gradient(
-    180deg,#fff4af,#f7ca52 55%,#c68b22
-  );
+  background:linear-gradient(180deg,#fff4af,#f7ca52 55%,#c68b22);
 }
-
-.btn:disabled {
-  opacity:.5;
-  cursor:not-allowed;
-}
-
-.actions {
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  margin:13px 0;
-}
-
-.actions .btn { flex:1; }
-
-.hint {
-  color:#f0f0f0;
-  font-size:12px;
-  line-height:1.6;
-}
-
-.divider {
-  height:1px;
-  background:rgba(255,255,255,.65);
-  margin:18px 0;
-}
-
-/* DECK BUILDER */
-
+.actions {display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
+.actions .btn {flex:1}
+.hint {font-size:12px;line-height:1.6}
+.divider {height:1px;background:#fffa;margin:18px 0}
 .progress {
   height:7px;
   border:1px solid white;
   border-radius:20px;
   overflow:hidden;
-  background:rgba(0,0,0,.3);
+  background:#0005;
   margin-bottom:12px;
 }
-
 .progress-fill {
   height:100%;
   width:0%;
   background:linear-gradient(90deg,#b8b8bd,#fff,#f4f4f4);
-  transition:width .2s;
 }
-
-.deck-status {
-  color:white;
-  font-size:12px;
-  margin:8px 0 13px;
-  min-height:16px;
-}
-
-/* 9 COLUMNS = 5 ROWS OF CARDS */
-
+.deck-status {font-size:12px;margin:8px 0 13px;min-height:16px}
 .deck-slots {
   display:grid;
   grid-template-columns:repeat(9,minmax(0,1fr));
   gap:6px;
 }
-
 .slot {
   aspect-ratio:63/88;
   min-width:0;
@@ -236,24 +139,10 @@ select option {
   justify-content:center;
   overflow:hidden;
   cursor:pointer;
-  transition:box-shadow .15s;
 }
-
-.slot:hover,
-.slot.drag-over {
-  box-shadow:0 0 12px rgba(255,255,255,.65);
-}
-
-.slot.filled {
-  border-style:solid;
-}
-
-.slot img {
-  width:100%;
-  height:100%;
-  object-fit:contain;
-}
-
+.slot:hover,.slot.drag-over {box-shadow:0 0 12px #fffa}
+.slot.filled {border-style:solid}
+.slot img {width:100%;height:100%;object-fit:contain}
 .slot-number {
   position:absolute;
   top:3px;
@@ -263,18 +152,12 @@ select option {
   text-shadow:0 1px 3px black;
   z-index:2;
 }
-
 .slot.filled .slot-number {
-  background:rgba(0,0,0,.65);
+  background:#000a;
   padding:2px 3px;
   border-radius:3px;
 }
-
-.slot-plus {
-  font-size:21px;
-  color:white;
-}
-
+.slot-plus {font-size:21px}
 .slot-remove {
   position:absolute;
   top:2px;
@@ -288,14 +171,8 @@ select option {
   font-size:10px;
   display:none;
 }
-
 .slot.filled:hover .slot-remove,
-.slot-remove:focus-visible {
-  display:block;
-}
-
-/* CARD LIBRARY */
-
+.slot-remove:focus-visible {display:block}
 .library-grid {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -304,7 +181,6 @@ select option {
   overflow-y:auto;
   padding:5px;
 }
-
 .library-card {
   min-width:0;
   cursor:pointer;
@@ -314,16 +190,11 @@ select option {
   background:rgba(30,32,43,.65);
   transition:transform .15s,box-shadow .15s;
 }
-
 .library-card:hover {
   transform:translateY(-3px);
-  box-shadow:0 0 14px rgba(255,255,255,.5);
+  box-shadow:0 0 14px #fff8;
 }
-
-.library-card.selected {
-  box-shadow:0 0 16px rgba(255,255,255,.85);
-}
-
+.library-card.selected {box-shadow:0 0 16px #fffd}
 .card-image {
   width:100%;
   aspect-ratio:63/88;
@@ -331,36 +202,21 @@ select option {
   object-fit:contain;
   display:block;
 }
-
 .card-name {
   font-size:12px;
   font-weight:bold;
   margin-top:7px;
   overflow-wrap:anywhere;
 }
-
-.card-meta {
-  font-size:10px;
-  color:#e1e1e8;
-  margin:4px 0;
-  line-height:1.4;
-}
-
-/* CARD PLACEHOLDERS */
-
+.card-meta {font-size:10px;color:#e1e1e8;margin:4px 0;line-height:1.4}
 .mini-card {
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   padding:10%;
   text-align:center;
-  background:
-    radial-gradient(
-      circle at 50% 35%,
-      var(--gem),
-      transparent 55%
-    ),
-    linear-gradient(145deg,#3b3d52,#161723);
+  background:radial-gradient(circle at 50% 35%,var(--gem),transparent 55%),
+             linear-gradient(145deg,#3b3d52,#161723);
   border:1px solid white;
   color:white;
   box-shadow:inset 0 0 15px #ffffff20;
@@ -368,55 +224,30 @@ select option {
   width:100%;
   border-radius:6px;
 }
-
-.mini-card .gem-icon {
+.gem-icon {
   font-size:clamp(15px,3vw,33px);
   filter:drop-shadow(0 0 9px var(--gem));
 }
-
-.mini-card .mini-name {
+.mini-name {
   font-size:clamp(8px,1vw,13px);
   font-weight:bold;
   overflow-wrap:anywhere;
   text-shadow:0 2px 4px black;
 }
-
-.mini-card .mini-cost {
+.mini-cost {
   align-self:flex-start;
-  background:rgba(0,0,0,.65);
+  background:#000a;
   border:1px solid white;
   padding:3px 6px;
   border-radius:5px;
   font-weight:bold;
   font-size:11px;
 }
-
-.mini-card .mini-stats {
-  font-size:11px;
-  font-weight:bold;
-}
-
-.slot .mini-card {
-  width:100%;
-  height:100%;
-  padding:5%;
-}
-
-.slot .mini-card .mini-name {
-  font-size:clamp(5px,.65vw,10px);
-}
-
-.slot .mini-card .gem-icon {
-  font-size:clamp(10px,1.5vw,22px);
-}
-
-.slot .mini-card .mini-cost,
-.slot .mini-card .mini-stats {
-  font-size:8px;
-}
-
-/* SELECTED CARD */
-
+.mini-stats {font-size:11px;font-weight:bold}
+.slot .mini-card {width:100%;height:100%;padding:5%}
+.slot .mini-name {font-size:clamp(5px,.65vw,10px)}
+.slot .gem-icon {font-size:clamp(10px,1.5vw,22px)}
+.slot .mini-cost,.slot .mini-stats {font-size:8px}
 .selected-info {
   padding:10px;
   border:1px solid white;
@@ -425,343 +256,119 @@ select option {
   font-size:12px;
   line-height:1.5;
 }
-
-.selected-info strong { color:white; }
-
-.selected-info p {
-  margin:5px 0;
-  color:#ededf2;
-}
-
-.empty {
-  padding:25px 8px;
-  text-align:center;
-  color:white;
-  font-size:13px;
-}
-
-footer {
-  text-align:center;
-  color:white;
-  font-size:11px;
-  padding:15px 10px 30px;
-}
-
-/* RESPONSIVE */
-
+.selected-info p {margin:5px 0;color:#ededf2}
+.empty {padding:25px 8px;text-align:center;font-size:13px}
+footer {text-align:center;font-size:11px;padding:15px 10px 30px}
 @media(max-width:1050px) {
-  .layout {
-    grid-template-columns:190px minmax(0,1fr);
-  }
-
-  .library-panel {
-    grid-column:2;
-  }
+  .layout {grid-template-columns:190px minmax(0,1fr)}
+  .library-panel {grid-column:2}
 }
-
 @media(max-width:650px) {
-  body {
-    background-attachment:scroll;
-  }
-
-  .layout {
-    grid-template-columns:1fr;
-    padding:0 10px;
-  }
-
-  .library-panel {
-    grid-column:auto;
-  }
-
-  .deck-panel {
-    grid-row:1;
-  }
-
-  .deck-slots {
-    gap:3px;
-  }
-
-  .slot {
-    padding:1px;
-    border-radius:3px;
-  }
-
-  .slot-number { font-size:7px; }
-  .slot-plus { font-size:13px; }
-
-  .panel { padding:10px; }
-
-  .library-grid {
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-
-  .hero { padding:20px 10px; }
+  body {background-attachment:scroll}
+  .layout {grid-template-columns:1fr;padding:0 10px}
+  .library-panel {grid-column:auto}
+  .deck-panel {grid-row:1}
+  .deck-slots {gap:3px}
+  .slot {padding:1px;border-radius:3px}
+  .slot-number {font-size:7px}
+  .slot-plus {font-size:13px}
+  .panel {padding:10px}
+  .library-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+  .hero {padding:20px 10px}
 }
 </style>
 </head>
-
 <body>
 
 <header class="hero">
-  <img
-    src="frlogotext.png"
-    alt="Fractured Realm"
-    class="logo-text"
-  >
+  <img src="frlogotext.png" alt="Fractured Realms" class="logo-text">
   <p class="hero-subtitle">DECK BUILDER</p>
 </header>
 
 <main class="layout">
-
-  <!-- LEFT: FILTERS -->
-
   <aside class="panel">
     <h2>Card Filters</h2>
-
     <label for="search">Search card name</label>
-    <input id="search" type="search"
-           placeholder="Search cards...">
-
+    <input id="search" type="search" placeholder="Search cards...">
     <label for="colour">Colour</label>
     <select id="colour"></select>
-
     <label for="cost">Cost</label>
     <select id="cost"></select>
-
     <label for="power">Power</label>
     <select id="power"></select>
-
     <label for="health">Health</label>
     <select id="health"></select>
-
     <label for="type">Card type</label>
     <select id="type"></select>
-
     <label for="unitType">Unit type</label>
     <select id="unitType"></select>
-
     <label for="keyword">Keyword</label>
     <select id="keyword"></select>
-
     <label for="rarity">Rarity</label>
     <select id="rarity"></select>
-
     <div class="actions">
-      <button class="btn" id="resetFilters">
-        Reset filters
-      </button>
+      <button class="btn" id="resetFilters">Reset filters</button>
     </div>
-
     <div class="divider"></div>
-
     <h2>Your Build</h2>
-
     <label for="deckName">Deck name</label>
     <input id="deckName" value="My Fractured Deck">
-
     <div class="actions">
       <button class="btn gold" id="saveDeck">Save</button>
       <button class="btn" id="loadDeck">Load</button>
     </div>
-
     <div class="actions">
-      <button class="btn" id="exportDeck">
-        Export JSON
-      </button>
-      <button class="btn" id="importDeck">
-        Import JSON
-      </button>
+      <button class="btn" id="exportDeck">Export JSON</button>
+      <button class="btn" id="importDeck">Import JSON</button>
     </div>
-
-    <input type="file" id="importFile"
-           accept=".json,application/json" hidden>
-
-    <button class="btn" id="clearDeck">
-      Clear Deck
-    </button>
-
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+    <button class="btn" id="clearDeck">Clear Deck</button>
     <p class="hint">
-      Select a card in the library, then click a deck
-      slot. You can also drag cards into slots.
+      Select a card in the library, then click a deck slot.
+      You can also drag cards into slots.
       Click × on a filled slot to remove it.
     </p>
   </aside>
-
-  <!-- CENTRE: DECK -->
 
   <section class="panel deck-panel">
     <div class="section-top">
       <h2>Deck Builder</h2>
       <span class="count" id="deckCount">0 / 45</span>
     </div>
-
-    <div class="progress">
-      <div class="progress-fill" id="progress"></div>
-    </div>
-
-    <p class="deck-status" id="deckStatus">
-      Select a card to start building.
-    </p>
-
+    <div class="progress"><div class="progress-fill" id="progress"></div></div>
+    <p class="deck-status" id="deckStatus">Loading card database...</p>
     <div class="deck-slots" id="deckSlots"></div>
   </section>
-
-  <!-- RIGHT: LIBRARY -->
 
   <section class="panel library-panel">
     <div class="section-top">
       <h2>Card Library</h2>
-      <span class="count" id="libraryCount">0</span>
+      <span class="count" id="libraryCount">Loading...</span>
     </div>
-
     <div id="selectedInfo" class="selected-info">
       <strong>No card selected</strong>
       <p>Choose a card below to add it to your deck.</p>
     </div>
-
     <div class="divider"></div>
-
     <div class="library-grid" id="cardGrid"></div>
-
     <div class="empty" id="emptyResults" hidden>
       No cards match your filters.
     </div>
   </section>
-
 </main>
 
-<footer>
-  Fractured Realm · Deck Builder 
-</footer>
+<footer>Fractured Realms · Deck Builder</footer>
 
 <script>
+/* GOOGLE SHEETS CONNECTION */
+const SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQs1xYztQEt5X7N_g0qyC6mH3bJp-ygo9jlf_1MHFeoaKvQji0tZrj23nVDQ-JBwgG6cZfyF-FYPsND/pub?output=csv";
 
-/* ================================================
-   CARD DATABASE
-   Replace ONLY this section when new cards arrive.
-   ================================================ */
-
-const cards = [
-  {
-    id:"swamp-boggart",
-    name:"Swamp Boggart",
-    colours:["Green"],
-    cost:4,power:4,health:5,
-    type:"Unit",unitType:"Nature",
-    keywords:["Alt Summon","On Summon"],
-    rarity:"",
-    image:"images/swamp-boggart.png"
-  },
-  {
-    id:"infernus-the-darkin",
-    name:"Infernus, the Darkin",
-    colours:["Red"],
-    cost:4,power:4,health:5,
-    type:"Unit",unitType:"Human/Arcane",
-    keywords:["Alt Summon","On Summon","OPT"],
-    rarity:"",
-    image:"images/infernus-the-darkin.png"
-  },
-  {
-    id:"valora-faetell",
-    name:"Valora Faetell",
-    colours:["Blue"],
-    cost:2,power:2,health:3,
-    type:"Unit",unitType:"Fairy/Human",
-    keywords:["Life Trigger","Quick-play"],
-    rarity:"",
-    image:"images/valora-faetell.png"
-  },
-  {
-    id:"akimbo-drake",
-    name:"Akimbo Drake",
-    colours:["Red","Purple"],
-    cost:4,power:3,health:3,
-    type:"Unit",unitType:"Dragon",
-    keywords:["On Summon","Tool+"],
-    rarity:"",
-    image:"images/akimbo-drake.png"
-  },
-  {
-    id:"stampede",
-    name:"Stampede",
-    colours:["Green","Yellow"],
-    cost:5,power:null,health:null,
-    type:"Action",unitType:"",
-    keywords:["On Activation","Life Trigger"],
-    rarity:"",
-    image:"images/stampede.png"
-  },
-  {
-    id:"gaiara-the-tempest",
-    name:"Gaiara the Tempest",
-    colours:["Blue"],
-    cost:4,power:4,health:4,
-    type:"Unit",unitType:"Arcane/Human",
-    keywords:["Alt Summon","On Summon"],
-    rarity:"",
-    image:"images/gaiara-the-tempest.png"
-  },
-  {
-    id:"illusionist",
-    name:"Illusionist",
-    colours:["Black"],
-    cost:4,power:4,health:5,
-    type:"Unit",unitType:"Human/Arcane",
-    keywords:["Camo","Alt Summon","On Summon"],
-    rarity:"",
-    image:"images/illusionist.png"
-  },
-  {
-    id:"grim-the-headless",
-    name:"Grim, The Headless",
-    colours:["Purple"],
-    cost:4,power:4,health:4,
-    type:"Unit",unitType:"Undead",
-    keywords:["Alt Summon","When Attacking","On Death"],
-    rarity:"",
-    image:"images/grim-the-headless.png"
-  },
-  {
-    id:"highlander",
-    name:"Highlander",
-    colours:["Yellow"],
-    cost:4,power:4,health:4,
-    type:"Unit",unitType:"Human",
-    keywords:["Alt Summon","Quick play","On Death"],
-    rarity:"",
-    image:"images/highlander.png"
-  },
-  {
-    id:"crystal-calamity",
-    name:"Crystal Calamity",
-    colours:[],
-    cost:null,power:8,health:8,
-    type:"Unit",unitType:"Dragon",
-    keywords:["Singleton","Stamina","Alt Summon"],
-    rarity:"",
-    image:"images/crystal-calamity.png"
-  },
-  {
-    id:"operative-one",
-    name:"Operative One",
-    colours:["White"],
-    cost:5,power:5,health:4,
-    type:"Unit",unitType:"Human",
-    keywords:["Life Trigger","On Summon"],
-    rarity:"",
-    image:"images/operative-one.png"
-  }
-];
-
-/* ================================================
-   WEBSITE FUNCTIONALITY
-   No need to edit anything below this line.
-   ================================================ */
-
+const IMAGE_FOLDER = "images/";
 const MAX_CARDS = 45;
 const STORAGE_KEY = "fractured-realms-deck-v1";
 
+let cards = [];
 let deck = Array(MAX_CARDS).fill(null);
 let selectedCard = null;
 let draggingCard = null;
@@ -769,37 +376,181 @@ let draggingSlot = null;
 
 const $ = id => document.getElementById(id);
 
-const crystalColours = {
-  Red:"#ff496d",
-  Blue:"#43caff",
-  Green:"#5df48b",
-  Yellow:"#ffe04c",
-  Purple:"#b777ff",
-  Black:"#a4a8c6",
-  White:"#f1f4ff"
-};
-
-function crystalColour(card) {
-  if (!card.colours || !card.colours.length) {
-    return "#f5dfff";
-  }
-  return crystalColours[card.colours[0]] || "#65eaff";
+/* Convert a card name into its image filename.
+   Example: "Infernus, the Darkin" -> "infernus-the-darkin.png" */
+function slugify(value) {
+  return String(value ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .replace(/['’]/g,"")
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-|-$/g,"");
 }
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g,char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
   })[char]);
 }
 
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let quoted = false;
+  text = text.replace(/^\uFEFF/,"");
+
+  for (let i=0;i<text.length;i++) {
+    const char = text[i];
+    if (char === '"') {
+      if (quoted && text[i+1] === '"') {
+        field += '"';
+        i++;
+      } else {
+        quoted = !quoted;
+      }
+    } else if (char === "," && !quoted) {
+      row.push(field);
+      field = "";
+    } else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && text[i+1] === "\n") i++;
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += char;
+    }
+  }
+  if (quoted) throw new Error("Unclosed CSV quotation mark");
+  if (field !== "" || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function numberOrNull(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return null;
+  const number = Number(text);
+  return Number.isFinite(number) ? number : null;
+}
+
+function splitValues(value) {
+  return String(value ?? "")
+    .split(/\s*[,/;|]\s*/)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+
+const knownKeywords = [
+  "Alt Summon","On Summon","Life Trigger",
+  "Quick-play","Quick play","OPT","Camo",
+  "On Death","When Attacking","On Activation",
+  "Tool+","Singleton","Stamina"
+];
+
+function extractKeywords(row) {
+  const text = [
+    row["Main Effect"] || "",
+    row["Life Trigger"] || ""
+  ].join(" ");
+
+  const found = knownKeywords.filter(keyword =>
+    text.toLowerCase().includes(keyword.toLowerCase())
+  );
+  if (String(row["Life Trigger"] ?? "").trim() &&
+      !found.some(k => k.toLowerCase() === "life trigger")) {
+    found.push("Life Trigger");
+  }
+  return [...new Set(found)];
+}
+
+function sheetToCards(csv) {
+  const rows = parseCSV(csv);
+  const headers = (rows.shift() || []).map(h => h.trim());
+  if (!headers.includes("Name")) {
+    throw new Error("The spreadsheet needs a Name column");
+  }
+
+  const used = new Set();
+  return rows.map(values => {
+    const row = {};
+    headers.forEach((header,index) => {
+      row[header] = (values[index] || "").trim();
+    });
+
+    const name = row["Name"];
+    if (!name) return null;
+
+    const id = slugify(name);
+    if (!id || used.has(id)) return null;
+    used.add(id);
+
+    return {
+      id,
+      name,
+      colours:splitValues(row["Faction"]),
+      cost:numberOrNull(row["Cost"]),
+      power:numberOrNull(row["Power"]),
+      health:numberOrNull(row["Health"]),
+      type:row["Card Type"] || "",
+      unitType:row["Unit Type"] || "",
+      keywords:extractKeywords(row),
+      rarity:row["Rarity"] || "",
+      image:IMAGE_FOLDER + id + ".png"
+    };
+  }).filter(Boolean);
+}
+
+async function loadCards() {
+  updateStatus("Loading cards from Google Sheets...");
+  try {
+    const response = await fetch(SHEET_CSV_URL,{cache:"no-store"});
+    if (!response.ok) throw new Error("HTTP " + response.status);
+
+    const csv = await response.text();
+    const loaded = sheetToCards(csv);
+    if (!loaded.length) throw new Error("No cards found");
+
+    cards = loaded;
+    setupFilters();
+    if (selectedCard && !getCard(selectedCard)) selectedCard = null;
+    renderLibrary();
+    renderDeck();
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        restoreDeck(JSON.parse(saved));
+      } catch (error) {
+        console.warn("Saved deck could not be restored",error);
+      }
+    }
+    updateStatus(`${cards.length} cards loaded from Google Sheets.`);
+  } catch (error) {
+    console.error("Google Sheets loading error:",error);
+    $("libraryCount").textContent = "Unavailable";
+    updateStatus("Unable to load Google Sheets. Please refresh to try again.");
+  }
+}
+
+const crystalColours = {
+  Red:"#ff496d",Blue:"#43caff",Green:"#5df48b",
+  Yellow:"#ffe04c",Purple:"#b777ff",
+  Black:"#a4a8c6",White:"#f1f4ff"
+};
+
+function crystalColour(card) {
+  return crystalColours[card.colours[0]] || "#f5dfff";
+}
+
 function cardPlaceholder(card) {
-  const colour = crystalColour(card);
   return `
-    <div class="mini-card" style="--gem:${colour}">
+    <div class="mini-card" style="--gem:${crystalColour(card)}">
       <span class="mini-cost">${card.cost ?? "✦"}</span>
       <span class="gem-icon">◆</span>
       <span class="mini-name">${escapeHTML(card.name)}</span>
@@ -807,17 +558,10 @@ function cardPlaceholder(card) {
         card.power == null ? "" :
         `${card.power} / ${card.health ?? "–"}`
       }</span>
-    </div>
-  `;
+    </div>`;
 }
 
 function cardArtwork(card) {
-  if (!card.image) {
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = cardPlaceholder(card);
-    return wrapper.firstElementChild;
-  }
-
   const wrapper = document.createElement("div");
   wrapper.style.width = "100%";
   wrapper.style.height = "100%";
@@ -841,21 +585,18 @@ function uniqueValues(field) {
   const values = cards.flatMap(card => {
     const value = card[field];
     if (Array.isArray(value)) return value;
-    if (value === null || value === undefined || value === "") {
-      return [];
-    }
-    return [value];
+    return value === null || value === undefined || value === ""
+      ? [] : [value];
   });
-
   return [...new Set(values)].sort((a,b) =>
     typeof a === "number" && typeof b === "number"
-      ? a-b
-      : String(a).localeCompare(String(b))
+      ? a-b : String(a).localeCompare(String(b))
   );
 }
 
 function fillSelect(id,values,allLabel) {
   const select = $(id);
+  const previous = select.value;
   select.innerHTML = "";
 
   const all = document.createElement("option");
@@ -869,6 +610,10 @@ function fillSelect(id,values,allLabel) {
     option.textContent = value;
     select.appendChild(option);
   });
+
+  if ([...select.options].some(o => o.value === previous)) {
+    select.value = previous;
+  }
 }
 
 function setupFilters() {
@@ -880,6 +625,9 @@ function setupFilters() {
   fillSelect("unitType",uniqueValues("unitType"),"All unit types");
   fillSelect("keyword",uniqueValues("keywords"),"All keywords");
   fillSelect("rarity",uniqueValues("rarity"),"All rarities");
+
+  if (setupFilters.ready) return;
+  setupFilters.ready = true;
 
   [
     "search","colour","cost","power","health",
@@ -894,53 +642,45 @@ function setupFilters() {
 
 function matchesFilters(card) {
   const query = $("search").value.trim().toLowerCase();
-
-  if (query && !card.name.toLowerCase().includes(query)) {
-    return false;
-  }
+  if (query && !card.name.toLowerCase().includes(query)) return false;
 
   const comparisons = [
-    ["colour",card.colours || []],
+    ["colour",card.colours],
     ["cost",card.cost],
     ["power",card.power],
     ["health",card.health],
     ["type",card.type],
     ["unitType",card.unitType],
-    ["keyword",card.keywords || []],
+    ["keyword",card.keywords],
     ["rarity",card.rarity]
   ];
 
   return comparisons.every(([id,value]) => {
     const filter = $(id).value;
     if (!filter) return true;
-
     if (Array.isArray(value)) {
       return value.some(item => String(item) === filter);
     }
-
     return String(value ?? "") === filter;
   });
 }
 
 function selectCard(card) {
   selectedCard = card.id;
-
   $("selectedInfo").innerHTML = `
     <strong>${escapeHTML(card.name)}</strong>
     <p>${escapeHTML(card.type)} · ${
       escapeHTML(card.colours.join(" / ") || "Colourless")
     } · Cost ${card.cost ?? "—"}</p>
-    <p>Click an empty deck slot to add this card.</p>
-  `;
-
+    <p>Click an empty deck slot to add this card.</p>`;
   renderLibrary();
 }
 
 function renderLibrary() {
   const grid = $("cardGrid");
   grid.innerHTML = "";
-
   const filtered = cards.filter(matchesFilters);
+
   $("libraryCount").textContent = `${filtered.length} cards`;
   $("emptyResults").hidden = filtered.length > 0;
 
@@ -952,9 +692,7 @@ function renderLibrary() {
     item.setAttribute("aria-label",`Select ${card.name}`);
     item.draggable = true;
 
-    if (selectedCard === card.id) {
-      item.classList.add("selected");
-    }
+    if (selectedCard === card.id) item.classList.add("selected");
 
     item.appendChild(cardArtwork(card));
 
@@ -972,25 +710,19 @@ function renderLibrary() {
     item.appendChild(meta);
 
     item.addEventListener("click",() => selectCard(card));
-
     item.addEventListener("keydown",event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         selectCard(card);
       }
     });
-
     item.addEventListener("dragstart",event => {
       draggingCard = card.id;
       draggingSlot = null;
       event.dataTransfer.setData("text/plain",card.id);
       event.dataTransfer.effectAllowed = "copy";
     });
-
-    item.addEventListener("dragend",() => {
-      draggingCard = null;
-    });
-
+    item.addEventListener("dragend",() => draggingCard = null);
     grid.appendChild(item);
   });
 }
@@ -1004,21 +736,19 @@ function updateStatus(message) {
 }
 
 function addCard(index,cardId) {
-  if (!getCard(cardId)) return;
-
+  const card = getCard(cardId);
+  if (!card) return;
   if (deck[index] !== null) {
     updateStatus("Remove the existing card from that slot first.");
     return;
   }
-
   deck[index] = cardId;
   renderDeck();
-  updateStatus(`${getCard(cardId).name} added to your deck.`);
+  updateStatus(`${card.name} added to your deck.`);
 }
 
 function removeCard(index) {
   if (deck[index] === null) return;
-
   const card = getCard(deck[index]);
   deck[index] = null;
   renderDeck();
@@ -1036,7 +766,7 @@ function renderDeck() {
     slot.setAttribute("role","button");
     slot.setAttribute("aria-label",
       cardId
-        ? `Slot ${index+1}: ${getCard(cardId)?.name}`
+        ? `Slot ${index+1}: ${getCard(cardId)?.name || cardId}`
         : `Empty slot ${index+1}`
     );
 
@@ -1048,7 +778,6 @@ function renderDeck() {
     if (cardId) {
       slot.classList.add("filled");
       const card = getCard(cardId);
-
       if (card) slot.appendChild(cardArtwork(card));
 
       const remove = document.createElement("button");
@@ -1056,12 +785,10 @@ function renderDeck() {
       remove.textContent = "×";
       remove.title = "Remove card";
       remove.setAttribute("aria-label",`Remove slot ${index+1}`);
-
       remove.onclick = event => {
         event.stopPropagation();
         removeCard(index);
       };
-
       slot.appendChild(remove);
     } else {
       const plus = document.createElement("span");
@@ -1071,17 +798,12 @@ function renderDeck() {
     }
 
     function activateSlot() {
-      if (cardId) {
-        removeCard(index);
-      } else if (selectedCard) {
-        addCard(index,selectedCard);
-      } else {
-        updateStatus("Select a card from the library first.");
-      }
+      if (cardId) removeCard(index);
+      else if (selectedCard) addCard(index,selectedCard);
+      else updateStatus("Select a card from the library first.");
     }
 
     slot.addEventListener("click",activateSlot);
-
     slot.addEventListener("keydown",event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -1103,35 +825,28 @@ function renderDeck() {
       event.preventDefault();
       slot.classList.add("drag-over");
     });
-
     slot.addEventListener("dragleave",() => {
       slot.classList.remove("drag-over");
     });
-
     slot.addEventListener("drop",event => {
       event.preventDefault();
       slot.classList.remove("drag-over");
 
       if (draggingSlot !== null) {
         const source = draggingSlot;
-
         if (source !== index) {
-          [deck[source],deck[index]] =
-            [deck[index],deck[source]];
+          [deck[source],deck[index]] = [deck[index],deck[source]];
           renderDeck();
           updateStatus("Deck cards rearranged.");
         }
       } else {
         const id = draggingCard ||
           event.dataTransfer.getData("text/plain");
-
         if (id) addCard(index,id);
       }
-
       draggingSlot = null;
       draggingCard = null;
     });
-
     slot.addEventListener("dragend",() => {
       draggingSlot = null;
       draggingCard = null;
@@ -1157,9 +872,7 @@ function deckPayload() {
 
 function saveDeck() {
   try {
-    localStorage.setItem(
-      STORAGE_KEY,JSON.stringify(deckPayload())
-    );
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(deckPayload()));
     updateStatus("Deck saved on this device.");
   } catch {
     updateStatus("Unable to save in this browser.");
@@ -1170,12 +883,10 @@ function restoreDeck(data) {
   if (!data || !Array.isArray(data.slots)) {
     throw new Error("Invalid deck format");
   }
-
   deck = Array.from({length:MAX_CARDS},(_,index) => {
     const id = data.slots[index];
     return getCard(id) ? id : null;
   });
-
   $("deckName").value = data.name || "My Fractured Deck";
   renderDeck();
 }
@@ -1183,12 +894,10 @@ function restoreDeck(data) {
 function loadDeck() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-
     if (!saved) {
       updateStatus("No saved deck found on this device.");
       return;
     }
-
     restoreDeck(JSON.parse(saved));
     updateStatus("Saved deck loaded.");
   } catch {
@@ -1197,22 +906,19 @@ function loadDeck() {
 }
 
 function exportDeck() {
-  const data = JSON.stringify(deckPayload(),null,2);
-  const blob = new Blob([data],{type:"application/json"});
+  const blob = new Blob(
+    [JSON.stringify(deckPayload(),null,2)],
+    {type:"application/json"}
+  );
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-
   link.href = url;
   link.download =
-    ($("deckName").value.trim() || "fractured-deck")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g,"-") + ".json";
-
+    slugify($("deckName").value.trim() || "fractured-deck") + ".json";
   document.body.appendChild(link);
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-
   updateStatus("Deck exported as JSON.");
 }
 
@@ -1229,21 +935,17 @@ $("clearDeck").onclick = () => {
 
 $("resetFilters").onclick = () => {
   $("search").value = "";
-
   [
     "colour","cost","power","health",
     "type","unitType","keyword","rarity"
   ].forEach(id => $(id).value = "");
-
   renderLibrary();
 };
 
 $("importDeck").onclick = () => $("importFile").click();
-
 $("importFile").onchange = async event => {
   const file = event.target.files[0];
   if (!file) return;
-
   try {
     const data = JSON.parse(await file.text());
     restoreDeck(data);
@@ -1251,21 +953,12 @@ $("importFile").onchange = async event => {
   } catch {
     updateStatus("Could not import that deck file.");
   }
-
   event.target.value = "";
 };
 
-setupFilters();
-renderLibrary();
+/* INITIALISE WEBSITE */
 renderDeck();
-
-try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) restoreDeck(JSON.parse(saved));
-} catch {
-  // Start with an empty deck if saved data is invalid.
-}
-
+loadCards();
 </script>
 </body>
 </html>
