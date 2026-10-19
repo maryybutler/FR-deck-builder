@@ -9,34 +9,30 @@
 <style>
 :root {
   --bg:#8a897eed;
-  --panel:#444550;
-  --panel2:#555663;
+  --panel:rgba(35,38,49,.78);
   --line:#ffffff;
-  --gold:#ffd45c;
-  --cyan:#54e9ff;
   --text:#ffffff;
   --muted:#e3e3e8;
+  --gold:#ffd45c;
 }
 
-* {
-  box-sizing:border-box;
-}
+* { box-sizing:border-box; }
 
 body {
   margin:0;
   min-height:100vh;
   color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);
+  background-color:#8a897e;
+  background-image:url("frbackground.png");
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
 }
 
-button,input,select {
-  font:inherit;
-}
-
-button {
-  cursor:pointer;
-}
+button,input,select { font:inherit; }
+button { cursor:pointer; }
 
 button:focus-visible,
 input:focus-visible,
@@ -51,34 +47,23 @@ select:focus-visible {
   text-align:center;
   padding:25px 20px 22px;
   border-bottom:1px solid white;
-  background:transparent;
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
 }
 
-.logo {
+.logo-text {
   display:block;
-  width:115px;
+  width:min(600px,90%);
+  max-width:100%;
   height:auto;
-  margin:0 auto 12px;
-}
-
-.hero h1 {
-  margin:0;
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:clamp(32px,4.5vw,56px);
-  font-weight:900;
-  letter-spacing:2px;
-  color:#050505;
-  -webkit-text-stroke:1.5px #e4aa29;
-  paint-order:stroke fill;
-  text-shadow:
-    1px 1px 0 #fff2a4,
-    2px 2px 0 #d49417,
-    3px 3px 0 #8c560d,
-    4px 5px 6px #00000045;
+  margin:0 auto;
+  object-fit:contain;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));
 }
 
 .hero-subtitle {
-  margin:7px 0 0;
+  margin:5px 0 0;
   font-family:Georgia,"Times New Roman",serif;
   font-size:clamp(19px,2.5vw,29px);
   font-weight:900;
@@ -91,9 +76,7 @@ select:focus-visible {
 .layout {
   display:grid;
   grid-template-columns:
-    215px
-    minmax(0,2.2fr)
-    minmax(270px,0.85fr);
+    215px minmax(0,2.2fr) minmax(270px,.85fr);
   gap:15px;
   max-width:1900px;
   margin:20px auto;
@@ -106,25 +89,16 @@ select:focus-visible {
   padding:16px;
   border:1px solid white;
   border-radius:15px;
-  background:linear-gradient(
-    145deg,
-    #565761ed,
-    #393b46ed
-  );
-  box-shadow:0 8px 25px #00000030;
-}
-
-.deck-panel,
-.library-panel {
-  border-color:white;
-  box-shadow:0 8px 25px #00000030;
+  background:var(--panel);
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
 
 h2 {
   margin:0 0 12px;
   color:white;
   font-size:20px;
-  font-weight:700;
 }
 
 .section-top {
@@ -141,7 +115,7 @@ h2 {
   white-space:nowrap;
 }
 
-/* FILTERS */
+/* FILTERS AND BUTTONS */
 
 label {
   display:block;
@@ -150,35 +124,28 @@ label {
   margin:13px 0 5px;
 }
 
-input,
-select {
+input,select {
   width:100%;
   min-width:0;
   padding:10px;
   color:white;
-  background:#454650;
+  background:rgba(30,32,43,.68);
   border:1px solid white;
   border-radius:8px;
 }
 
-input::placeholder {
-  color:#dddddf;
-}
+input::placeholder { color:#dddddf; }
 
-input:focus,
-select:focus {
-  border-color:white;
+select option {
+  color:white;
+  background:#343641;
 }
 
 .btn {
   padding:10px 12px;
   border:1px solid white;
   border-radius:9px;
-  background:linear-gradient(
-    180deg,
-    #666774,
-    #41424c
-  );
+  background:rgba(80,83,100,.75);
   color:white;
   font-size:12px;
   font-weight:bold;
@@ -192,17 +159,9 @@ select:focus {
 
 .btn.gold {
   color:#151515;
-  border-color:white;
   background:linear-gradient(
-    180deg,
-    #fff4af,
-    #f7ca52 55%,
-    #c68b22
+    180deg,#fff4af,#f7ca52 55%,#c68b22
   );
-}
-
-.btn.danger {
-  border-color:white;
 }
 
 .btn:disabled {
@@ -217,9 +176,7 @@ select:focus {
   margin:13px 0;
 }
 
-.actions .btn {
-  flex:1;
-}
+.actions .btn { flex:1; }
 
 .hint {
   color:#f0f0f0;
@@ -229,31 +186,25 @@ select:focus {
 
 .divider {
   height:1px;
-  background:white;
-  opacity:.65;
+  background:rgba(255,255,255,.65);
   margin:18px 0;
 }
 
-/* DECK */
+/* DECK BUILDER */
 
 .progress {
   height:7px;
   border:1px solid white;
   border-radius:20px;
   overflow:hidden;
-  background:#454650;
+  background:rgba(0,0,0,.3);
   margin-bottom:12px;
 }
 
 .progress-fill {
   height:100%;
   width:0%;
-  background:linear-gradient(
-    90deg,
-    #b8b8bd,
-    #ffffff,
-    #f4f4f4
-  );
+  background:linear-gradient(90deg,#b8b8bd,#fff,#f4f4f4);
   transition:width .2s;
 }
 
@@ -264,7 +215,7 @@ select:focus {
   min-height:16px;
 }
 
-/* NINE CARDS PER ROW */
+/* 9 COLUMNS = 5 ROWS OF CARDS */
 
 .deck-slots {
   display:grid;
@@ -278,32 +229,23 @@ select:focus {
   padding:2px;
   border:1px dashed white;
   border-radius:6px;
-  background:linear-gradient(
-    145deg,
-    #646674,
-    #353744
-  );
+  background:rgba(35,38,50,.55);
   position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
   cursor:pointer;
-  transition:
-    border-color .15s,
-    box-shadow .15s,
-    transform .15s;
+  transition:box-shadow .15s;
 }
 
 .slot:hover,
 .slot.drag-over {
-  border-color:white;
-  box-shadow:0 0 12px #ffffff90;
+  box-shadow:0 0 12px rgba(255,255,255,.65);
 }
 
 .slot.filled {
   border-style:solid;
-  border-color:white;
 }
 
 .slot img {
@@ -323,7 +265,7 @@ select:focus {
 }
 
 .slot.filled .slot-number {
-  background:#000000a8;
+  background:rgba(0,0,0,.65);
   padding:2px 3px;
   border-radius:3px;
 }
@@ -331,12 +273,6 @@ select:focus {
 .slot-plus {
   font-size:21px;
   color:white;
-}
-
-.slot .mini-card {
-  width:100%;
-  height:100%;
-  border-radius:4px;
 }
 
 .slot-remove {
@@ -375,22 +311,17 @@ select:focus {
   padding:5px;
   border:1px solid white;
   border-radius:9px;
-  background:#41434f;
-  transition:
-    transform .15s,
-    border-color .15s,
-    box-shadow .15s;
+  background:rgba(30,32,43,.65);
+  transition:transform .15s,box-shadow .15s;
 }
 
 .library-card:hover {
   transform:translateY(-3px);
-  border-color:white;
-  box-shadow:0 0 14px #ffffff65;
+  box-shadow:0 0 14px rgba(255,255,255,.5);
 }
 
 .library-card.selected {
-  border-color:white;
-  box-shadow:0 0 16px #ffffffbb;
+  box-shadow:0 0 16px rgba(255,255,255,.85);
 }
 
 .card-image {
@@ -398,7 +329,6 @@ select:focus {
   aspect-ratio:63/88;
   border-radius:6px;
   object-fit:contain;
-  background:#252631;
   display:block;
 }
 
@@ -430,11 +360,7 @@ select:focus {
       var(--gem),
       transparent 55%
     ),
-    linear-gradient(
-      145deg,
-      #3b3d52,
-      #161723
-    );
+    linear-gradient(145deg,#3b3d52,#161723);
   border:1px solid white;
   color:white;
   box-shadow:inset 0 0 15px #ffffff20;
@@ -457,7 +383,7 @@ select:focus {
 
 .mini-card .mini-cost {
   align-self:flex-start;
-  background:#000000a8;
+  background:rgba(0,0,0,.65);
   border:1px solid white;
   padding:3px 6px;
   border-radius:5px;
@@ -471,6 +397,8 @@ select:focus {
 }
 
 .slot .mini-card {
+  width:100%;
+  height:100%;
   padding:5%;
 }
 
@@ -487,20 +415,18 @@ select:focus {
   font-size:8px;
 }
 
-/* SELECTED CARD DETAILS */
+/* SELECTED CARD */
 
 .selected-info {
   padding:10px;
   border:1px solid white;
   border-radius:9px;
-  background:#41434f;
+  background:rgba(30,32,43,.65);
   font-size:12px;
   line-height:1.5;
 }
 
-.selected-info strong {
-  color:white;
-}
+.selected-info strong { color:white; }
 
 .selected-info p {
   margin:5px 0;
@@ -516,12 +442,12 @@ select:focus {
 
 footer {
   text-align:center;
-  color:#ffffff;
+  color:white;
   font-size:11px;
   padding:15px 10px 30px;
 }
 
-/* RESPONSIVE LAYOUT */
+/* RESPONSIVE */
 
 @media(max-width:1050px) {
   .layout {
@@ -534,6 +460,10 @@ footer {
 }
 
 @media(max-width:650px) {
+  body {
+    background-attachment:scroll;
+  }
+
   .layout {
     grid-template-columns:1fr;
     padding:0 10px;
@@ -556,25 +486,16 @@ footer {
     border-radius:3px;
   }
 
-  .slot-number {
-    font-size:7px;
-  }
+  .slot-number { font-size:7px; }
+  .slot-plus { font-size:13px; }
 
-  .slot-plus {
-    font-size:13px;
-  }
-
-  .panel {
-    padding:10px;
-  }
+  .panel { padding:10px; }
 
   .library-grid {
     grid-template-columns:repeat(3,minmax(0,1fr));
   }
 
-  .hero {
-    padding:20px 10px;
-  }
+  .hero { padding:20px 10px; }
 }
 </style>
 </head>
@@ -583,29 +504,23 @@ footer {
 
 <header class="hero">
   <img
-    src="logo.png"
-    alt="Fractured Realms logo"
-    class="logo"
-    onerror="this.style.display='none'"
+    src="frlogotext.png"
+    alt="Fractured Realms"
+    class="logo-text"
   >
-
-  <h1>Fractured Realms</h1>
   <p class="hero-subtitle">DECK BUILDER</p>
 </header>
 
 <main class="layout">
 
-  <!-- LEFT: CARD FILTERS -->
+  <!-- LEFT: FILTERS -->
 
   <aside class="panel">
     <h2>Card Filters</h2>
 
     <label for="search">Search card name</label>
-    <input
-      id="search"
-      type="search"
-      placeholder="Search cards..."
-    >
+    <input id="search" type="search"
+           placeholder="Search cards...">
 
     <label for="colour">Colour</label>
     <select id="colour"></select>
@@ -642,18 +557,11 @@ footer {
     <h2>Your Build</h2>
 
     <label for="deckName">Deck name</label>
-    <input
-      id="deckName"
-      value="My Fractured Deck"
-    >
+    <input id="deckName" value="My Fractured Deck">
 
     <div class="actions">
-      <button class="btn gold" id="saveDeck">
-        Save
-      </button>
-      <button class="btn" id="loadDeck">
-        Load
-      </button>
+      <button class="btn gold" id="saveDeck">Save</button>
+      <button class="btn" id="loadDeck">Load</button>
     </div>
 
     <div class="actions">
@@ -665,83 +573,57 @@ footer {
       </button>
     </div>
 
-    <input
-      type="file"
-      id="importFile"
-      accept=".json,application/json"
-      hidden
-    >
+    <input type="file" id="importFile"
+           accept=".json,application/json" hidden>
 
-    <button class="btn danger" id="clearDeck">
+    <button class="btn" id="clearDeck">
       Clear Deck
     </button>
 
     <p class="hint">
-      Select a card in the library, then click a deck slot.
-      You can also drag cards into slots.
-      Click the × on a filled slot to remove it.
+      Select a card in the library, then click a deck
+      slot. You can also drag cards into slots.
+      Click × on a filled slot to remove it.
     </p>
   </aside>
 
-  <!-- CENTRE: DECK BUILDER -->
+  <!-- CENTRE: DECK -->
 
   <section class="panel deck-panel">
     <div class="section-top">
       <h2>Deck Builder</h2>
-      <span class="count" id="deckCount">
-        0 / 45
-      </span>
+      <span class="count" id="deckCount">0 / 45</span>
     </div>
 
     <div class="progress">
-      <div
-        class="progress-fill"
-        id="progress"
-      ></div>
+      <div class="progress-fill" id="progress"></div>
     </div>
 
     <p class="deck-status" id="deckStatus">
       Select a card to start building.
     </p>
 
-    <div
-      class="deck-slots"
-      id="deckSlots"
-    ></div>
+    <div class="deck-slots" id="deckSlots"></div>
   </section>
 
-  <!-- RIGHT: CARD LIBRARY -->
+  <!-- RIGHT: LIBRARY -->
 
   <section class="panel library-panel">
     <div class="section-top">
       <h2>Card Library</h2>
-      <span class="count" id="libraryCount">
-        0
-      </span>
+      <span class="count" id="libraryCount">0</span>
     </div>
 
-    <div
-      id="selectedInfo"
-      class="selected-info"
-    >
+    <div id="selectedInfo" class="selected-info">
       <strong>No card selected</strong>
-      <p>
-        Choose a card below to add it to your deck.
-      </p>
+      <p>Choose a card below to add it to your deck.</p>
     </div>
 
     <div class="divider"></div>
 
-    <div
-      class="library-grid"
-      id="cardGrid"
-    ></div>
+    <div class="library-grid" id="cardGrid"></div>
 
-    <div
-      class="empty"
-      id="emptyResults"
-      hidden
-    >
+    <div class="empty" id="emptyResults" hidden>
       No cards match your filters.
     </div>
   </section>
@@ -754,7 +636,10 @@ footer {
 
 <script>
 
-/* FRACTURED REALMS SAMPLE CARD DATA */
+/* ================================================
+   CARD DATABASE
+   Replace ONLY this section when new cards arrive.
+   ================================================ */
 
 const cards = [
   {
@@ -869,6 +754,11 @@ const cards = [
   }
 ];
 
+/* ================================================
+   WEBSITE FUNCTIONALITY
+   No need to edit anything below this line.
+   ================================================ */
+
 const MAX_CARDS = 45;
 const STORAGE_KEY = "fractured-realms-deck-v1";
 
@@ -893,49 +783,39 @@ function crystalColour(card) {
   if (!card.colours || !card.colours.length) {
     return "#f5dfff";
   }
-
   return crystalColours[card.colours[0]] || "#65eaff";
 }
 
 function escapeHTML(value) {
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    char => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    })[char]
-  );
+  return String(value ?? "").replace(/[&<>"']/g,char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
 }
 
 function cardPlaceholder(card) {
   const colour = crystalColour(card);
-
   return `
     <div class="mini-card" style="--gem:${colour}">
-      <span class="mini-cost">
-        ${card.cost ?? "✦"}
-      </span>
+      <span class="mini-cost">${card.cost ?? "✦"}</span>
       <span class="gem-icon">◆</span>
-      <span class="mini-name">
-        ${escapeHTML(card.name)}
-      </span>
-      <span class="mini-stats">
-        ${
-          card.power == null
-            ? ""
-            : `${card.power} / ${card.health ?? "–"}`
-        }
-      </span>
+      <span class="mini-name">${escapeHTML(card.name)}</span>
+      <span class="mini-stats">${
+        card.power == null ? "" :
+        `${card.power} / ${card.health ?? "–"}`
+      }</span>
     </div>
   `;
 }
 
 function cardArtwork(card) {
   if (!card.image) {
-    return cardPlaceholder(card);
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = cardPlaceholder(card);
+    return wrapper.firstElementChild;
   }
 
   const wrapper = document.createElement("div");
@@ -960,19 +840,10 @@ function cardArtwork(card) {
 function uniqueValues(field) {
   const values = cards.flatMap(card => {
     const value = card[field];
-
-    if (Array.isArray(value)) {
-      return value;
-    }
-
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
+    if (Array.isArray(value)) return value;
+    if (value === null || value === undefined || value === "") {
       return [];
     }
-
     return [value];
   });
 
@@ -1024,10 +895,7 @@ function setupFilters() {
 function matchesFilters(card) {
   const query = $("search").value.trim().toLowerCase();
 
-  if (
-    query &&
-    !card.name.toLowerCase().includes(query)
-  ) {
+  if (query && !card.name.toLowerCase().includes(query)) {
     return false;
   }
 
@@ -1044,15 +912,10 @@ function matchesFilters(card) {
 
   return comparisons.every(([id,value]) => {
     const filter = $(id).value;
-
-    if (!filter) {
-      return true;
-    }
+    if (!filter) return true;
 
     if (Array.isArray(value)) {
-      return value.some(
-        item => String(item) === filter
-      );
+      return value.some(item => String(item) === filter);
     }
 
     return String(value ?? "") === filter;
@@ -1064,11 +927,9 @@ function selectCard(card) {
 
   $("selectedInfo").innerHTML = `
     <strong>${escapeHTML(card.name)}</strong>
-    <p>
-      ${escapeHTML(card.type)} ·
-      ${escapeHTML(card.colours.join(" / ") || "Colourless")} ·
-      Cost ${card.cost ?? "—"}
-    </p>
+    <p>${escapeHTML(card.type)} · ${
+      escapeHTML(card.colours.join(" / ") || "Colourless")
+    } · Cost ${card.cost ?? "—"}</p>
     <p>Click an empty deck slot to add this card.</p>
   `;
 
@@ -1080,10 +941,7 @@ function renderLibrary() {
   grid.innerHTML = "";
 
   const filtered = cards.filter(matchesFilters);
-
-  $("libraryCount").textContent =
-    `${filtered.length} cards`;
-
+  $("libraryCount").textContent = `${filtered.length} cards`;
   $("emptyResults").hidden = filtered.length > 0;
 
   filtered.forEach(card => {
@@ -1091,10 +949,7 @@ function renderLibrary() {
     item.className = "library-card";
     item.tabIndex = 0;
     item.setAttribute("role","button");
-    item.setAttribute(
-      "aria-label",
-      `Select ${card.name}`
-    );
+    item.setAttribute("aria-label",`Select ${card.name}`);
     item.draggable = true;
 
     if (selectedCard === card.id) {
@@ -1116,16 +971,10 @@ function renderLibrary() {
     item.appendChild(name);
     item.appendChild(meta);
 
-    item.addEventListener(
-      "click",
-      () => selectCard(card)
-    );
+    item.addEventListener("click",() => selectCard(card));
 
     item.addEventListener("keydown",event => {
-      if (
-        event.key === "Enter" ||
-        event.key === " "
-      ) {
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         selectCard(card);
       }
@@ -1134,12 +983,7 @@ function renderLibrary() {
     item.addEventListener("dragstart",event => {
       draggingCard = card.id;
       draggingSlot = null;
-
-      event.dataTransfer.setData(
-        "text/plain",
-        card.id
-      );
-
+      event.dataTransfer.setData("text/plain",card.id);
       event.dataTransfer.effectAllowed = "copy";
     });
 
@@ -1160,38 +1004,25 @@ function updateStatus(message) {
 }
 
 function addCard(index,cardId) {
-  if (!getCard(cardId)) {
-    return;
-  }
+  if (!getCard(cardId)) return;
 
   if (deck[index] !== null) {
-    updateStatus(
-      "Remove the existing card from that slot first."
-    );
+    updateStatus("Remove the existing card from that slot first.");
     return;
   }
 
   deck[index] = cardId;
   renderDeck();
-
-  updateStatus(
-    `${getCard(cardId).name} added to your deck.`
-  );
+  updateStatus(`${getCard(cardId).name} added to your deck.`);
 }
 
 function removeCard(index) {
-  if (deck[index] === null) {
-    return;
-  }
+  if (deck[index] === null) return;
 
   const card = getCard(deck[index]);
   deck[index] = null;
-
   renderDeck();
-
-  updateStatus(
-    `${card?.name || "Card"} removed.`
-  );
+  updateStatus(`${card?.name || "Card"} removed.`);
 }
 
 function renderDeck() {
@@ -1203,9 +1034,7 @@ function renderDeck() {
     slot.className = "slot";
     slot.tabIndex = 0;
     slot.setAttribute("role","button");
-
-    slot.setAttribute(
-      "aria-label",
+    slot.setAttribute("aria-label",
       cardId
         ? `Slot ${index+1}: ${getCard(cardId)?.name}`
         : `Empty slot ${index+1}`
@@ -1218,22 +1047,15 @@ function renderDeck() {
 
     if (cardId) {
       slot.classList.add("filled");
-
       const card = getCard(cardId);
 
-      if (card) {
-        slot.appendChild(cardArtwork(card));
-      }
+      if (card) slot.appendChild(cardArtwork(card));
 
       const remove = document.createElement("button");
       remove.className = "slot-remove";
       remove.textContent = "×";
       remove.title = "Remove card";
-
-      remove.setAttribute(
-        "aria-label",
-        `Remove slot ${index+1}`
-      );
+      remove.setAttribute("aria-label",`Remove slot ${index+1}`);
 
       remove.onclick = event => {
         event.stopPropagation();
@@ -1241,7 +1063,6 @@ function renderDeck() {
       };
 
       slot.appendChild(remove);
-
     } else {
       const plus = document.createElement("span");
       plus.className = "slot-plus";
@@ -1255,22 +1076,14 @@ function renderDeck() {
       } else if (selectedCard) {
         addCard(index,selectedCard);
       } else {
-        updateStatus(
-          "Select a card from the library first."
-        );
+        updateStatus("Select a card from the library first.");
       }
     }
 
-    slot.addEventListener(
-      "click",
-      activateSlot
-    );
+    slot.addEventListener("click",activateSlot);
 
     slot.addEventListener("keydown",event => {
-      if (
-        event.key === "Enter" ||
-        event.key === " "
-      ) {
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         activateSlot();
       }
@@ -1278,16 +1091,10 @@ function renderDeck() {
 
     if (cardId) {
       slot.draggable = true;
-
       slot.addEventListener("dragstart",event => {
         draggingSlot = index;
         draggingCard = null;
-
-        event.dataTransfer.setData(
-          "text/plain",
-          cardId
-        );
-
+        event.dataTransfer.setData("text/plain",cardId);
         event.dataTransfer.effectAllowed = "move";
       });
     }
@@ -1311,21 +1118,14 @@ function renderDeck() {
         if (source !== index) {
           [deck[source],deck[index]] =
             [deck[index],deck[source]];
-
           renderDeck();
-
-          updateStatus(
-            "Deck cards rearranged."
-          );
+          updateStatus("Deck cards rearranged.");
         }
-
       } else {
         const id = draggingCard ||
           event.dataTransfer.getData("text/plain");
 
-        if (id) {
-          addCard(index,id);
-        }
+        if (id) addCard(index,id);
       }
 
       draggingSlot = null;
@@ -1341,128 +1141,79 @@ function renderDeck() {
   });
 
   const count = deck.filter(Boolean).length;
-
-  $("deckCount").textContent =
-    `${count} / ${MAX_CARDS}`;
-
-  $("progress").style.width =
-    `${count/MAX_CARDS*100}%`;
+  $("deckCount").textContent = `${count} / ${MAX_CARDS}`;
+  $("progress").style.width = `${count/MAX_CARDS*100}%`;
 }
 
 function deckPayload() {
   return {
     game:"Fractured Realms",
     version:1,
-    name:
-      $("deckName").value.trim() ||
-      "Untitled Deck",
+    name:$("deckName").value.trim() || "Untitled Deck",
     slots:[...deck],
-    cards:deck
-      .filter(Boolean)
-      .map(id => getCard(id)?.name || id)
+    cards:deck.filter(Boolean).map(id => getCard(id)?.name || id)
   };
 }
 
 function saveDeck() {
   try {
     localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(deckPayload())
+      STORAGE_KEY,JSON.stringify(deckPayload())
     );
-
-    updateStatus(
-      "Deck saved on this device."
-    );
-
+    updateStatus("Deck saved on this device.");
   } catch {
-    updateStatus(
-      "Unable to save in this browser."
-    );
+    updateStatus("Unable to save in this browser.");
   }
 }
 
 function restoreDeck(data) {
-  if (
-    !data ||
-    !Array.isArray(data.slots)
-  ) {
+  if (!data || !Array.isArray(data.slots)) {
     throw new Error("Invalid deck format");
   }
 
-  deck = Array.from(
-    {length:MAX_CARDS},
-    (_,index) => {
-      const id = data.slots[index];
-      return getCard(id) ? id : null;
-    }
-  );
+  deck = Array.from({length:MAX_CARDS},(_,index) => {
+    const id = data.slots[index];
+    return getCard(id) ? id : null;
+  });
 
-  $("deckName").value =
-    data.name || "My Fractured Deck";
-
+  $("deckName").value = data.name || "My Fractured Deck";
   renderDeck();
 }
 
 function loadDeck() {
   try {
-    const saved =
-      localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY);
 
     if (!saved) {
-      updateStatus(
-        "No saved deck found on this device."
-      );
+      updateStatus("No saved deck found on this device.");
       return;
     }
 
     restoreDeck(JSON.parse(saved));
-
-    updateStatus(
-      "Saved deck loaded."
-    );
-
+    updateStatus("Saved deck loaded.");
   } catch {
-    updateStatus(
-      "Unable to load the saved deck."
-    );
+    updateStatus("Unable to load the saved deck.");
   }
 }
 
 function exportDeck() {
-  const data = JSON.stringify(
-    deckPayload(),
-    null,
-    2
-  );
-
-  const blob = new Blob(
-    [data],
-    {type:"application/json"}
-  );
-
+  const data = JSON.stringify(deckPayload(),null,2);
+  const blob = new Blob([data],{type:"application/json"});
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
 
   link.href = url;
-
   link.download =
-    (
-      $("deckName").value.trim() ||
-      "fractured-deck"
-    )
+    ($("deckName").value.trim() || "fractured-deck")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g,"-")
-    + ".json";
+    .replace(/[^a-z0-9]+/g,"-") + ".json";
 
   document.body.appendChild(link);
   link.click();
   link.remove();
-
   URL.revokeObjectURL(url);
 
-  updateStatus(
-    "Deck exported as JSON."
-  );
+  updateStatus("Deck exported as JSON.");
 }
 
 $("saveDeck").onclick = saveDeck;
@@ -1470,14 +1221,8 @@ $("loadDeck").onclick = loadDeck;
 $("exportDeck").onclick = exportDeck;
 
 $("clearDeck").onclick = () => {
-  if (
-    !confirm("Clear all 45 deck slots?")
-  ) {
-    return;
-  }
-
+  if (!confirm("Clear all 45 deck slots?")) return;
   deck = Array(MAX_CARDS).fill(null);
-
   renderDeck();
   updateStatus("Deck cleared.");
 };
@@ -1488,39 +1233,23 @@ $("resetFilters").onclick = () => {
   [
     "colour","cost","power","health",
     "type","unitType","keyword","rarity"
-  ].forEach(id => {
-    $(id).value = "";
-  });
+  ].forEach(id => $(id).value = "");
 
   renderLibrary();
 };
 
-$("importDeck").onclick = () => {
-  $("importFile").click();
-};
+$("importDeck").onclick = () => $("importFile").click();
 
 $("importFile").onchange = async event => {
   const file = event.target.files[0];
-
-  if (!file) {
-    return;
-  }
+  if (!file) return;
 
   try {
-    const data = JSON.parse(
-      await file.text()
-    );
-
+    const data = JSON.parse(await file.text());
     restoreDeck(data);
-
-    updateStatus(
-      "Deck imported successfully."
-    );
-
+    updateStatus("Deck imported successfully.");
   } catch {
-    updateStatus(
-      "Could not import that deck file."
-    );
+    updateStatus("Could not import that deck file.");
   }
 
   event.target.value = "";
@@ -1530,21 +1259,13 @@ setupFilters();
 renderLibrary();
 renderDeck();
 
-/* RESTORE SAVED DECK */
-
 try {
-  const saved =
-    localStorage.getItem(STORAGE_KEY);
-
-  if (saved) {
-    restoreDeck(JSON.parse(saved));
-  }
-
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) restoreDeck(JSON.parse(saved));
 } catch {
-  // Start with an empty deck.
+  // Start with an empty deck if saved data is invalid.
 }
 
 </script>
 </body>
 </html>
-
