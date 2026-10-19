@@ -501,7 +501,7 @@ function sheetToCards(csv) {
       unitType:row["Unit Type"] || "",
       keywords:extractKeywords(row),
       rarity:row["Rarity"] || "",
-      image:IMAGE_FOLDER + id + ".png"
+      image:IMAGE_FOLDER + encodeURIComponent(name) + ".png"
     };
   }).filter(Boolean);
 }
