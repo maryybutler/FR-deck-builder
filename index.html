@@ -990,13 +990,7 @@ function renderLibrary() {
     name.className = "card-name";
     name.textContent = card.name;
 
-    const meta = document.createElement("div");
-    meta.className = "card-meta";
-    meta.textContent =
-      card.mainEffect || "No main effect listed yet.";
-
-    item.appendChild(name);
-    item.appendChild(meta);
+item.appendChild(name);
 
     item.addEventListener("click",() => {
       addNextCard(card);
