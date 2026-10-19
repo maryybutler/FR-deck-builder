@@ -390,6 +390,46 @@ footer {
   }
   .hero {padding:20px 10px}
 }
+  
+.sort-controls {
+  margin:12px 0 18px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:10px;
+  background:rgba(255,255,255,.10);
+}
+
+.sort-controls h3 {
+  margin:0 0 10px;
+  font-size:15px;
+}
+
+.sort-grid {
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(0,1.5fr);
+  gap:8px;
+}
+
+.sort-grid label {
+  margin:0;
+  font-size:11px;
+}
+
+.sort-grid select {
+  margin-top:5px;
+  font-size:12px;
+  padding:8px 5px;
+}
+
+@media(max-width:650px) {
+  .sort-grid {
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .sort-grid select {
+    font-size:11px;
+  }
+}
+
 </style>
 </head>
 
@@ -445,6 +485,44 @@ footer {
       <h2>Deck Builder</h2>
       <span class="count" id="deckCount">0 / 45</span>
     </div>
+    
+<div class="sort-controls">
+  <h3>Sort Order</h3>
+  <div class="sort-grid">
+    <label>First priority
+      <select id="sort1"></select>
+    </label>
+    <label>Direction
+      <select id="direction1">
+        <option value="asc">Low to high / A–Z</option>
+        <option value="desc">High to low / Z–A</option>
+      </select>
+    </label>
+
+    <label>Second priority
+      <select id="sort2"></select>
+    </label>
+    <label>Direction
+      <select id="direction2">
+        <option value="asc">Low to high / A–Z</option>
+        <option value="desc">High to low / Z–A</option>
+      </select>
+    </label>
+
+    <label>Third priority
+      <select id="sort3"></select>
+    </label>
+    <label>Direction
+      <select id="direction3">
+        <option value="asc">Low to high / A–Z</option>
+        <option value="desc">High to low / Z–A</option>
+      </select>
+    </label>
+  </div>
+  <p class="hint" id="sortHint">
+    Manual order. Matching cards stay together.
+  </p>
+</div>
 
     <div class="progress">
       <div class="progress-fill" id="progress"></div>
@@ -1081,22 +1159,230 @@ function addCard(index,cardId) {
     return;
   }
 
-  deck[index] = cardId;
-  renderDeck();
-  updateStatus(`${card.name} added to your deck.`);
+deck[index] = cardId;
+
+if (sortRules().length) {
+  applySort();
+} else {
+  groupDeck();
 }
+
+updateStatus(`${card.name} added to your deck.`);
+
 
 function removeCard(index) {
   if (deck[index] === null) return;
 
   const card = getCard(deck[index]);
-  deck[index] = null;
+ 
+deck[index] = null;
 
-  renderDeck();
+if (sortRules().length) {
+  applySort();
+} else {
+  groupDeck();
+}
 
   updateStatus(
     `${card?.name || "Card"} removed from your deck.`
   );
+}
+
+/* DECK SORTING AND GROUPING */
+
+const SORT_OPTIONS = [
+  ["","None / Manual"],
+  ["cost","Cost"],
+  ["power","Power"],
+  ["health","Health"],
+  ["alphabetical","Alphabetical"],
+  ["units","Units first"],
+  ["tools","Tools first"],
+  ["actions","Actions first"]
+];
+
+let manualOrder = true;
+
+function initialiseSorting() {
+  for (let level=1;level<=3;level++) {
+    const select = $("sort"+level);
+
+    select.innerHTML = "";
+
+    SORT_OPTIONS.forEach(([value,label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change",applySort);
+
+    $("direction"+level).addEventListener(
+      "change",applySort
+    );
+  }
+}
+
+function sortRules() {
+  return [1,2,3].map(level => ({
+    field:$("sort"+level).value,
+    direction:$("direction"+level).value
+  })).filter(rule => rule.field);
+}
+
+function sortValue(card,field) {
+  if (field === "alphabetical") {
+    return card.name;
+  }
+
+  if (["cost","power","health"].includes(field)) {
+    return card[field];
+  }
+
+  const type = String(card.type || "").toLowerCase();
+
+  const target = {
+    units:"unit",
+    tools:"tool",
+    actions:"action"
+  }[field];
+
+  return type.includes(target) ? 0 : 1;
+}
+
+function compareCards(a,b,rules) {
+  for (const rule of rules) {
+    const av = sortValue(a,rule.field);
+    const bv = sortValue(b,rule.field);
+
+    // Missing numerical values always go last.
+    if (av == null && bv != null) return 1;
+    if (bv == null && av != null) return -1;
+
+    let comparison = 0;
+
+    if (typeof av === "string") {
+      comparison = av.localeCompare(bv,undefined,{
+        numeric:true,
+        sensitivity:"base"
+      });
+    } else {
+      comparison = (av ?? 0)-(bv ?? 0);
+    }
+
+    if (comparison !== 0) {
+      return rule.direction === "desc"
+        ? -comparison
+        : comparison;
+    }
+  }
+
+  return a.name.localeCompare(b.name);
+}
+
+function groupedIds(ids) {
+  const groups = new Map();
+
+  ids.forEach(id => {
+    if (!id || !getCard(id)) return;
+
+    if (!groups.has(id)) groups.set(id,[]);
+    groups.get(id).push(id);
+  });
+
+  return [...groups.values()].flat();
+}
+
+function setDeckOrder(ids) {
+  const valid = ids.slice(0,MAX_CARDS);
+
+  deck = [
+    ...valid,
+    ...Array(MAX_CARDS-valid.length).fill(null)
+  ];
+
+  renderDeck();
+}
+
+function applySort() {
+  const rules = sortRules();
+
+  manualOrder = rules.length === 0;
+
+  if (manualOrder) {
+    groupDeck();
+    $("sortHint").textContent =
+      "Manual order. Matching cards stay together.";
+    return;
+  }
+
+  const groups = new Map();
+
+  deck.filter(Boolean).forEach(id => {
+    if (!groups.has(id)) groups.set(id,[]);
+    groups.get(id).push(id);
+  });
+
+  const sorted = [...groups.entries()].sort((a,b) =>
+    compareCards(getCard(a[0]),getCard(b[0]),rules)
+  );
+
+  setDeckOrder(sorted.flatMap(group => group[1]));
+
+  $("sortHint").textContent =
+    "Automatically sorted. Drag a card to return to manual order.";
+}
+
+function groupDeck() {
+  setDeckOrder(groupedIds(deck));
+}
+
+function resetToManual() {
+  for (let level=1;level<=3;level++) {
+    $("sort"+level).value = "";
+  }
+
+  manualOrder = true;
+
+  $("sortHint").textContent =
+    "Manual order. Matching cards stay together.";
+}
+
+/* Move a complete group, shifting other cards */
+
+function moveDeckGroup(sourceIndex,targetIndex) {
+  const id = deck[sourceIndex];
+  if (!id) return;
+
+  const filled = deck.filter(Boolean);
+
+  // Move all copies together.
+  const moving = filled.filter(value => value === id);
+  const remaining = filled.filter(value => value !== id);
+
+  const targetId = deck[targetIndex];
+
+  if (targetId === id) return;
+
+  let insertAt;
+
+  if (targetId) {
+    insertAt = remaining.indexOf(targetId);
+
+    if (insertAt < 0) insertAt = remaining.length;
+
+    // Dropping onto a group inserts before that group.
+  } else {
+    insertAt = remaining.length;
+  }
+
+  remaining.splice(insertAt,0,...moving);
+
+  resetToManual();
+  setDeckOrder(remaining);
+
+  updateStatus("Card group moved. Other cards shifted to fit.");
 }
 
 /* DECK BUILDER */
@@ -1203,12 +1489,20 @@ function renderDeck() {
       event.preventDefault();
       slot.classList.remove("drag-over");
 
-      if (draggingSlot !== null) {
-        const source = draggingSlot;
+   
+if (draggingSlot !== null) {
+  const source = draggingSlot;
 
-        if (source !== index) {
-          [deck[source],deck[index]] =
-            [deck[index],deck[source]];
+  if (source !== index) {
+    moveDeckGroup(source,index);
+  }
+
+} else {
+  const id = draggingCard ||
+    event.dataTransfer.getData("text/plain");
+
+  if (id) addCard(index,id);
+}
 
           renderDeck();
           updateStatus("Deck cards rearranged.");
@@ -1394,8 +1688,11 @@ $("importFile").onchange = async event => {
 
 /* INITIALISE WEBSITE */
 
+
+initialiseSorting();
 renderDeck();
 loadCards();
+
 
 </script>
 </body>
