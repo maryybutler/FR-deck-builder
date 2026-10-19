@@ -12,7 +12,9 @@
   --text:#fff;
   --gold:#ffd45c;
 }
+
 * {box-sizing:border-box}
+
 body {
   margin:0;
   min-height:100vh;
@@ -20,19 +22,27 @@ body {
   font-family:Arial,Helvetica,sans-serif;
   background:#8a897e url("frbackground.png") center/cover fixed no-repeat;
 }
+
 button,input,select {font:inherit}
 button {cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible {
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.library-card:focus-visible,
+.slot:focus-visible {
   outline:2px solid white;
   outline-offset:2px;
 }
+
 .hero {
   text-align:center;
   padding:25px 20px 22px;
   border-bottom:1px solid white;
   background:rgba(255,255,255,.10);
-  backdrop-filter:blur(5px);
+  backdrop-filter:blur(4px);
 }
+
 .logo-text {
   display:block;
   width:min(600px,90%);
@@ -41,6 +51,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   object-fit:contain;
   filter:drop-shadow(0 4px 8px #0004);
 }
+
 .hero-subtitle {
   margin:5px 0 0;
   font-family:Georgia,"Times New Roman",serif;
@@ -49,6 +60,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   letter-spacing:5px;
   color:#fff;
 }
+
 .layout {
   display:grid;
   grid-template-columns:215px minmax(0,2.2fr) minmax(270px,.85fr);
@@ -58,6 +70,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   padding:0 16px;
   align-items:start;
 }
+
 .panel {
   min-width:0;
   padding:16px;
@@ -67,7 +80,9 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   backdrop-filter:blur(9px);
   box-shadow:0 8px 25px #0004;
 }
+
 h2 {margin:0 0 12px;font-size:20px}
+
 .section-top {
   display:flex;
   align-items:center;
@@ -75,8 +90,10 @@ h2 {margin:0 0 12px;font-size:20px}
   gap:8px;
   flex-wrap:wrap;
 }
+
 .count {font-weight:bold;white-space:nowrap}
 label {display:block;font-size:12px;margin:13px 0 5px}
+
 input,select {
   width:100%;
   min-width:0;
@@ -86,8 +103,10 @@ input,select {
   border:1px solid white;
   border-radius:8px;
 }
+
 input::placeholder {color:#ddd}
 select option {background:#343641;color:white}
+
 .btn {
   padding:10px 12px;
   border:1px solid white;
@@ -98,15 +117,28 @@ select option {background:#343641;color:white}
   font-weight:bold;
   transition:filter .15s,transform .15s;
 }
-.btn:hover {filter:brightness(1.2);transform:translateY(-1px)}
+
+.btn:hover {
+  filter:brightness(1.2);
+  transform:translateY(-1px);
+}
+
 .btn.gold {
   color:#151515;
   background:linear-gradient(180deg,#fff4af,#f7ca52 55%,#c68b22);
 }
-.actions {display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
+
+.actions {
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:13px 0;
+}
+
 .actions .btn {flex:1}
 .hint {font-size:12px;line-height:1.6}
 .divider {height:1px;background:#fffa;margin:18px 0}
+
 .progress {
   height:7px;
   border:1px solid white;
@@ -115,17 +147,25 @@ select option {background:#343641;color:white}
   background:#0005;
   margin-bottom:12px;
 }
+
 .progress-fill {
   height:100%;
   width:0%;
   background:linear-gradient(90deg,#b8b8bd,#fff,#f4f4f4);
 }
-.deck-status {font-size:12px;margin:8px 0 13px;min-height:16px}
+
+.deck-status {
+  font-size:12px;
+  margin:8px 0 13px;
+  min-height:16px;
+}
+
 .deck-slots {
   display:grid;
   grid-template-columns:repeat(9,minmax(0,1fr));
   gap:6px;
 }
+
 .slot {
   aspect-ratio:63/88;
   min-width:0;
@@ -140,9 +180,14 @@ select option {background:#343641;color:white}
   overflow:hidden;
   cursor:pointer;
 }
-.slot:hover,.slot.drag-over {box-shadow:0 0 12px #fffa}
+
+.slot:hover,.slot.drag-over {
+  box-shadow:0 0 12px #fffa;
+}
+
 .slot.filled {border-style:solid}
 .slot img {width:100%;height:100%;object-fit:contain}
+
 .slot-number {
   position:absolute;
   top:3px;
@@ -152,12 +197,15 @@ select option {background:#343641;color:white}
   text-shadow:0 1px 3px black;
   z-index:2;
 }
+
 .slot.filled .slot-number {
   background:#000a;
   padding:2px 3px;
   border-radius:3px;
 }
+
 .slot-plus {font-size:21px}
+
 .slot-remove {
   position:absolute;
   top:2px;
@@ -171,8 +219,12 @@ select option {background:#343641;color:white}
   font-size:10px;
   display:none;
 }
+
 .slot.filled:hover .slot-remove,
-.slot-remove:focus-visible {display:block}
+.slot-remove:focus-visible {
+  display:block;
+}
+
 .library-grid {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -181,6 +233,7 @@ select option {background:#343641;color:white}
   overflow-y:auto;
   padding:5px;
 }
+
 .library-card {
   min-width:0;
   cursor:pointer;
@@ -190,11 +243,16 @@ select option {background:#343641;color:white}
   background:rgba(30,32,43,.65);
   transition:transform .15s,box-shadow .15s;
 }
+
 .library-card:hover {
   transform:translateY(-3px);
   box-shadow:0 0 14px #fff8;
 }
-.library-card.selected {box-shadow:0 0 16px #fffd}
+
+.library-card.selected {
+  box-shadow:0 0 16px #fffd;
+}
+
 .card-image {
   width:100%;
   aspect-ratio:63/88;
@@ -202,21 +260,32 @@ select option {background:#343641;color:white}
   object-fit:contain;
   display:block;
 }
+
 .card-name {
   font-size:12px;
   font-weight:bold;
   margin-top:7px;
   overflow-wrap:anywhere;
 }
-.card-meta {font-size:10px;color:#e1e1e8;margin:4px 0;line-height:1.4}
+
+.card-meta {
+  font-size:10px;
+  color:#e1e1e8;
+  margin:4px 0;
+  line-height:1.4;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
 .mini-card {
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   padding:10%;
   text-align:center;
-  background:radial-gradient(circle at 50% 35%,var(--gem),transparent 55%),
-             linear-gradient(145deg,#3b3d52,#161723);
+  background:
+    radial-gradient(circle at 50% 35%,var(--gem),transparent 55%),
+    linear-gradient(145deg,#3b3d52,#161723);
   border:1px solid white;
   color:white;
   box-shadow:inset 0 0 15px #ffffff20;
@@ -224,16 +293,19 @@ select option {background:#343641;color:white}
   width:100%;
   border-radius:6px;
 }
+
 .gem-icon {
   font-size:clamp(15px,3vw,33px);
   filter:drop-shadow(0 0 9px var(--gem));
 }
+
 .mini-name {
   font-size:clamp(8px,1vw,13px);
   font-weight:bold;
   overflow-wrap:anywhere;
   text-shadow:0 2px 4px black;
 }
+
 .mini-cost {
   align-self:flex-start;
   background:#000a;
@@ -243,11 +315,13 @@ select option {background:#343641;color:white}
   font-weight:bold;
   font-size:11px;
 }
+
 .mini-stats {font-size:11px;font-weight:bold}
 .slot .mini-card {width:100%;height:100%;padding:5%}
 .slot .mini-name {font-size:clamp(5px,.65vw,10px)}
 .slot .gem-icon {font-size:clamp(10px,1.5vw,22px)}
 .slot .mini-cost,.slot .mini-stats {font-size:8px}
+
 .selected-info {
   padding:10px;
   border:1px solid white;
@@ -256,28 +330,69 @@ select option {background:#343641;color:white}
   font-size:12px;
   line-height:1.5;
 }
-.selected-info p {margin:5px 0;color:#ededf2}
-.empty {padding:25px 8px;text-align:center;font-size:13px}
-footer {text-align:center;font-size:11px;padding:15px 10px 30px}
-@media(max-width:1050px) {
-  .layout {grid-template-columns:190px minmax(0,1fr)}
-  .library-panel {grid-column:2}
+
+.selected-info p {
+  margin:5px 0;
+  color:#ededf2;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
+
+.empty {
+  padding:25px 8px;
+  text-align:center;
+  font-size:13px;
+}
+
+.empty[hidden] {display:none}
+
+.build-panel {
+  grid-column:1/-1;
+}
+
+.build-panel .build-inner {
+  max-width:650px;
+  margin:auto;
+}
+
+footer {
+  text-align:center;
+  font-size:11px;
+  padding:15px 10px 30px;
+}
+
+@media(max-width:1050px) {
+  .layout {
+    grid-template-columns:190px minmax(0,1fr);
+  }
+  .library-panel {grid-column:2}
+  .build-panel {grid-column:1/-1}
+}
+
 @media(max-width:650px) {
   body {background-attachment:scroll}
-  .layout {grid-template-columns:1fr;padding:0 10px}
-  .library-panel {grid-column:auto}
-  .deck-panel {grid-row:1}
+  .layout {
+    grid-template-columns:1fr;
+    padding:0 10px;
+  }
+  .filters-panel {grid-column:1;grid-row:1}
+  .deck-panel {grid-column:1;grid-row:2}
+  .library-panel {grid-column:1;grid-row:3}
+  .build-panel {grid-column:1;grid-row:4}
   .deck-slots {gap:3px}
   .slot {padding:1px;border-radius:3px}
   .slot-number {font-size:7px}
   .slot-plus {font-size:13px}
+  .slot-remove {display:block}
   .panel {padding:10px}
-  .library-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+  .library-grid {
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
   .hero {padding:20px 10px}
 }
 </style>
 </head>
+
 <body>
 
 <header class="hero">
@@ -286,48 +401,43 @@ footer {text-align:center;font-size:11px;padding:15px 10px 30px}
 </header>
 
 <main class="layout">
-  <aside class="panel">
+
+  <aside class="panel filters-panel">
     <h2>Card Filters</h2>
+
     <label for="search">Search card name</label>
     <input id="search" type="search" placeholder="Search cards...">
+
     <label for="colour">Colour</label>
     <select id="colour"></select>
+
     <label for="cost">Cost</label>
     <select id="cost"></select>
+
     <label for="power">Power</label>
     <select id="power"></select>
+
     <label for="health">Health</label>
     <select id="health"></select>
+
     <label for="type">Card type</label>
     <select id="type"></select>
+
     <label for="unitType">Unit type</label>
     <select id="unitType"></select>
+
     <label for="keyword">Keyword</label>
     <select id="keyword"></select>
+
+    <label for="lifeTrigger">Life trigger</label>
+    <select id="lifeTrigger"></select>
+
     <label for="rarity">Rarity</label>
     <select id="rarity"></select>
+
     <div class="actions">
       <button class="btn" id="resetFilters">Reset filters</button>
     </div>
-    <div class="divider"></div>
-    <h2>Your Build</h2>
-    <label for="deckName">Deck name</label>
-    <input id="deckName" value="My Fractured Deck">
-    <div class="actions">
-      <button class="btn gold" id="saveDeck">Save</button>
-      <button class="btn" id="loadDeck">Load</button>
-    </div>
-    <div class="actions">
-      <button class="btn" id="exportDeck">Export JSON</button>
-      <button class="btn" id="importDeck">Import JSON</button>
-    </div>
-    <input type="file" id="importFile" accept=".json,application/json" hidden>
-    <button class="btn" id="clearDeck">Clear Deck</button>
-    <p class="hint">
-      Select a card in the library, then click a deck slot.
-      You can also drag cards into slots.
-      Click × on a filled slot to remove it.
-    </p>
   </aside>
 
   <section class="panel deck-panel">
@@ -335,8 +445,15 @@ footer {text-align:center;font-size:11px;padding:15px 10px 30px}
       <h2>Deck Builder</h2>
       <span class="count" id="deckCount">0 / 45</span>
     </div>
-    <div class="progress"><div class="progress-fill" id="progress"></div></div>
-    <p class="deck-status" id="deckStatus">Loading card database...</p>
+
+    <div class="progress">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <p class="deck-status" id="deckStatus" aria-live="polite">
+      Loading card database...
+    </p>
+
     <div class="deck-slots" id="deckSlots"></div>
   </section>
 
@@ -345,22 +462,60 @@ footer {text-align:center;font-size:11px;padding:15px 10px 30px}
       <h2>Card Library</h2>
       <span class="count" id="libraryCount">Loading...</span>
     </div>
+
     <div id="selectedInfo" class="selected-info">
       <strong>No card selected</strong>
-      <p>Choose a card below to add it to your deck.</p>
+      <p>Left-click a card to add it to your deck. Right-click to remove a copy.</p>
     </div>
+
     <div class="divider"></div>
+
     <div class="library-grid" id="cardGrid"></div>
+
     <div class="empty" id="emptyResults" hidden>
       No cards match your filters.
     </div>
   </section>
+
+  <section class="panel build-panel">
+    <div class="build-inner">
+      <h2>Your Build</h2>
+
+      <label for="deckName">Deck name</label>
+      <input id="deckName" value="My Fractured Deck">
+
+      <div class="actions">
+        <button class="btn gold" id="saveDeck">Save</button>
+        <button class="btn" id="loadDeck">Load</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="exportDeck">Export JSON</button>
+        <button class="btn" id="importDeck">Import JSON</button>
+      </div>
+
+      <input type="file" id="importFile"
+        accept=".json,application/json" hidden>
+
+      <button class="btn" id="clearDeck">Clear Deck</button>
+
+      <p class="hint">
+        Left-click a library card to add it to the next empty slot.
+        Right-click a library card to remove one copy.
+        On mobile, tap a filled deck slot to remove it.
+        You can also drag cards into deck slots and rearrange them.
+        Maximum three copies of each card, or one if Singleton.
+      </p>
+    </div>
+  </section>
+
 </main>
 
 <footer>Fractured Realms · Deck Builder</footer>
 
 <script>
 /* GOOGLE SHEETS CONNECTION */
+
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQs1xYztQEt5X7N_g0qyC6mH3bJp-ygo9jlf_1MHFeoaKvQji0tZrj23nVDQ-JBwgG6cZfyF-FYPsND/pub?output=csv";
 
@@ -376,8 +531,8 @@ let draggingSlot = null;
 
 const $ = id => document.getElementById(id);
 
-/* Convert a card name into its image filename.
-   Example: "Infernus, the Darkin" -> "infernus-the-darkin.png" */
+/* UTILITIES */
+
 function slugify(value) {
   return String(value ?? "")
     .normalize("NFKD")
@@ -390,8 +545,11 @@ function slugify(value) {
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g,char => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",
-    '"':"&quot;","'":"&#39;"
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   })[char]);
 }
 
@@ -400,10 +558,12 @@ function parseCSV(text) {
   let row = [];
   let field = "";
   let quoted = false;
+
   text = text.replace(/^\uFEFF/,"");
 
   for (let i=0;i<text.length;i++) {
     const char = text[i];
+
     if (char === '"') {
       if (quoted && text[i+1] === '"') {
         field += '"';
@@ -424,11 +584,14 @@ function parseCSV(text) {
       field += char;
     }
   }
+
   if (quoted) throw new Error("Unclosed CSV quotation mark");
+
   if (field !== "" || row.length) {
     row.push(field);
     rows.push(row);
   }
+
   return rows;
 }
 
@@ -446,11 +609,22 @@ function splitValues(value) {
     .filter(Boolean);
 }
 
+/* GOOGLE SHEETS CARD DATA */
+
 const knownKeywords = [
-  "Alt Summon","On Summon","Life Trigger",
-  "Quick-play","Quick play","OPT","Camo",
-  "On Death","When Attacking","On Activation",
-  "Tool+","Singleton","Stamina"
+  "Alt Summon",
+  "On Summon",
+  "Life Trigger",
+  "Quick-play",
+  "Quick play",
+  "OPT",
+  "Camo",
+  "On Death",
+  "When Attacking",
+  "On Activation",
+  "Tool+",
+  "Singleton",
+  "Stamina"
 ];
 
 function extractKeywords(row) {
@@ -462,23 +636,30 @@ function extractKeywords(row) {
   const found = knownKeywords.filter(keyword =>
     text.toLowerCase().includes(keyword.toLowerCase())
   );
-  if (String(row["Life Trigger"] ?? "").trim() &&
-      !found.some(k => k.toLowerCase() === "life trigger")) {
+
+  if (
+    String(row["Life Trigger"] ?? "").trim() &&
+    !found.some(k => k.toLowerCase() === "life trigger")
+  ) {
     found.push("Life Trigger");
   }
+
   return [...new Set(found)];
 }
 
 function sheetToCards(csv) {
   const rows = parseCSV(csv);
   const headers = (rows.shift() || []).map(h => h.trim());
+
   if (!headers.includes("Name")) {
     throw new Error("The spreadsheet needs a Name column");
   }
 
   const used = new Set();
+
   return rows.map(values => {
     const row = {};
+
     headers.forEach((header,index) => {
       row[header] = (values[index] || "").trim();
     });
@@ -489,6 +670,8 @@ function sheetToCards(csv) {
     const id = slugify(name);
     if (!id || used.has(id)) return null;
     used.add(id);
+
+    const mainEffect = row["Main Effect"] || "";
 
     return {
       id,
@@ -501,28 +684,50 @@ function sheetToCards(csv) {
       unitType:row["Unit Type"] || "",
       keywords:extractKeywords(row),
       rarity:row["Rarity"] || "",
+      mainEffect,
+      lifeTrigger:row["Life Trigger"] || "",
+      singleton:/\bsingleton\b/i.test(mainEffect),
       image:IMAGE_FOLDER + encodeURIComponent(name) + ".png"
     };
-  }).filter(Boolean);
+  }).filter(Boolean).sort((a,b) =>
+    a.name.localeCompare(b.name,undefined,{
+      sensitivity:"base",
+      numeric:true
+    })
+  );
 }
 
 async function loadCards() {
   updateStatus("Loading cards from Google Sheets...");
+
   try {
-    const response = await fetch(SHEET_CSV_URL,{cache:"no-store"});
-    if (!response.ok) throw new Error("HTTP " + response.status);
+    const response = await fetch(SHEET_CSV_URL,{
+      cache:"no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
 
     const csv = await response.text();
     const loaded = sheetToCards(csv);
-    if (!loaded.length) throw new Error("No cards found");
+
+    if (!loaded.length) {
+      throw new Error("No cards found");
+    }
 
     cards = loaded;
     setupFilters();
-    if (selectedCard && !getCard(selectedCard)) selectedCard = null;
+
+    if (selectedCard && !getCard(selectedCard)) {
+      selectedCard = null;
+    }
+
     renderLibrary();
     renderDeck();
 
     const saved = localStorage.getItem(STORAGE_KEY);
+
     if (saved) {
       try {
         restoreDeck(JSON.parse(saved));
@@ -530,18 +735,28 @@ async function loadCards() {
         console.warn("Saved deck could not be restored",error);
       }
     }
-    updateStatus(`${cards.length} cards loaded from Google Sheets.`);
+
+    updateStatus("");
+
   } catch (error) {
     console.error("Google Sheets loading error:",error);
     $("libraryCount").textContent = "Unavailable";
-    updateStatus("Unable to load Google Sheets. Please refresh to try again.");
+    updateStatus(
+      "Unable to load Google Sheets. Please refresh to try again."
+    );
   }
 }
 
+/* CARD ARTWORK AND PLACEHOLDERS */
+
 const crystalColours = {
-  Red:"#ff496d",Blue:"#43caff",Green:"#5df48b",
-  Yellow:"#ffe04c",Purple:"#b777ff",
-  Black:"#a4a8c6",White:"#f1f4ff"
+  Red:"#ff496d",
+  Blue:"#43caff",
+  Green:"#5df48b",
+  Yellow:"#ffe04c",
+  Purple:"#b777ff",
+  Black:"#a4a8c6",
+  White:"#f1f4ff"
 };
 
 function crystalColour(card) {
@@ -555,10 +770,12 @@ function cardPlaceholder(card) {
       <span class="gem-icon">◆</span>
       <span class="mini-name">${escapeHTML(card.name)}</span>
       <span class="mini-stats">${
-        card.power == null ? "" :
-        `${card.power} / ${card.health ?? "–"}`
+        card.power == null
+          ? ""
+          : `${card.power} / ${card.health ?? "–"}`
       }</span>
-    </div>`;
+    </div>
+  `;
 }
 
 function cardArtwork(card) {
@@ -581,22 +798,30 @@ function cardArtwork(card) {
   return wrapper;
 }
 
+/* FILTERS */
+
 function uniqueValues(field) {
   const values = cards.flatMap(card => {
     const value = card[field];
+
     if (Array.isArray(value)) return value;
-    return value === null || value === undefined || value === ""
-      ? [] : [value];
+
+    return value === null ||
+      value === undefined ||
+      value === "" ? [] : [value];
   });
+
   return [...new Set(values)].sort((a,b) =>
     typeof a === "number" && typeof b === "number"
-      ? a-b : String(a).localeCompare(String(b))
+      ? a-b
+      : String(a).localeCompare(String(b))
   );
 }
 
 function fillSelect(id,values,allLabel) {
   const select = $(id);
   const previous = select.value;
+
   select.innerHTML = "";
 
   const all = document.createElement("option");
@@ -626,12 +851,26 @@ function setupFilters() {
   fillSelect("keyword",uniqueValues("keywords"),"All keywords");
   fillSelect("rarity",uniqueValues("rarity"),"All rarities");
 
+  fillSelect(
+    "lifeTrigger",
+    ["Yes","No"],
+    "Any life trigger"
+  );
+
   if (setupFilters.ready) return;
   setupFilters.ready = true;
 
   [
-    "search","colour","cost","power","health",
-    "type","unitType","keyword","rarity"
+    "search",
+    "colour",
+    "cost",
+    "power",
+    "health",
+    "type",
+    "unitType",
+    "keyword",
+    "rarity",
+    "lifeTrigger"
   ].forEach(id => {
     $(id).addEventListener(
       id === "search" ? "input" : "change",
@@ -642,7 +881,11 @@ function setupFilters() {
 
 function matchesFilters(card) {
   const query = $("search").value.trim().toLowerCase();
-  if (query && !card.name.toLowerCase().includes(query)) return false;
+
+  if (
+    query &&
+    !card.name.toLowerCase().includes(query)
+  ) return false;
 
   const comparisons = [
     ["colour",card.colours],
@@ -652,33 +895,77 @@ function matchesFilters(card) {
     ["type",card.type],
     ["unitType",card.unitType],
     ["keyword",card.keywords],
-    ["rarity",card.rarity]
+    ["rarity",card.rarity],
+    [
+      "lifeTrigger",
+      card.lifeTrigger.trim() ? "Yes" : "No"
+    ]
   ];
 
   return comparisons.every(([id,value]) => {
     const filter = $(id).value;
+
     if (!filter) return true;
+
     if (Array.isArray(value)) {
       return value.some(item => String(item) === filter);
     }
+
     return String(value ?? "") === filter;
   });
 }
 
+/* CARD SELECTION AND LIBRARY */
+
+function getCard(id) {
+  return cards.find(card => card.id === id);
+}
+
+function updateStatus(message) {
+  $("deckStatus").textContent = message;
+}
+
 function selectCard(card) {
   selectedCard = card.id;
+
   $("selectedInfo").innerHTML = `
     <strong>${escapeHTML(card.name)}</strong>
-    <p>${escapeHTML(card.type)} · ${
-      escapeHTML(card.colours.join(" / ") || "Colourless")
-    } · Cost ${card.cost ?? "—"}</p>
-    <p>Click an empty deck slot to add this card.</p>`;
-  renderLibrary();
+    <p>${escapeHTML(
+      card.mainEffect || "No main effect listed yet."
+    )}</p>
+  `;
+}
+
+function addNextCard(card) {
+  selectCard(card);
+
+  const index = deck.indexOf(null);
+
+  if (index < 0) {
+    updateStatus("Deck is full (45 cards).");
+    return;
+  }
+
+  addCard(index,card.id);
+}
+
+function removeOneCopy(card) {
+  selectCard(card);
+
+  const index = deck.lastIndexOf(card.id);
+
+  if (index < 0) {
+    updateStatus(`${card.name} is not in your deck.`);
+    return;
+  }
+
+  removeCard(index);
 }
 
 function renderLibrary() {
   const grid = $("cardGrid");
   grid.innerHTML = "";
+
   const filtered = cards.filter(matchesFilters);
 
   $("libraryCount").textContent = `${filtered.length} cards`;
@@ -686,13 +973,16 @@ function renderLibrary() {
 
   filtered.forEach(card => {
     const item = document.createElement("div");
+
     item.className = "library-card";
     item.tabIndex = 0;
     item.setAttribute("role","button");
-    item.setAttribute("aria-label",`Select ${card.name}`);
+    item.setAttribute("aria-label",`Add ${card.name} to deck`);
     item.draggable = true;
 
-    if (selectedCard === card.id) item.classList.add("selected");
+    if (selectedCard === card.id) {
+      item.classList.add("selected");
+    }
 
     item.appendChild(cardArtwork(card));
 
@@ -703,45 +993,88 @@ function renderLibrary() {
     const meta = document.createElement("div");
     meta.className = "card-meta";
     meta.textContent =
-      `${card.colours.join("/") || "Colourless"} · ` +
-      `${card.type} · Cost ${card.cost ?? "—"}`;
+      card.mainEffect || "No main effect listed yet.";
 
     item.appendChild(name);
     item.appendChild(meta);
 
-    item.addEventListener("click",() => selectCard(card));
+    item.addEventListener("click",() => {
+      addNextCard(card);
+      item.classList.add("selected");
+    });
+
+    item.addEventListener("contextmenu",event => {
+      event.preventDefault();
+      removeOneCopy(card);
+      item.classList.add("selected");
+    });
+
     item.addEventListener("keydown",event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        selectCard(card);
+        addNextCard(card);
+      }
+
+      if (event.key === "Backspace" || event.key === "Delete") {
+        event.preventDefault();
+        removeOneCopy(card);
       }
     });
+
     item.addEventListener("dragstart",event => {
       draggingCard = card.id;
       draggingSlot = null;
       event.dataTransfer.setData("text/plain",card.id);
       event.dataTransfer.effectAllowed = "copy";
     });
-    item.addEventListener("dragend",() => draggingCard = null);
+
+    item.addEventListener("dragend",() => {
+      draggingCard = null;
+    });
+
     grid.appendChild(item);
   });
 }
 
-function getCard(id) {
-  return cards.find(card => card.id === id);
-}
+/* DECK RULES AND CARD MANAGEMENT */
 
-function updateStatus(message) {
-  $("deckStatus").textContent = message;
+function cardLimit(card) {
+  return card.singleton ? 1 : 3;
 }
 
 function addCard(index,cardId) {
   const card = getCard(cardId);
+
   if (!card) return;
-  if (deck[index] !== null) {
-    updateStatus("Remove the existing card from that slot first.");
+
+  if (index < 0 || index >= MAX_CARDS) {
+    updateStatus("Deck is full.");
     return;
   }
+
+  if (deck[index] !== null) {
+    updateStatus(
+      "Remove the existing card from that slot first."
+    );
+    return;
+  }
+
+  const copies = deck.filter(id => id === cardId).length;
+  const limit = cardLimit(card);
+
+  if (copies >= limit) {
+    if (card.singleton) {
+      updateStatus(
+        `${card.name} is Singleton: only 1 copy per deck.`
+      );
+    } else {
+      updateStatus(
+        `Maximum 3 copies of ${card.name} per deck.`
+      );
+    }
+    return;
+  }
+
   deck[index] = cardId;
   renderDeck();
   updateStatus(`${card.name} added to your deck.`);
@@ -749,11 +1082,18 @@ function addCard(index,cardId) {
 
 function removeCard(index) {
   if (deck[index] === null) return;
+
   const card = getCard(deck[index]);
   deck[index] = null;
+
   renderDeck();
-  updateStatus(`${card?.name || "Card"} removed.`);
+
+  updateStatus(
+    `${card?.name || "Card"} removed from your deck.`
+  );
 }
+
+/* DECK BUILDER */
 
 function renderDeck() {
   const slots = $("deckSlots");
@@ -761,10 +1101,13 @@ function renderDeck() {
 
   deck.forEach((cardId,index) => {
     const slot = document.createElement("div");
+
     slot.className = "slot";
     slot.tabIndex = 0;
     slot.setAttribute("role","button");
-    slot.setAttribute("aria-label",
+
+    slot.setAttribute(
+      "aria-label",
       cardId
         ? `Slot ${index+1}: ${getCard(cardId)?.name || cardId}`
         : `Empty slot ${index+1}`
@@ -777,6 +1120,7 @@ function renderDeck() {
 
     if (cardId) {
       slot.classList.add("filled");
+
       const card = getCard(cardId);
       if (card) slot.appendChild(cardArtwork(card));
 
@@ -784,12 +1128,19 @@ function renderDeck() {
       remove.className = "slot-remove";
       remove.textContent = "×";
       remove.title = "Remove card";
-      remove.setAttribute("aria-label",`Remove slot ${index+1}`);
+
+      remove.setAttribute(
+        "aria-label",
+        `Remove slot ${index+1}`
+      );
+
       remove.onclick = event => {
         event.stopPropagation();
         removeCard(index);
       };
+
       slot.appendChild(remove);
+
     } else {
       const plus = document.createElement("span");
       plus.className = "slot-plus";
@@ -798,12 +1149,22 @@ function renderDeck() {
     }
 
     function activateSlot() {
-      if (cardId) removeCard(index);
-      else if (selectedCard) addCard(index,selectedCard);
-      else updateStatus("Select a card from the library first.");
+      if (cardId) {
+        removeCard(index);
+      } else if (selectedCard) {
+        addCard(index,selectedCard);
+      } else {
+        updateStatus("Select a card from the library first.");
+      }
     }
 
     slot.addEventListener("click",activateSlot);
+
+    slot.addEventListener("contextmenu",event => {
+      event.preventDefault();
+      if (cardId) removeCard(index);
+    });
+
     slot.addEventListener("keydown",event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -813,9 +1174,11 @@ function renderDeck() {
 
     if (cardId) {
       slot.draggable = true;
+
       slot.addEventListener("dragstart",event => {
         draggingSlot = index;
         draggingCard = null;
+
         event.dataTransfer.setData("text/plain",cardId);
         event.dataTransfer.effectAllowed = "move";
       });
@@ -825,28 +1188,37 @@ function renderDeck() {
       event.preventDefault();
       slot.classList.add("drag-over");
     });
+
     slot.addEventListener("dragleave",() => {
       slot.classList.remove("drag-over");
     });
+
     slot.addEventListener("drop",event => {
       event.preventDefault();
       slot.classList.remove("drag-over");
 
       if (draggingSlot !== null) {
         const source = draggingSlot;
+
         if (source !== index) {
-          [deck[source],deck[index]] = [deck[index],deck[source]];
+          [deck[source],deck[index]] =
+            [deck[index],deck[source]];
+
           renderDeck();
           updateStatus("Deck cards rearranged.");
         }
+
       } else {
         const id = draggingCard ||
           event.dataTransfer.getData("text/plain");
+
         if (id) addCard(index,id);
       }
+
       draggingSlot = null;
       draggingCard = null;
     });
+
     slot.addEventListener("dragend",() => {
       draggingSlot = null;
       draggingCard = null;
@@ -856,9 +1228,14 @@ function renderDeck() {
   });
 
   const count = deck.filter(Boolean).length;
+
   $("deckCount").textContent = `${count} / ${MAX_CARDS}`;
-  $("progress").style.width = `${count/MAX_CARDS*100}%`;
+
+  $("progress").style.width =
+    `${count/MAX_CARDS*100}%`;
 }
+
+/* SAVE, LOAD, EXPORT AND IMPORT */
 
 function deckPayload() {
   return {
@@ -866,14 +1243,21 @@ function deckPayload() {
     version:1,
     name:$("deckName").value.trim() || "Untitled Deck",
     slots:[...deck],
-    cards:deck.filter(Boolean).map(id => getCard(id)?.name || id)
+    cards:deck.filter(Boolean).map(
+      id => getCard(id)?.name || id
+    )
   };
 }
 
 function saveDeck() {
   try {
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(deckPayload()));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(deckPayload())
+    );
+
     updateStatus("Deck saved on this device.");
+
   } catch {
     updateStatus("Unable to save in this browser.");
   }
@@ -883,10 +1267,25 @@ function restoreDeck(data) {
   if (!data || !Array.isArray(data.slots)) {
     throw new Error("Invalid deck format");
   }
+
+  const counts = new Map();
+
   deck = Array.from({length:MAX_CARDS},(_,index) => {
     const id = data.slots[index];
-    return getCard(id) ? id : null;
+    const card = getCard(id);
+
+    if (!card) return null;
+
+    const count = counts.get(id) || 0;
+
+    if (count >= cardLimit(card)) {
+      return null;
+    }
+
+    counts.set(id,count+1);
+    return id;
   });
+
   $("deckName").value = data.name || "My Fractured Deck";
   renderDeck();
 }
@@ -894,12 +1293,15 @@ function restoreDeck(data) {
 function loadDeck() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
+
     if (!saved) {
       updateStatus("No saved deck found on this device.");
       return;
     }
+
     restoreDeck(JSON.parse(saved));
     updateStatus("Saved deck loaded.");
+
   } catch {
     updateStatus("Unable to load the saved deck.");
   }
@@ -910,17 +1312,26 @@ function exportDeck() {
     [JSON.stringify(deckPayload(),null,2)],
     {type:"application/json"}
   );
+
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
+
   link.href = url;
   link.download =
-    slugify($("deckName").value.trim() || "fractured-deck") + ".json";
+    slugify(
+      $("deckName").value.trim() || "fractured-deck"
+    ) + ".json";
+
   document.body.appendChild(link);
   link.click();
   link.remove();
+
   URL.revokeObjectURL(url);
+
   updateStatus("Deck exported as JSON.");
 }
+
+/* BUTTON CONTROLS */
 
 $("saveDeck").onclick = saveDeck;
 $("loadDeck").onclick = loadDeck;
@@ -928,6 +1339,7 @@ $("exportDeck").onclick = exportDeck;
 
 $("clearDeck").onclick = () => {
   if (!confirm("Clear all 45 deck slots?")) return;
+
   deck = Array(MAX_CARDS).fill(null);
   renderDeck();
   updateStatus("Deck cleared.");
@@ -935,30 +1347,50 @@ $("clearDeck").onclick = () => {
 
 $("resetFilters").onclick = () => {
   $("search").value = "";
+
   [
-    "colour","cost","power","health",
-    "type","unitType","keyword","rarity"
-  ].forEach(id => $(id).value = "");
+    "colour",
+    "cost",
+    "power",
+    "health",
+    "type",
+    "unitType",
+    "keyword",
+    "rarity",
+    "lifeTrigger"
+  ].forEach(id => {
+    $(id).value = "";
+  });
+
   renderLibrary();
 };
 
-$("importDeck").onclick = () => $("importFile").click();
+$("importDeck").onclick = () => {
+  $("importFile").click();
+};
+
 $("importFile").onchange = async event => {
   const file = event.target.files[0];
   if (!file) return;
+
   try {
     const data = JSON.parse(await file.text());
+
     restoreDeck(data);
     updateStatus("Deck imported successfully.");
+
   } catch {
     updateStatus("Could not import that deck file.");
   }
+
   event.target.value = "";
 };
 
 /* INITIALISE WEBSITE */
+
 renderDeck();
 loadCards();
+
 </script>
 </body>
 </html>
