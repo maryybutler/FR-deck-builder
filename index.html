@@ -346,7 +346,7 @@ select option {background:#343641;color:white}
   margin:auto;
 }
 
-/* SORT CONTROLS */
+/* SIMPLE SORT CONTROLS */
 
 .sort-controls {
   margin:12px 0 18px;
@@ -361,21 +361,12 @@ select option {background:#343641;color:white}
   font-size:15px;
 }
 
-.sort-grid {
-  display:grid;
-  grid-template-columns:minmax(0,2fr) minmax(0,1.5fr);
-  gap:8px;
-}
-
-.sort-grid label {
-  margin:0;
-  font-size:11px;
-}
-
-.sort-grid select {
+.sort-controls select {
+  width:100%;
+  max-width:350px;
+  padding:10px;
   margin-top:5px;
-  font-size:12px;
-  padding:8px 5px;
+  font-size:13px;
 }
 
 footer {
@@ -411,10 +402,6 @@ footer {
   .library-grid {
     grid-template-columns:repeat(3,minmax(0,1fr));
   }
-  .sort-grid {
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  }
-  .sort-grid select {font-size:11px}
   .hero {padding:20px 10px}
 }
 </style>
@@ -476,37 +463,13 @@ footer {
     <div class="sort-controls">
       <h3>Sort Order</h3>
 
-      <div class="sort-grid">
-        <label>First priority
-          <select id="sort1"></select>
-        </label>
-        <label>Direction
-          <select id="direction1">
-            <option value="asc">Low to high / A–Z</option>
-            <option value="desc">High to low / Z–A</option>
-          </select>
-        </label>
-
-        <label>Second priority
-          <select id="sort2"></select>
-        </label>
-        <label>Direction
-          <select id="direction2">
-            <option value="asc">Low to high / A–Z</option>
-            <option value="desc">High to low / Z–A</option>
-          </select>
-        </label>
-
-        <label>Third priority
-          <select id="sort3"></select>
-        </label>
-        <label>Direction
-          <select id="direction3">
-            <option value="asc">Low to high / A–Z</option>
-            <option value="desc">High to low / Z–A</option>
-          </select>
-        </label>
-      </div>
+      <select id="deckSort">
+        <option value="manual">Manual Order</option>
+        <option value="type">Units → Actions → Tools</option>
+        <option value="costAsc">Cost: Low to High</option>
+        <option value="costDesc">Cost: High to Low</option>
+        <option value="alphabetical">Alphabetical (A–Z)</option>
+      </select>
 
       <p class="hint" id="sortHint">
         Manual order. Matching cards stay together.
@@ -1138,7 +1101,6 @@ function addCard(index,cardId) {
     return;
   }
 
-  // Add into the existing group if present.
   const filled = deck.filter(Boolean);
   const lastCopy = filled.lastIndexOf(cardId);
 
@@ -1162,12 +1124,9 @@ function removeCard(index) {
   if (deck[index] === null) return;
 
   const card = getCard(deck[index]);
-
   const filled = deck.filter(Boolean);
 
-  // Deck slots are compacted, so this index matches.
   filled.splice(index,1);
-
   setDeckOrder(filled);
 
   if (sortRules().length) {
@@ -1179,94 +1138,62 @@ function removeCard(index) {
   );
 }
 
-/* DECK SORTING AND GROUPING */
-
-const SORT_OPTIONS = [
-  ["","None / Manual"],
-  ["cost","Cost"],
-  ["power","Power"],
-  ["health","Health"],
-  ["alphabetical","Alphabetical"],
-  ["units","Units first"],
-  ["tools","Tools first"],
-  ["actions","Actions first"]
-];
+/* SIMPLIFIED DECK SORTING AND GROUPING */
 
 function initialiseSorting() {
-  for (let level=1;level<=3;level++) {
-    const select = $("sort"+level);
-    select.innerHTML = "";
-
-    SORT_OPTIONS.forEach(([value,label]) => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = label;
-      select.appendChild(option);
-    });
-
-    select.addEventListener("change",applySort);
-
-    $("direction"+level).addEventListener(
-      "change",applySort
-    );
-  }
+  $("deckSort").addEventListener("change",applySort);
 }
 
 function sortRules() {
-  return [1,2,3].map(level => ({
-    field:$("sort"+level).value,
-    direction:$("direction"+level).value
-  })).filter(rule => rule.field);
+  const mode = $("deckSort").value;
+  return mode === "manual" ? [] : [mode];
 }
 
-function sortValue(card,field) {
-  if (field === "alphabetical") {
-    return card.name;
-  }
-
-  if (["cost","power","health"].includes(field)) {
-    return card[field];
-  }
-
+function cardTypeRank(card) {
   const type = String(card.type || "").toLowerCase();
 
-  const target = {
-    units:"unit",
-    tools:"tool",
-    actions:"action"
-  }[field];
+  if (type.includes("unit")) return 0;
+  if (type.includes("action")) return 1;
+  if (type.includes("tool")) return 2;
 
-  return type.includes(target) ? 0 : 1;
+  return 3;
 }
 
-function compareCards(a,b,rules) {
-  for (const rule of rules) {
-    const av = sortValue(a,rule.field);
-    const bv = sortValue(b,rule.field);
+function compareCards(a,b,mode) {
+  const alphabetical = a.name.localeCompare(
+    b.name,
+    undefined,
+    {numeric:true,sensitivity:"base"}
+  );
 
-    // Missing numerical values go last.
-    if (av == null && bv != null) return 1;
-    if (bv == null && av != null) return -1;
-
-    let comparison = 0;
-
-    if (typeof av === "string") {
-      comparison = av.localeCompare(bv,undefined,{
-        numeric:true,
-        sensitivity:"base"
-      });
-    } else {
-      comparison = (av ?? 0)-(bv ?? 0);
-    }
-
-    if (comparison !== 0) {
-      return rule.direction === "desc"
-        ? -comparison
-        : comparison;
-    }
+  if (mode === "alphabetical") {
+    return alphabetical;
   }
 
-  return a.name.localeCompare(b.name);
+  if (mode === "type") {
+    return cardTypeRank(a)-cardTypeRank(b)
+      || alphabetical;
+  }
+
+  if (mode === "costAsc" || mode === "costDesc") {
+    const aCost = a.cost;
+    const bCost = b.cost;
+
+    if (aCost == null && bCost != null) return 1;
+    if (bCost == null && aCost != null) return -1;
+
+    const difference = (aCost ?? 0)-(bCost ?? 0);
+
+    if (difference !== 0) {
+      return mode === "costDesc"
+        ? -difference
+        : difference;
+    }
+
+    return alphabetical;
+  }
+
+  return alphabetical;
 }
 
 function groupedIds(ids) {
@@ -1297,13 +1224,14 @@ function setDeckOrder(ids) {
 }
 
 function applySort() {
-  const rules = sortRules();
+  const mode = $("deckSort").value;
 
-  if (!rules.length) {
+  if (mode === "manual") {
     groupDeck();
 
     $("sortHint").textContent =
       "Manual order. Matching cards stay together.";
+
     return;
   }
 
@@ -1313,6 +1241,7 @@ function applySort() {
     if (!groups.has(id)) {
       groups.set(id,[]);
     }
+
     groups.get(id).push(id);
   });
 
@@ -1320,7 +1249,7 @@ function applySort() {
     compareCards(
       getCard(a[0]),
       getCard(b[0]),
-      rules
+      mode
     )
   );
 
@@ -1337,9 +1266,7 @@ function groupDeck() {
 }
 
 function resetToManual() {
-  for (let level=1;level<=3;level++) {
-    $("sort"+level).value = "";
-  }
+  $("deckSort").value = "manual";
 
   $("sortHint").textContent =
     "Manual order. Matching cards stay together.";
@@ -1700,3 +1627,4 @@ loadCards();
 </script>
 </body>
 </html>
+
