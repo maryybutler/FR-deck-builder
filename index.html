@@ -268,15 +268,6 @@ select option {background:#343641;color:white}
   overflow-wrap:anywhere;
 }
 
-.card-meta {
-  font-size:10px;
-  color:#e1e1e8;
-  margin:4px 0;
-  line-height:1.4;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
 .mini-card {
   display:flex;
   flex-direction:column;
@@ -355,6 +346,38 @@ select option {background:#343641;color:white}
   margin:auto;
 }
 
+/* SORT CONTROLS */
+
+.sort-controls {
+  margin:12px 0 18px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:10px;
+  background:rgba(255,255,255,.10);
+}
+
+.sort-controls h3 {
+  margin:0 0 10px;
+  font-size:15px;
+}
+
+.sort-grid {
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(0,1.5fr);
+  gap:8px;
+}
+
+.sort-grid label {
+  margin:0;
+  font-size:11px;
+}
+
+.sort-grid select {
+  margin-top:5px;
+  font-size:12px;
+  padding:8px 5px;
+}
+
 footer {
   text-align:center;
   font-size:11px;
@@ -388,48 +411,12 @@ footer {
   .library-grid {
     grid-template-columns:repeat(3,minmax(0,1fr));
   }
-  .hero {padding:20px 10px}
-}
-  
-.sort-controls {
-  margin:12px 0 18px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,.6);
-  border-radius:10px;
-  background:rgba(255,255,255,.10);
-}
-
-.sort-controls h3 {
-  margin:0 0 10px;
-  font-size:15px;
-}
-
-.sort-grid {
-  display:grid;
-  grid-template-columns:minmax(0,2fr) minmax(0,1.5fr);
-  gap:8px;
-}
-
-.sort-grid label {
-  margin:0;
-  font-size:11px;
-}
-
-.sort-grid select {
-  margin-top:5px;
-  font-size:12px;
-  padding:8px 5px;
-}
-
-@media(max-width:650px) {
   .sort-grid {
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   }
-  .sort-grid select {
-    font-size:11px;
-  }
+  .sort-grid select {font-size:11px}
+  .hero {padding:20px 10px}
 }
-
 </style>
 </head>
 
@@ -485,44 +472,46 @@ footer {
       <h2>Deck Builder</h2>
       <span class="count" id="deckCount">0 / 45</span>
     </div>
-    
-<div class="sort-controls">
-  <h3>Sort Order</h3>
-  <div class="sort-grid">
-    <label>First priority
-      <select id="sort1"></select>
-    </label>
-    <label>Direction
-      <select id="direction1">
-        <option value="asc">Low to high / A–Z</option>
-        <option value="desc">High to low / Z–A</option>
-      </select>
-    </label>
 
-    <label>Second priority
-      <select id="sort2"></select>
-    </label>
-    <label>Direction
-      <select id="direction2">
-        <option value="asc">Low to high / A–Z</option>
-        <option value="desc">High to low / Z–A</option>
-      </select>
-    </label>
+    <div class="sort-controls">
+      <h3>Sort Order</h3>
 
-    <label>Third priority
-      <select id="sort3"></select>
-    </label>
-    <label>Direction
-      <select id="direction3">
-        <option value="asc">Low to high / A–Z</option>
-        <option value="desc">High to low / Z–A</option>
-      </select>
-    </label>
-  </div>
-  <p class="hint" id="sortHint">
-    Manual order. Matching cards stay together.
-  </p>
-</div>
+      <div class="sort-grid">
+        <label>First priority
+          <select id="sort1"></select>
+        </label>
+        <label>Direction
+          <select id="direction1">
+            <option value="asc">Low to high / A–Z</option>
+            <option value="desc">High to low / Z–A</option>
+          </select>
+        </label>
+
+        <label>Second priority
+          <select id="sort2"></select>
+        </label>
+        <label>Direction
+          <select id="direction2">
+            <option value="asc">Low to high / A–Z</option>
+            <option value="desc">High to low / Z–A</option>
+          </select>
+        </label>
+
+        <label>Third priority
+          <select id="sort3"></select>
+        </label>
+        <label>Direction
+          <select id="direction3">
+            <option value="asc">Low to high / A–Z</option>
+            <option value="desc">High to low / Z–A</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="hint" id="sortHint">
+        Manual order. Matching cards stay together.
+      </p>
+    </div>
 
     <div class="progress">
       <div class="progress-fill" id="progress"></div>
@@ -543,7 +532,7 @@ footer {
 
     <div id="selectedInfo" class="selected-info">
       <strong>No card selected</strong>
-      <p>Left-click a card to add it to your deck. Right-click to remove a copy.</p>
+      <p>Hover over a card to view its Main Effect. Click to add it to your deck.</p>
     </div>
 
     <div class="divider"></div>
@@ -578,11 +567,11 @@ footer {
       <button class="btn" id="clearDeck">Clear Deck</button>
 
       <p class="hint">
-        Left-click a library card to add it to the next empty slot.
-        Right-click a library card to remove one copy.
-        On mobile, tap a filled deck slot to remove it.
-        You can also drag cards into deck slots and rearrange them.
-        Maximum three copies of each card, or one if Singleton.
+        Left-click a library card to add it to the deck.
+        Right-click to remove a copy.
+        Drag cards to move their groups and shift other cards.
+        Matching cards automatically stay together.
+        Maximum three copies per card, or one if Singleton.
       </p>
     </div>
   </section>
@@ -802,7 +791,6 @@ async function loadCards() {
     }
 
     renderLibrary();
-    renderDeck();
 
     const saved = localStorage.getItem(STORAGE_KEY);
 
@@ -812,6 +800,8 @@ async function loadCards() {
       } catch (error) {
         console.warn("Saved deck could not be restored",error);
       }
+    } else {
+      groupDeck();
     }
 
     updateStatus("");
@@ -1067,25 +1057,20 @@ function renderLibrary() {
     const name = document.createElement("div");
     name.className = "card-name";
     name.textContent = card.name;
+    item.appendChild(name);
 
-item.appendChild(name);
+    item.addEventListener("mouseenter",() => {
+      selectCard(card);
+    });
 
-// Show card information when hovering
-item.addEventListener("mouseenter",() => {
-  selectCard(card);
-  item.classList.add("selected");
-});
+    item.addEventListener("focus",() => {
+      selectCard(card);
+    });
 
-// Show information when navigating with keyboard
-item.addEventListener("focus",() => {
-  selectCard(card);
-});
-
-// Left-click adds card and displays its information
-item.addEventListener("click",() => {
-  addNextCard(card);
-  item.classList.add("selected");
-});
+    item.addEventListener("click",() => {
+      addNextCard(card);
+      item.classList.add("selected");
+    });
 
     item.addEventListener("contextmenu",event => {
       event.preventDefault();
@@ -1136,52 +1121,58 @@ function addCard(index,cardId) {
     return;
   }
 
-  if (deck[index] !== null) {
-    updateStatus(
-      "Remove the existing card from that slot first."
-    );
-    return;
-  }
-
   const copies = deck.filter(id => id === cardId).length;
   const limit = cardLimit(card);
 
   if (copies >= limit) {
-    if (card.singleton) {
-      updateStatus(
-        `${card.name} is Singleton: only 1 copy per deck.`
-      );
-    } else {
-      updateStatus(
-        `Maximum 3 copies of ${card.name} per deck.`
-      );
-    }
+    updateStatus(
+      card.singleton
+        ? `${card.name} is Singleton: only 1 copy per deck.`
+        : `Maximum 3 copies of ${card.name} per deck.`
+    );
     return;
   }
 
-deck[index] = cardId;
+  if (deck.filter(Boolean).length >= MAX_CARDS) {
+    updateStatus("Deck is full (45 cards).");
+    return;
+  }
 
-if (sortRules().length) {
-  applySort();
-} else {
-  groupDeck();
+  // Add into the existing group if present.
+  const filled = deck.filter(Boolean);
+  const lastCopy = filled.lastIndexOf(cardId);
+
+  if (lastCopy >= 0) {
+    filled.splice(lastCopy+1,0,cardId);
+  } else {
+    const position = Math.min(index,filled.length);
+    filled.splice(position,0,cardId);
+  }
+
+  setDeckOrder(filled);
+
+  if (sortRules().length) {
+    applySort();
+  }
+
+  updateStatus(`${card.name} added to your deck.`);
 }
-
-updateStatus(`${card.name} added to your deck.`);
-
 
 function removeCard(index) {
   if (deck[index] === null) return;
 
   const card = getCard(deck[index]);
- 
-deck[index] = null;
 
-if (sortRules().length) {
-  applySort();
-} else {
-  groupDeck();
-}
+  const filled = deck.filter(Boolean);
+
+  // Deck slots are compacted, so this index matches.
+  filled.splice(index,1);
+
+  setDeckOrder(filled);
+
+  if (sortRules().length) {
+    applySort();
+  }
 
   updateStatus(
     `${card?.name || "Card"} removed from your deck.`
@@ -1201,12 +1192,9 @@ const SORT_OPTIONS = [
   ["actions","Actions first"]
 ];
 
-let manualOrder = true;
-
 function initialiseSorting() {
   for (let level=1;level<=3;level++) {
     const select = $("sort"+level);
-
     select.innerHTML = "";
 
     SORT_OPTIONS.forEach(([value,label]) => {
@@ -1256,7 +1244,7 @@ function compareCards(a,b,rules) {
     const av = sortValue(a,rule.field);
     const bv = sortValue(b,rule.field);
 
-    // Missing numerical values always go last.
+    // Missing numerical values go last.
     if (av == null && bv != null) return 1;
     if (bv == null && av != null) return -1;
 
@@ -1287,7 +1275,10 @@ function groupedIds(ids) {
   ids.forEach(id => {
     if (!id || !getCard(id)) return;
 
-    if (!groups.has(id)) groups.set(id,[]);
+    if (!groups.has(id)) {
+      groups.set(id,[]);
+    }
+
     groups.get(id).push(id);
   });
 
@@ -1308,10 +1299,9 @@ function setDeckOrder(ids) {
 function applySort() {
   const rules = sortRules();
 
-  manualOrder = rules.length === 0;
-
-  if (manualOrder) {
+  if (!rules.length) {
     groupDeck();
+
     $("sortHint").textContent =
       "Manual order. Matching cards stay together.";
     return;
@@ -1320,15 +1310,23 @@ function applySort() {
   const groups = new Map();
 
   deck.filter(Boolean).forEach(id => {
-    if (!groups.has(id)) groups.set(id,[]);
+    if (!groups.has(id)) {
+      groups.set(id,[]);
+    }
     groups.get(id).push(id);
   });
 
   const sorted = [...groups.entries()].sort((a,b) =>
-    compareCards(getCard(a[0]),getCard(b[0]),rules)
+    compareCards(
+      getCard(a[0]),
+      getCard(b[0]),
+      rules
+    )
   );
 
-  setDeckOrder(sorted.flatMap(group => group[1]));
+  setDeckOrder(
+    sorted.flatMap(group => group[1])
+  );
 
   $("sortHint").textContent =
     "Automatically sorted. Drag a card to return to manual order.";
@@ -1343,13 +1341,11 @@ function resetToManual() {
     $("sort"+level).value = "";
   }
 
-  manualOrder = true;
-
   $("sortHint").textContent =
     "Manual order. Matching cards stay together.";
 }
 
-/* Move a complete group, shifting other cards */
+/* MOVE GROUPS WITHOUT SWAPPING */
 
 function moveDeckGroup(sourceIndex,targetIndex) {
   const id = deck[sourceIndex];
@@ -1357,7 +1353,6 @@ function moveDeckGroup(sourceIndex,targetIndex) {
 
   const filled = deck.filter(Boolean);
 
-  // Move all copies together.
   const moving = filled.filter(value => value === id);
   const remaining = filled.filter(value => value !== id);
 
@@ -1370,9 +1365,9 @@ function moveDeckGroup(sourceIndex,targetIndex) {
   if (targetId) {
     insertAt = remaining.indexOf(targetId);
 
-    if (insertAt < 0) insertAt = remaining.length;
-
-    // Dropping onto a group inserts before that group.
+    if (insertAt < 0) {
+      insertAt = remaining.length;
+    }
   } else {
     insertAt = remaining.length;
   }
@@ -1382,7 +1377,9 @@ function moveDeckGroup(sourceIndex,targetIndex) {
   resetToManual();
   setDeckOrder(remaining);
 
-  updateStatus("Card group moved. Other cards shifted to fit.");
+  updateStatus(
+    "Card group moved. Other cards shifted to fit."
+  );
 }
 
 /* DECK BUILDER */
@@ -1414,7 +1411,10 @@ function renderDeck() {
       slot.classList.add("filled");
 
       const card = getCard(cardId);
-      if (card) slot.appendChild(cardArtwork(card));
+
+      if (card) {
+        slot.appendChild(cardArtwork(card));
+      }
 
       const remove = document.createElement("button");
       remove.className = "slot-remove";
@@ -1454,7 +1454,10 @@ function renderDeck() {
 
     slot.addEventListener("contextmenu",event => {
       event.preventDefault();
-      if (cardId) removeCard(index);
+
+      if (cardId) {
+        removeCard(index);
+      }
     });
 
     slot.addEventListener("keydown",event => {
@@ -1489,30 +1492,20 @@ function renderDeck() {
       event.preventDefault();
       slot.classList.remove("drag-over");
 
-   
-if (draggingSlot !== null) {
-  const source = draggingSlot;
+      if (draggingSlot !== null) {
+        const source = draggingSlot;
 
-  if (source !== index) {
-    moveDeckGroup(source,index);
-  }
-
-} else {
-  const id = draggingCard ||
-    event.dataTransfer.getData("text/plain");
-
-  if (id) addCard(index,id);
-}
-
-          renderDeck();
-          updateStatus("Deck cards rearranged.");
+        if (source !== index) {
+          moveDeckGroup(source,index);
         }
 
       } else {
         const id = draggingCard ||
           event.dataTransfer.getData("text/plain");
 
-        if (id) addCard(index,id);
+        if (id) {
+          addCard(index,id);
+        }
       }
 
       draggingSlot = null;
@@ -1529,7 +1522,8 @@ if (draggingSlot !== null) {
 
   const count = deck.filter(Boolean).length;
 
-  $("deckCount").textContent = `${count} / ${MAX_CARDS}`;
+  $("deckCount").textContent =
+    `${count} / ${MAX_CARDS}`;
 
   $("progress").style.width =
     `${count/MAX_CARDS*100}%`;
@@ -1570,24 +1564,34 @@ function restoreDeck(data) {
 
   const counts = new Map();
 
-  deck = Array.from({length:MAX_CARDS},(_,index) => {
-    const id = data.slots[index];
-    const card = getCard(id);
+  const restored = Array.from(
+    {length:MAX_CARDS},
+    (_,index) => {
+      const id = data.slots[index];
+      const card = getCard(id);
 
-    if (!card) return null;
+      if (!card) return null;
 
-    const count = counts.get(id) || 0;
+      const count = counts.get(id) || 0;
 
-    if (count >= cardLimit(card)) {
-      return null;
+      if (count >= cardLimit(card)) {
+        return null;
+      }
+
+      counts.set(id,count+1);
+      return id;
     }
+  ).filter(Boolean);
 
-    counts.set(id,count+1);
-    return id;
-  });
+  $("deckName").value =
+    data.name || "My Fractured Deck";
 
-  $("deckName").value = data.name || "My Fractured Deck";
-  renderDeck();
+  deck = [
+    ...restored,
+    ...Array(MAX_CARDS-restored.length).fill(null)
+  ];
+
+  applySort();
 }
 
 function loadDeck() {
@@ -1671,6 +1675,7 @@ $("importDeck").onclick = () => {
 
 $("importFile").onchange = async event => {
   const file = event.target.files[0];
+
   if (!file) return;
 
   try {
@@ -1688,11 +1693,9 @@ $("importFile").onchange = async event => {
 
 /* INITIALISE WEBSITE */
 
-
 initialiseSorting();
 renderDeck();
 loadCards();
-
 
 </script>
 </body>
