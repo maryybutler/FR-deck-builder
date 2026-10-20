@@ -324,6 +324,25 @@ select option {background:#343641;color:white}
   margin:auto;
 }
 
+/* SORT BUTTON */
+
+.sort-area {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:12px 0;
+}
+
+.sort-area .btn {
+  min-width:90px;
+  font-size:14px;
+}
+
+.sort-area .hint {
+  margin:0;
+}
+
 /* CRYSTAL COLOUR FILTERS */
 
 .crystal-filters {
@@ -350,9 +369,7 @@ select option {background:#343641;color:white}
   transition:transform .15s,box-shadow .15s;
 }
 
-.crystal-button:hover {
-  transform:scale(1.12);
-}
+.crystal-button:hover {transform:scale(1.12)}
 
 .crystal-button.active {
   transform:scale(1.1);
@@ -463,10 +480,12 @@ footer {
       <span class="count" id="deckCount">0 / 45</span>
     </div>
 
-    <p class="hint">
-      Automatically sorted: Units → Actions → Tools,
-      then lowest resource cost first, then alphabetically.
-    </p>
+    <div class="sort-area">
+      <button class="btn gold" id="sortDeckButton">Sort</button>
+      <p class="hint">
+        Units → Actions → Tools · Cost low to high · A–Z
+      </p>
+    </div>
 
     <div class="progress">
       <div class="progress-fill" id="progress"></div>
@@ -491,8 +510,13 @@ footer {
     </div>
 
     <p class="crystal-label">Filter by crystal colour · Select multiple</p>
-    <div id="crystalFilters" class="crystal-filters"
-      role="group" aria-label="Filter cards by crystal colour"></div>
+
+    <div
+      id="crystalFilters"
+      class="crystal-filters"
+      role="group"
+      aria-label="Filter cards by crystal colour">
+    </div>
 
     <div class="divider"></div>
 
@@ -520,16 +544,20 @@ footer {
         <button class="btn" id="importDeck">Import JSON</button>
       </div>
 
-      <input type="file" id="importFile"
-        accept=".json,application/json" hidden>
+      <input
+        type="file"
+        id="importFile"
+        accept=".json,application/json"
+        hidden>
 
       <button class="btn" id="clearDeck">Clear Deck</button>
 
       <p class="hint">
         Click a library card to add it to your deck.
         Tap a card in your deck to remove one copy.
-        On desktop, you can also right-click to remove a card.
-        You can drag cards from the library into the deck.
+        Right-click a library card to remove a copy.
+        Drag library cards into your deck to add them.
+        Press Sort whenever you want to organise your cards.
         Maximum three copies per card, or one if Singleton.
       </p>
     </div>
@@ -555,7 +583,6 @@ let selectedCard = null;
 let draggingCard = null;
 
 const activeColours = new Set();
-
 const $ = id => document.getElementById(id);
 
 /* UTILITIES */
@@ -580,6 +607,28 @@ function escapeHTML(value) {
   })[char]);
 }
 
+function normalise(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/[\u2018\u2019]/g,"'")
+    .toLowerCase();
+}
+
+function splitValues(value) {
+  return String(value ?? "")
+    .split(/\s*[,/;|]\s*/)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+
+function numberOrNull(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return null;
+
+  const number = Number(text);
+  return Number.isFinite(number) ? number : null;
+}
+
 function parseCSV(text) {
   const rows = [];
   let row = [];
@@ -598,15 +647,19 @@ function parseCSV(text) {
       } else {
         quoted = !quoted;
       }
+
     } else if (char === "," && !quoted) {
       row.push(field);
       field = "";
+
     } else if ((char === "\n" || char === "\r") && !quoted) {
       if (char === "\r" && text[i+1] === "\n") i++;
+
       row.push(field);
       rows.push(row);
       row = [];
       field = "";
+
     } else {
       field += char;
     }
@@ -624,27 +677,48 @@ function parseCSV(text) {
   return rows;
 }
 
-function numberOrNull(value) {
-  const text = String(value ?? "").trim();
+/* IMAGE FILENAME MATCHING */
 
-  if (!text) return null;
+/*
+  Supports:
+  Farmer's Hand.png
+  Farmer’s Hand.png
+  Farmers Hand.png
 
-  const number = Number(text);
+  The website tries each filename in order.
+  This also works for other cards with apostrophes.
+*/
 
-  return Number.isFinite(number) ? number : null;
-}
+function imageCandidates(name) {
+  const original = String(name ?? "").trim();
 
-/* SPLIT MULTIPLE TYPES AND COLOURS */
+  const straight = original.replace(
+    /[\u2018\u2019]/g,"'"
+  );
 
-function splitValues(value) {
-  return String(value ?? "")
-    .split(/\s*[,/;|]\s*/)
-    .map(x => x.trim())
-    .filter(Boolean);
-}
+  const curly = straight.replace(/'/g,"\u2019");
 
-function normalise(value) {
-  return String(value ?? "").trim().toLowerCase();
+  const withoutApostrophe = straight.replace(
+    /'/g,""
+  );
+
+  const withoutApostropheWithSpace = straight.replace(
+    /'/g," "
+  ).replace(/\s+/g," ").trim();
+
+  const names = [
+    original,
+    straight,
+    curly,
+    withoutApostrophe,
+    withoutApostropheWithSpace
+  ];
+
+  const unique = [...new Set(names)];
+
+  return unique.map(filename =>
+    IMAGE_FOLDER + encodeURIComponent(filename + ".png")
+  );
 }
 
 /* GOOGLE SHEETS CARD DATA */
@@ -677,7 +751,7 @@ function extractKeywords(row) {
 
   if (
     String(row["Life Trigger"] ?? "").trim() &&
-    !found.some(k => k.toLowerCase() === "life trigger")
+    !found.some(k => normalise(k) === "life trigger")
   ) {
     found.push("Life Trigger");
   }
@@ -703,7 +777,6 @@ function sheetToCards(csv) {
     });
 
     const name = row["Name"];
-
     if (!name) return null;
 
     const id = slugify(name);
@@ -721,15 +794,15 @@ function sheetToCards(csv) {
       power:numberOrNull(row["Power"]),
       health:numberOrNull(row["Health"]),
       type:row["Card Type"] || "",
-      unitType:row["Unit Type"] || "",
       unitTypes:splitValues(row["Unit Type"]),
       keywords:extractKeywords(row),
       rarity:row["Rarity"] || "",
       mainEffect,
       lifeTrigger:row["Life Trigger"] || "",
       singleton:/\bsingleton\b/i.test(mainEffect),
-      image:IMAGE_FOLDER + encodeURIComponent(name) + ".png"
+      images:imageCandidates(name)
     };
+
   }).filter(Boolean).sort(compareCards);
 }
 
@@ -829,22 +902,46 @@ function cardArtwork(card) {
 
   const img = document.createElement("img");
 
-  img.src = card.image;
   img.alt = card.name;
   img.className = "card-image";
   img.draggable = false;
   img.style.height = "100%";
 
+  let attempt = 0;
+
+  const candidates = card.images || imageCandidates(card.name);
+
   img.onerror = () => {
-    wrapper.innerHTML = cardPlaceholder(card);
+    attempt++;
+
+    if (attempt < candidates.length) {
+      img.src = candidates[attempt];
+    } else {
+      wrapper.innerHTML = cardPlaceholder(card);
+    }
   };
 
   wrapper.appendChild(img);
 
+  if (candidates.length) {
+    img.src = candidates[0];
+  } else {
+    wrapper.innerHTML = cardPlaceholder(card);
+  }
+
   return wrapper;
 }
 
-/* AUTOMATIC CARD SORTING */
+/* CARD SORTING */
+
+/*
+  The library always displays:
+  Units, Actions, Tools
+  Then cost low to high
+  Then alphabetical.
+
+  The deck only changes order when Sort is clicked.
+*/
 
 function cardTypeRank(card) {
   const type = normalise(card.type);
@@ -864,7 +961,6 @@ function compareCards(a,b) {
     return typeDifference;
   }
 
-  // Cards without a cost appear last.
   if (a.cost == null && b.cost != null) return 1;
   if (b.cost == null && a.cost != null) return -1;
 
@@ -882,18 +978,26 @@ function compareCards(a,b) {
   );
 }
 
+function setDeckOrder(ids) {
+  const valid = ids.slice(0,MAX_CARDS);
+
+  deck = [
+    ...valid,
+    ...Array(MAX_CARDS-valid.length).fill(null)
+  ];
+
+  renderDeck();
+}
+
 function sortDeck() {
   const sorted = deck
     .filter(Boolean)
     .filter(id => getCard(id))
     .sort((a,b) => compareCards(getCard(a),getCard(b)));
 
-  deck = [
-    ...sorted,
-    ...Array(MAX_CARDS-sorted.length).fill(null)
-  ];
+  setDeckOrder(sorted);
 
-  renderDeck();
+  updateStatus("Deck sorted successfully.");
 }
 
 /* FILTERS */
@@ -909,7 +1013,17 @@ function uniqueValues(field) {
       value === "" ? [] : [value];
   });
 
-  return [...new Set(values)].sort((a,b) =>
+  const unique = new Map();
+
+  values.forEach(value => {
+    const key = normalise(value);
+
+    if (!unique.has(key)) {
+      unique.set(key,value);
+    }
+  });
+
+  return [...unique.values()].sort((a,b) =>
     typeof a === "number" && typeof b === "number"
       ? a-b
       : String(a).localeCompare(String(b),undefined,{
@@ -948,26 +1062,37 @@ function setupFilters() {
   fillSelect("power",uniqueValues("power"),"Any power");
   fillSelect("health",uniqueValues("health"),"Any health");
 
+  const cardTypes = cards.flatMap(card =>
+    splitValues(card.type)
+  );
+
+  const individualCardTypes = [...new Map(
+    cardTypes.map(type => [normalise(type),type])
+  ).values()];
+
   fillSelect(
     "type",
-    uniqueValues("type").flatMap(splitValues)
-      .filter((value,index,array) =>
-        array.findIndex(
-          item => normalise(item) === normalise(value)
-        ) === index
-      ),
+    individualCardTypes.sort((a,b) => a.localeCompare(b)),
     "All card types"
   );
 
-  // Individual unit types only: Human, Mech, etc.
   fillSelect(
     "unitType",
     uniqueValues("unitTypes"),
     "All unit types"
   );
 
-  fillSelect("keyword",uniqueValues("keywords"),"All keywords");
-  fillSelect("rarity",uniqueValues("rarity"),"All rarities");
+  fillSelect(
+    "keyword",
+    uniqueValues("keywords"),
+    "All keywords"
+  );
+
+  fillSelect(
+    "rarity",
+    uniqueValues("rarity"),
+    "All rarities"
+  );
 
   fillSelect(
     "lifeTrigger",
@@ -1035,7 +1160,6 @@ function matchesFilters(card) {
 
   if (!normalFiltersMatch) return false;
 
-  // OR matching for selected crystal colours.
   if (activeColours.size > 0) {
     const matchesColour = card.colours.some(
       colour => activeColours.has(normalise(colour))
@@ -1047,7 +1171,7 @@ function matchesFilters(card) {
   return true;
 }
 
-/* CLICKABLE CRYSTAL COLOUR FILTERS */
+/* CRYSTAL COLOUR DOTS */
 
 function renderCrystalFilters() {
   const container = $("crystalFilters");
@@ -1057,15 +1181,14 @@ function renderCrystalFilters() {
     cards.flatMap(card => card.colours.map(normalise))
   );
 
-  const colourNames = Object.keys(crystalColours);
-
-  colourNames.forEach(name => {
+  Object.keys(crystalColours).forEach(name => {
     if (!available.has(normalise(name))) return;
 
     const button = document.createElement("button");
     const selected = activeColours.has(normalise(name));
 
     button.type = "button";
+
     button.className =
       "crystal-button" + (selected ? " active" : "");
 
@@ -1075,10 +1198,12 @@ function renderCrystalFilters() {
     );
 
     button.title = name;
+
     button.setAttribute(
       "aria-label",
       `Filter by ${name}`
     );
+
     button.setAttribute("aria-pressed",String(selected));
 
     button.addEventListener("click",() => {
@@ -1219,14 +1344,14 @@ function addCard(cardId) {
   const card = getCard(cardId);
   if (!card) return;
 
-  const count = deck.filter(Boolean).length;
+  const filled = deck.filter(Boolean);
 
-  if (count >= MAX_CARDS) {
+  if (filled.length >= MAX_CARDS) {
     updateStatus("Deck is full (45 cards).");
     return;
   }
 
-  const copies = deck.filter(id => id === cardId).length;
+  const copies = filled.filter(id => id === cardId).length;
 
   if (copies >= cardLimit(card)) {
     updateStatus(
@@ -1237,8 +1362,18 @@ function addCard(cardId) {
     return;
   }
 
-  deck[count] = cardId;
-  sortDeck();
+  // Keep identical cards together without sorting
+  // the rest of the deck automatically.
+
+  const lastCopy = filled.lastIndexOf(cardId);
+
+  if (lastCopy >= 0) {
+    filled.splice(lastCopy+1,0,cardId);
+  } else {
+    filled.push(cardId);
+  }
+
+  setDeckOrder(filled);
 
   updateStatus(`${card.name} added to your deck.`);
 }
@@ -1251,12 +1386,7 @@ function removeCard(index) {
 
   filled.splice(index,1);
 
-  deck = [
-    ...filled,
-    ...Array(MAX_CARDS-filled.length).fill(null)
-  ];
-
-  sortDeck();
+  setDeckOrder(filled);
 
   updateStatus(
     `${card?.name || "Card"} removed from your deck.`
@@ -1296,6 +1426,7 @@ function renderDeck() {
       if (card) {
         slot.appendChild(cardArtwork(card));
       }
+
     } else {
       const plus = document.createElement("span");
       plus.className = "slot-plus";
@@ -1330,7 +1461,6 @@ function renderDeck() {
       }
     });
 
-    // Drag a library card into the deck.
     slot.addEventListener("dragover",event => {
       event.preventDefault();
       slot.classList.add("drag-over");
@@ -1423,12 +1553,8 @@ function restoreDeck(data) {
   $("deckName").value =
     data.name || "My Fractured Deck";
 
-  deck = [
-    ...restored,
-    ...Array(MAX_CARDS-restored.length).fill(null)
-  ];
-
-  sortDeck();
+  // Restore saved order without automatically sorting.
+  setDeckOrder(restored);
 }
 
 function loadDeck() {
@@ -1473,6 +1599,8 @@ function exportDeck() {
 }
 
 /* BUTTON CONTROLS */
+
+$("sortDeckButton").onclick = sortDeck;
 
 $("saveDeck").onclick = saveDeck;
 $("loadDeck").onclick = loadDeck;
