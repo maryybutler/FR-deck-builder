@@ -5,431 +5,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fractured Realms Deck Builder</title>
-
 <style>
-:root {
-  --panel:rgba(255,255,255,.28);
-  --text:#fff;
-  --gold:#ffd45c;
+:root{--panel:rgba(255,255,255,.28);--text:#fff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Arial,Helvetica,sans-serif;background:#8a897e url('frbackground.png') center/cover fixed no-repeat}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,.library-card:focus-visible,.slot:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.hero{text-align:center;padding:25px 20px 22px;border-bottom:1px solid #fff;background:#ffffff1a;backdrop-filter:blur(4px)}
+.logo-text{display:block;width:min(600px,90%);height:auto;margin:auto;object-fit:contain;filter:drop-shadow(0 4px 8px #0004)}
+.hero-subtitle{margin:5px 0 0;font-family:Georgia,serif;font-size:clamp(19px,2.5vw,29px);font-weight:900;letter-spacing:5px}
+.layout{display:grid;grid-template-columns:215px minmax(0,2.2fr) minmax(270px,.85fr);gap:15px;max-width:1900px;margin:20px auto;padding:0 16px;align-items:start}
+.panel{min-width:0;padding:16px;border:1px solid #fff;border-radius:15px;background:var(--panel);backdrop-filter:blur(9px);box-shadow:0 8px 25px #0004}
+h2{margin:0 0 12px;font-size:20px}
+.section-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.count{font-weight:bold;white-space:nowrap}
+label{display:block;font-size:12px;margin:13px 0 5px}
+input,select{width:100%;min-width:0;padding:10px;color:white;background:#20232bad;border:1px solid white;border-radius:8px}
+input::placeholder{color:#ddd}
+select option{background:#343641;color:#fff}
+.btn{padding:10px 12px;border:1px solid #fff;border-radius:9px;background:#505364bf;color:white;font-size:12px;font-weight:bold}
+.btn:hover{filter:brightness(1.15)}
+.btn.gold{color:#151515;background:linear-gradient(180deg,#fff4af,#f7ca52 55%,#c68b22)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
+.actions .btn{flex:1}
+.hint{font-size:12px;line-height:1.6}
+.divider{height:1px;background:#fffa;margin:18px 0}
+.progress{height:7px;border:1px solid white;border-radius:20px;overflow:hidden;background:#0005;margin-bottom:12px}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#b8b8bd,#fff,#f4f4f4)}
+.deck-status{font-size:12px;margin:8px 0 13px;min-height:16px}
+.deck-slots{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
+.slot{aspect-ratio:63/88;min-width:0;padding:2px;border:1px dashed #fff;border-radius:6px;background:#2326328c;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}
+.slot:hover,.slot.drag-over{box-shadow:0 0 12px #fffa}
+.slot.filled{border-style:solid}
+.slot img{width:100%;height:100%;object-fit:contain}
+.slot-number{position:absolute;top:3px;left:3px;font-size:9px;color:white;text-shadow:0 1px 3px black;z-index:2}
+.slot.filled .slot-number{background:#000a;padding:2px 3px;border-radius:3px}
+.slot-plus{font-size:21px}
+.library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-height:75vh;overflow-y:auto;padding:5px}
+.library-card{min-width:0;cursor:pointer;padding:5px;border:1px solid #fff;border-radius:9px;background:#20232ba6;transition:transform .15s,box-shadow .15s}
+.library-card:hover{transform:translateY(-3px);box-shadow:0 0 14px #fff8}
+.library-card.selected{box-shadow:0 0 16px #fffd}
+.card-image{width:100%;aspect-ratio:63/88;border-radius:6px;object-fit:contain;display:block}
+.card-name{font-size:12px;font-weight:bold;margin-top:7px;overflow-wrap:anywhere}
+.mini-card{display:flex;flex-direction:column;justify-content:space-between;padding:10%;text-align:center;background:radial-gradient(circle at 50% 35%,var(--gem),transparent 55%),linear-gradient(145deg,#3b3d52,#161723);border:1px solid #fff;color:white;aspect-ratio:63/88;width:100%;border-radius:6px}
+.gem-icon{font-size:clamp(15px,3vw,33px);filter:drop-shadow(0 0 9px var(--gem))}
+.mini-name{font-size:clamp(8px,1vw,13px);font-weight:bold;overflow-wrap:anywhere;text-shadow:0 2px 4px black}
+.mini-cost{align-self:flex-start;background:#000a;border:1px solid #fff;padding:3px 6px;border-radius:5px;font-weight:bold;font-size:11px}
+.mini-stats{font-size:11px;font-weight:bold}
+.slot .mini-card{width:100%;height:100%;padding:5%}
+.slot .mini-name{font-size:clamp(5px,.65vw,10px)}
+.slot .gem-icon{font-size:clamp(10px,1.5vw,22px)}
+.slot .mini-cost,.slot .mini-stats{font-size:8px}
+.selected-info{padding:10px;border:1px solid #fff;border-radius:9px;background:#20232ba6;font-size:12px;line-height:1.5}
+.selected-info p{margin:5px 0;color:#ededf2;white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{padding:25px 8px;text-align:center;font-size:13px}
+.empty[hidden]{display:none}
+.build-panel{grid-column:1/-1}
+.build-inner{max-width:650px;margin:auto}
+.sort-area{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:12px 0}
+.sort-area .btn{min-width:90px;font-size:14px}
+.sort-area .hint{margin:0}
+.crystal-filters{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;padding:14px 8px;margin:12px 0;border:1px solid #ffffffa6;border-radius:10px;background:#20232b59}
+.crystal-button{width:34px;height:34px;padding:0;border:2px solid #ffffffa6;border-radius:50%;background:var(--crystal);box-shadow:inset 0 0 8px #ffffff55,0 2px 7px #0005}
+.crystal-button:hover{transform:scale(1.12)}
+.crystal-button.active{transform:scale(1.1);border:3px solid #fff;box-shadow:0 0 0 3px #222a,0 0 0 5px #fff,0 0 16px var(--crystal)}
+.crystal-label{text-align:center;font-size:11px;margin:6px 0 2px}
+footer{text-align:center;font-size:11px;padding:15px 10px 30px}
+@media(max-width:1050px){
+.layout{grid-template-columns:190px minmax(0,1fr)}
+.library-panel{grid-column:2}
+.build-panel{grid-column:1/-1}
 }
-
-* {box-sizing:border-box}
-
-body {
-  margin:0;
-  min-height:100vh;
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
-  background:#8a897e url("frbackground.png") center/cover fixed no-repeat;
-}
-
-button,input,select {font:inherit}
-button {cursor:pointer}
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-.library-card:focus-visible,
-.slot:focus-visible {
-  outline:2px solid white;
-  outline-offset:2px;
-}
-
-.hero {
-  text-align:center;
-  padding:25px 20px 22px;
-  border-bottom:1px solid white;
-  background:rgba(255,255,255,.10);
-  backdrop-filter:blur(4px);
-}
-
-.logo-text {
-  display:block;
-  width:min(600px,90%);
-  height:auto;
-  margin:0 auto;
-  object-fit:contain;
-  filter:drop-shadow(0 4px 8px #0004);
-}
-
-.hero-subtitle {
-  margin:5px 0 0;
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:clamp(19px,2.5vw,29px);
-  font-weight:900;
-  letter-spacing:5px;
-}
-
-.layout {
-  display:grid;
-  grid-template-columns:215px minmax(0,2.2fr) minmax(270px,.85fr);
-  gap:15px;
-  max-width:1900px;
-  margin:20px auto;
-  padding:0 16px;
-  align-items:start;
-}
-
-.panel {
-  min-width:0;
-  padding:16px;
-  border:1px solid white;
-  border-radius:15px;
-  background:var(--panel);
-  backdrop-filter:blur(9px);
-  box-shadow:0 8px 25px #0004;
-}
-
-h2 {margin:0 0 12px;font-size:20px}
-
-.section-top {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.count {font-weight:bold;white-space:nowrap}
-label {display:block;font-size:12px;margin:13px 0 5px}
-
-input,select {
-  width:100%;
-  min-width:0;
-  padding:10px;
-  color:white;
-  background:rgba(30,32,43,.68);
-  border:1px solid white;
-  border-radius:8px;
-}
-
-input::placeholder {color:#ddd}
-select option {background:#343641;color:white}
-
-.btn {
-  padding:10px 12px;
-  border:1px solid white;
-  border-radius:9px;
-  background:rgba(80,83,100,.75);
-  color:white;
-  font-size:12px;
-  font-weight:bold;
-  transition:filter .15s,transform .15s;
-}
-
-.btn:hover {
-  filter:brightness(1.2);
-  transform:translateY(-1px);
-}
-
-.btn.gold {
-  color:#151515;
-  background:linear-gradient(180deg,#fff4af,#f7ca52 55%,#c68b22);
-}
-
-.actions {
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  margin:13px 0;
-}
-
-.actions .btn {flex:1}
-.hint {font-size:12px;line-height:1.6}
-.divider {height:1px;background:#fffa;margin:18px 0}
-
-.progress {
-  height:7px;
-  border:1px solid white;
-  border-radius:20px;
-  overflow:hidden;
-  background:#0005;
-  margin-bottom:12px;
-}
-
-.progress-fill {
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#b8b8bd,#fff,#f4f4f4);
-}
-
-.deck-status {
-  font-size:12px;
-  margin:8px 0 13px;
-  min-height:16px;
-}
-
-.deck-slots {
-  display:grid;
-  grid-template-columns:repeat(9,minmax(0,1fr));
-  gap:6px;
-}
-
-.slot {
-  aspect-ratio:63/88;
-  min-width:0;
-  padding:2px;
-  border:1px dashed white;
-  border-radius:6px;
-  background:rgba(35,38,50,.55);
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  cursor:pointer;
-}
-
-.slot:hover,.slot.drag-over {
-  box-shadow:0 0 12px #fffa;
-}
-
-.slot.filled {border-style:solid}
-.slot img {width:100%;height:100%;object-fit:contain}
-
-.slot-number {
-  position:absolute;
-  top:3px;
-  left:3px;
-  font-size:9px;
-  color:white;
-  text-shadow:0 1px 3px black;
-  z-index:2;
-}
-
-.slot.filled .slot-number {
-  background:#000a;
-  padding:2px 3px;
-  border-radius:3px;
-}
-
-.slot-plus {font-size:21px}
-
-.library-grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:11px;
-  max-height:75vh;
-  overflow-y:auto;
-  padding:5px;
-}
-
-.library-card {
-  min-width:0;
-  cursor:pointer;
-  padding:5px;
-  border:1px solid white;
-  border-radius:9px;
-  background:rgba(30,32,43,.65);
-  transition:transform .15s,box-shadow .15s;
-}
-
-.library-card:hover {
-  transform:translateY(-3px);
-  box-shadow:0 0 14px #fff8;
-}
-
-.library-card.selected {
-  box-shadow:0 0 16px #fffd;
-}
-
-.card-image {
-  width:100%;
-  aspect-ratio:63/88;
-  border-radius:6px;
-  object-fit:contain;
-  display:block;
-}
-
-.card-name {
-  font-size:12px;
-  font-weight:bold;
-  margin-top:7px;
-  overflow-wrap:anywhere;
-}
-
-.mini-card {
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  padding:10%;
-  text-align:center;
-  background:
-    radial-gradient(circle at 50% 35%,var(--gem),transparent 55%),
-    linear-gradient(145deg,#3b3d52,#161723);
-  border:1px solid white;
-  color:white;
-  box-shadow:inset 0 0 15px #ffffff20;
-  aspect-ratio:63/88;
-  width:100%;
-  border-radius:6px;
-}
-
-.gem-icon {
-  font-size:clamp(15px,3vw,33px);
-  filter:drop-shadow(0 0 9px var(--gem));
-}
-
-.mini-name {
-  font-size:clamp(8px,1vw,13px);
-  font-weight:bold;
-  overflow-wrap:anywhere;
-  text-shadow:0 2px 4px black;
-}
-
-.mini-cost {
-  align-self:flex-start;
-  background:#000a;
-  border:1px solid white;
-  padding:3px 6px;
-  border-radius:5px;
-  font-weight:bold;
-  font-size:11px;
-}
-
-.mini-stats {font-size:11px;font-weight:bold}
-.slot .mini-card {width:100%;height:100%;padding:5%}
-.slot .mini-name {font-size:clamp(5px,.65vw,10px)}
-.slot .gem-icon {font-size:clamp(10px,1.5vw,22px)}
-.slot .mini-cost,.slot .mini-stats {font-size:8px}
-
-.selected-info {
-  padding:10px;
-  border:1px solid white;
-  border-radius:9px;
-  background:rgba(30,32,43,.65);
-  font-size:12px;
-  line-height:1.5;
-}
-
-.selected-info p {
-  margin:5px 0;
-  color:#ededf2;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
-.empty {
-  padding:25px 8px;
-  text-align:center;
-  font-size:13px;
-}
-
-.empty[hidden] {display:none}
-
-.build-panel {grid-column:1/-1}
-
-.build-panel .build-inner {
-  max-width:650px;
-  margin:auto;
-}
-
-/* SORT BUTTON */
-
-.sort-area {
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:12px 0;
-}
-
-.sort-area .btn {
-  min-width:90px;
-  font-size:14px;
-}
-
-.sort-area .hint {
-  margin:0;
-}
-
-/* CRYSTAL COLOUR FILTERS */
-
-.crystal-filters {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  padding:14px 8px;
-  margin:12px 0;
-  border:1px solid rgba(255,255,255,.65);
-  border-radius:10px;
-  background:rgba(30,32,43,.35);
-}
-
-.crystal-button {
-  width:34px;
-  height:34px;
-  padding:0;
-  border:2px solid rgba(255,255,255,.65);
-  border-radius:50%;
-  background:var(--crystal);
-  box-shadow:inset 0 0 8px #ffffff55,0 2px 7px #0005;
-  transition:transform .15s,box-shadow .15s;
-}
-
-.crystal-button:hover {transform:scale(1.12)}
-
-.crystal-button.active {
-  transform:scale(1.1);
-  border:3px solid white;
-  box-shadow:
-    0 0 0 3px #222a,
-    0 0 0 5px white,
-    0 0 16px var(--crystal);
-}
-
-.crystal-button:focus-visible {
-  outline:3px solid white;
-  outline-offset:5px;
-}
-
-.crystal-label {
-  text-align:center;
-  font-size:11px;
-  margin:6px 0 2px;
-}
-
-footer {
-  text-align:center;
-  font-size:11px;
-  padding:15px 10px 30px;
-}
-
-@media(max-width:1050px) {
-  .layout {
-    grid-template-columns:190px minmax(0,1fr);
-  }
-  .library-panel {grid-column:2}
-  .build-panel {grid-column:1/-1}
-}
-
-@media(max-width:650px) {
-  body {background-attachment:scroll}
-  .layout {
-    grid-template-columns:1fr;
-    padding:0 10px;
-  }
-  .filters-panel {grid-column:1;grid-row:1}
-  .deck-panel {grid-column:1;grid-row:2}
-  .library-panel {grid-column:1;grid-row:3}
-  .build-panel {grid-column:1;grid-row:4}
-  .deck-slots {gap:3px}
-  .slot {padding:1px;border-radius:3px}
-  .slot-number {font-size:7px}
-  .slot-plus {font-size:13px}
-  .panel {padding:10px}
-  .library-grid {
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-  .crystal-filters {gap:13px}
-  .crystal-button {width:30px;height:30px}
-  .hero {padding:20px 10px}
+@media(max-width:650px){
+body{background-attachment:scroll}
+.layout{grid-template-columns:1fr;padding:0 10px}
+.filters-panel{grid-column:1;grid-row:1}
+.deck-panel{grid-column:1;grid-row:2}
+.library-panel{grid-column:1;grid-row:3}
+.build-panel{grid-column:1;grid-row:4}
+.deck-slots{gap:3px}
+.slot{padding:1px;border-radius:3px}
+.slot-number{font-size:7px}
+.slot-plus{font-size:13px}
+.panel{padding:10px}
+.library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.crystal-filters{gap:13px}
+.crystal-button{width:30px;height:30px}
+.hero{padding:20px 10px}
 }
 </style>
 </head>
-
 <body>
 
 <header class="hero">
@@ -439,137 +105,100 @@ footer {
 
 <main class="layout">
 
-  <aside class="panel filters-panel">
-    <h2>Card Filters</h2>
+<aside class="panel filters-panel">
+  <h2>Card Filters</h2>
+  <label for="search">Search card name</label>
+  <input id="search" type="search" placeholder="Search cards...">
+  <label for="cost">Cost</label>
+  <select id="cost"></select>
+  <label for="power">Power</label>
+  <select id="power"></select>
+  <label for="health">Health</label>
+  <select id="health"></select>
+  <label for="type">Card type</label>
+  <select id="type"></select>
+  <label for="unitType">Unit type</label>
+  <select id="unitType"></select>
+  <label for="keyword">Keyword</label>
+  <select id="keyword"></select>
+  <label for="lifeTrigger">Life trigger</label>
+  <select id="lifeTrigger"></select>
+  <label for="rarity">Rarity</label>
+  <select id="rarity"></select>
+  <div class="actions">
+    <button class="btn" id="resetFilters">Reset filters</button>
+  </div>
+</aside>
 
-    <label for="search">Search card name</label>
-    <input id="search" type="search" placeholder="Search cards...">
+<section class="panel deck-panel">
+  <div class="section-top">
+    <h2>Deck Builder</h2>
+    <span class="count" id="deckCount">0 / 45</span>
+  </div>
+  <div class="sort-area">
+    <button class="btn gold" id="sortDeckButton">Sort</button>
+    <p class="hint">Units → Actions → Tools · Cost low to high · A–Z</p>
+  </div>
+  <div class="progress">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+  <p class="deck-status" id="deckStatus" aria-live="polite">
+    Loading card database...
+  </p>
+  <div class="deck-slots" id="deckSlots"></div>
+</section>
 
-    <label for="cost">Cost</label>
-    <select id="cost"></select>
+<section class="panel library-panel">
+  <div class="section-top">
+    <h2>Card Library</h2>
+    <span class="count" id="libraryCount">Loading...</span>
+  </div>
+  <div id="selectedInfo" class="selected-info">
+    <strong>No card selected</strong>
+    <p>Hover over a card to view its Main Effect. Click to add it to your deck.</p>
+  </div>
+  <p class="crystal-label">Filter by crystal colour · Select multiple</p>
+  <div id="crystalFilters" class="crystal-filters"
+       role="group" aria-label="Filter cards by crystal colour"></div>
+  <div class="divider"></div>
+  <div class="library-grid" id="cardGrid"></div>
+  <div class="empty" id="emptyResults" hidden>
+    No cards match your filters.
+  </div>
+</section>
 
-    <label for="power">Power</label>
-    <select id="power"></select>
-
-    <label for="health">Health</label>
-    <select id="health"></select>
-
-    <label for="type">Card type</label>
-    <select id="type"></select>
-
-    <label for="unitType">Unit type</label>
-    <select id="unitType"></select>
-
-    <label for="keyword">Keyword</label>
-    <select id="keyword"></select>
-
-    <label for="lifeTrigger">Life trigger</label>
-    <select id="lifeTrigger"></select>
-
-    <label for="rarity">Rarity</label>
-    <select id="rarity"></select>
-
+<section class="panel build-panel">
+  <div class="build-inner">
+    <h2>Your Build</h2>
+    <label for="deckName">Deck name</label>
+    <input id="deckName" value="My Fractured Deck">
     <div class="actions">
-      <button class="btn" id="resetFilters">Reset filters</button>
+      <button class="btn gold" id="saveDeck">Save</button>
+      <button class="btn" id="loadDeck">Load</button>
     </div>
-  </aside>
-
-  <section class="panel deck-panel">
-    <div class="section-top">
-      <h2>Deck Builder</h2>
-      <span class="count" id="deckCount">0 / 45</span>
+    <div class="actions">
+      <button class="btn" id="exportDeck">Export JSON</button>
+      <button class="btn" id="importDeck">Import JSON</button>
     </div>
-
-    <div class="sort-area">
-      <button class="btn gold" id="sortDeckButton">Sort</button>
-      <p class="hint">
-        Units → Actions → Tools · Cost low to high · A–Z
-      </p>
-    </div>
-
-    <div class="progress">
-      <div class="progress-fill" id="progress"></div>
-    </div>
-
-    <p class="deck-status" id="deckStatus" aria-live="polite">
-      Loading card database...
+    <input type="file" id="importFile"
+           accept=".json,application/json" hidden>
+    <button class="btn" id="clearDeck">Clear Deck</button>
+    <p class="hint">
+      Click a library card to add it to your deck.
+      Tap a card in your deck to remove one copy.
+      Right-click a library card to remove a copy.
+      Drag library cards into your deck to add them.
+      Press Sort whenever you want to organise your cards.
+      Maximum three copies per card, or one if Singleton.
     </p>
-
-    <div class="deck-slots" id="deckSlots"></div>
-  </section>
-
-  <section class="panel library-panel">
-    <div class="section-top">
-      <h2>Card Library</h2>
-      <span class="count" id="libraryCount">Loading...</span>
-    </div>
-
-    <div id="selectedInfo" class="selected-info">
-      <strong>No card selected</strong>
-      <p>Hover over a card to view its Main Effect. Click to add it to your deck.</p>
-    </div>
-
-    <p class="crystal-label">Filter by crystal colour · Select multiple</p>
-
-    <div
-      id="crystalFilters"
-      class="crystal-filters"
-      role="group"
-      aria-label="Filter cards by crystal colour">
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="library-grid" id="cardGrid"></div>
-
-    <div class="empty" id="emptyResults" hidden>
-      No cards match your filters.
-    </div>
-  </section>
-
-  <section class="panel build-panel">
-    <div class="build-inner">
-      <h2>Your Build</h2>
-
-      <label for="deckName">Deck name</label>
-      <input id="deckName" value="My Fractured Deck">
-
-      <div class="actions">
-        <button class="btn gold" id="saveDeck">Save</button>
-        <button class="btn" id="loadDeck">Load</button>
-      </div>
-
-      <div class="actions">
-        <button class="btn" id="exportDeck">Export JSON</button>
-        <button class="btn" id="importDeck">Import JSON</button>
-      </div>
-
-      <input
-        type="file"
-        id="importFile"
-        accept=".json,application/json"
-        hidden>
-
-      <button class="btn" id="clearDeck">Clear Deck</button>
-
-      <p class="hint">
-        Click a library card to add it to your deck.
-        Tap a card in your deck to remove one copy.
-        Right-click a library card to remove a copy.
-        Drag library cards into your deck to add them.
-        Press Sort whenever you want to organise your cards.
-        Maximum three copies per card, or one if Singleton.
-      </p>
-    </div>
-  </section>
+  </div>
+</section>
 
 </main>
 
 <footer>Fractured Realms · Deck Builder</footer>
 
 <script>
-/* GOOGLE SHEETS CONNECTION */
-
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQs1xYztQEt5X7N_g0qyC6mH3bJp-ygo9jlf_1MHFeoaKvQji0tZrj23nVDQ-JBwgG6cZfyF-FYPsND/pub?output=csv";
 
@@ -585,32 +214,30 @@ let draggingCard = null;
 const activeColours = new Set();
 const $ = id => document.getElementById(id);
 
-/* UTILITIES */
-
 function slugify(value) {
   return String(value ?? "")
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/['’]/g,"")
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-|-$/g,"");
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g,char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   })[char]);
 }
 
 function normalise(value) {
   return String(value ?? "")
     .trim()
-    .replace(/[\u2018\u2019]/g,"'")
+    .replace(/[\u2018\u2019]/g, "'")
     .toLowerCase();
 }
 
@@ -624,7 +251,6 @@ function splitValues(value) {
 function numberOrNull(value) {
   const text = String(value ?? "").trim();
   if (!text) return null;
-
   const number = Number(text);
   return Number.isFinite(number) ? number : null;
 }
@@ -635,39 +261,33 @@ function parseCSV(text) {
   let field = "";
   let quoted = false;
 
-  text = text.replace(/^\uFEFF/,"");
+  text = text.replace(/^\uFEFF/, "");
 
-  for (let i=0;i<text.length;i++) {
+  for (let i = 0; i < text.length; i++) {
     const char = text[i];
 
     if (char === '"') {
-      if (quoted && text[i+1] === '"') {
+      if (quoted && text[i + 1] === '"') {
         field += '"';
         i++;
       } else {
         quoted = !quoted;
       }
-
     } else if (char === "," && !quoted) {
       row.push(field);
       field = "";
-
     } else if ((char === "\n" || char === "\r") && !quoted) {
-      if (char === "\r" && text[i+1] === "\n") i++;
-
+      if (char === "\r" && text[i + 1] === "\n") i++;
       row.push(field);
       rows.push(row);
       row = [];
       field = "";
-
     } else {
       field += char;
     }
   }
 
-  if (quoted) {
-    throw new Error("Unclosed CSV quotation mark");
-  }
+  if (quoted) throw Error("Unclosed CSV quotation mark");
 
   if (field !== "" || row.length) {
     row.push(field);
@@ -677,51 +297,46 @@ function parseCSV(text) {
   return rows;
 }
 
-/* IMAGE FILENAME MATCHING */
-
 /*
-  Supports:
-  Farmer's Hand.png
-  Farmer’s Hand.png
-  Farmers Hand.png
-
-  The website tries each filename in order.
-  This also works for other cards with apostrophes.
+ IMAGE MATCHING
+ Tries curly apostrophes, straight apostrophes,
+ no apostrophes, and common image extensions.
 */
 
 function imageCandidates(name) {
-  const original = String(name ?? "").trim();
+  const original = String(name ?? "")
+    .trim()
+    .normalize("NFC");
 
-  const straight = original.replace(
-    /[\u2018\u2019]/g,"'"
-  );
+  const straight = original.replace(/[\u2018\u2019]/g, "'");
+  const curly = straight.replace(/'/g, "\u2019");
+  const none = straight.replace(/'/g, "");
+  const spaced = straight.replace(/'/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  const curly = straight.replace(/'/g,"\u2019");
-
-  const withoutApostrophe = straight.replace(
-    /'/g,""
-  );
-
-  const withoutApostropheWithSpace = straight.replace(
-    /'/g," "
-  ).replace(/\s+/g," ").trim();
-
-  const names = [
+  const names = [...new Set([
     original,
     straight,
     curly,
-    withoutApostrophe,
-    withoutApostropheWithSpace
+    none,
+    spaced
+  ])];
+
+  const extensions = [
+    ".png",
+    ".PNG",
+    ".jpg",
+    ".jpeg",
+    ".webp"
   ];
 
-  const unique = [...new Set(names)];
-
-  return unique.map(filename =>
-    IMAGE_FOLDER + encodeURIComponent(filename + ".png")
+  return names.flatMap(filename =>
+    extensions.map(ext =>
+      IMAGE_FOLDER + encodeURIComponent(filename + ext)
+    )
   );
 }
-
-/* GOOGLE SHEETS CARD DATA */
 
 const knownKeywords = [
   "Alt Summon",
@@ -745,8 +360,8 @@ function extractKeywords(row) {
     row["Life Trigger"] || ""
   ].join(" ");
 
-  const found = knownKeywords.filter(keyword =>
-    text.toLowerCase().includes(keyword.toLowerCase())
+  const found = knownKeywords.filter(k =>
+    text.toLowerCase().includes(k.toLowerCase())
   );
 
   if (
@@ -759,12 +374,37 @@ function extractKeywords(row) {
   return [...new Set(found)];
 }
 
+function cardTypeRank(card) {
+  const type = normalise(card.type);
+
+  if (type.includes("unit")) return 0;
+  if (type.includes("action")) return 1;
+  if (type.includes("tool")) return 2;
+
+  return 3;
+}
+
+function compareCards(a, b) {
+  const t = cardTypeRank(a) - cardTypeRank(b);
+  if (t) return t;
+
+  if (a.cost == null && b.cost != null) return 1;
+  if (b.cost == null && a.cost != null) return -1;
+
+  const c = (a.cost ?? 0) - (b.cost ?? 0);
+
+  return c || a.name.localeCompare(b.name, undefined, {
+    numeric: true,
+    sensitivity: "base"
+  });
+}
+
 function sheetToCards(csv) {
   const rows = parseCSV(csv);
   const headers = (rows.shift() || []).map(h => h.trim());
 
   if (!headers.includes("Name")) {
-    throw new Error("The spreadsheet needs a Name column");
+    throw Error("The spreadsheet needs a Name column");
   }
 
   const used = new Set();
@@ -772,7 +412,7 @@ function sheetToCards(csv) {
   return rows.map(values => {
     const row = {};
 
-    headers.forEach((header,index) => {
+    headers.forEach((header, index) => {
       row[header] = (values[index] || "").trim();
     });
 
@@ -789,20 +429,19 @@ function sheetToCards(csv) {
     return {
       id,
       name,
-      colours:splitValues(row["Faction"]),
-      cost:numberOrNull(row["Cost"]),
-      power:numberOrNull(row["Power"]),
-      health:numberOrNull(row["Health"]),
-      type:row["Card Type"] || "",
-      unitTypes:splitValues(row["Unit Type"]),
-      keywords:extractKeywords(row),
-      rarity:row["Rarity"] || "",
+      colours: splitValues(row["Faction"]),
+      cost: numberOrNull(row["Cost"]),
+      power: numberOrNull(row["Power"]),
+      health: numberOrNull(row["Health"]),
+      type: row["Card Type"] || "",
+      unitTypes: splitValues(row["Unit Type"]),
+      keywords: extractKeywords(row),
+      rarity: row["Rarity"] || "",
       mainEffect,
-      lifeTrigger:row["Life Trigger"] || "",
-      singleton:/\bsingleton\b/i.test(mainEffect),
-      images:imageCandidates(name)
+      lifeTrigger: row["Life Trigger"] || "",
+      singleton: /\bsingleton\b/i.test(mainEffect),
+      images: imageCandidates(name)
     };
-
   }).filter(Boolean).sort(compareCards);
 }
 
@@ -810,19 +449,18 @@ async function loadCards() {
   updateStatus("Loading cards from Google Sheets...");
 
   try {
-    const response = await fetch(SHEET_CSV_URL,{
-      cache:"no-store"
+    const response = await fetch(SHEET_CSV_URL, {
+      cache: "no-store"
     });
 
     if (!response.ok) {
-      throw new Error("HTTP " + response.status);
+      throw Error("HTTP " + response.status);
     }
 
-    const csv = await response.text();
-    const loaded = sheetToCards(csv);
+    const loaded = sheetToCards(await response.text());
 
     if (!loaded.length) {
-      throw new Error("No cards found");
+      throw Error("No cards found");
     }
 
     cards = loaded;
@@ -831,13 +469,19 @@ async function loadCards() {
     renderCrystalFilters();
     renderLibrary();
 
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = null;
+
+    try {
+      saved = localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      console.warn("Local storage unavailable", e);
+    }
 
     if (saved) {
       try {
         restoreDeck(JSON.parse(saved));
       } catch (error) {
-        console.warn("Saved deck could not be restored",error);
+        console.warn("Saved deck could not be restored", error);
         renderDeck();
       }
     } else {
@@ -847,33 +491,27 @@ async function loadCards() {
     updateStatus("");
 
   } catch (error) {
-    console.error("Google Sheets loading error:",error);
-
+    console.error("Google Sheets loading error:", error);
     $("libraryCount").textContent = "Unavailable";
-
     updateStatus(
       "Unable to load Google Sheets. Please refresh to try again."
     );
   }
 }
 
-/* CARD ARTWORK AND PLACEHOLDERS */
-
 const crystalColours = {
-  Red:"#f16c80",
-  Blue:"#69bff4",
-  Green:"#7ed6a0",
-  Yellow:"#f5d76e",
-  Purple:"#ba9aeb",
-  Black:"#5d6076",
-  White:"#f5f5f5"
+  Red: "#f16c80",
+  Blue: "#69bff4",
+  Green: "#7ed6a0",
+  Yellow: "#f5d76e",
+  Purple: "#ba9aeb",
+  Black: "#5d6076",
+  White: "#f5f5f5"
 };
 
 function crystalColour(card) {
-  const colour = card.colours[0];
-
   const match = Object.keys(crystalColours).find(
-    key => normalise(key) === normalise(colour)
+    key => normalise(key) === normalise(card.colours[0])
   );
 
   return crystalColours[match] || "#f5dfff";
@@ -932,58 +570,20 @@ function cardArtwork(card) {
   return wrapper;
 }
 
-/* CARD SORTING */
-
-/*
-  The library always displays:
-  Units, Actions, Tools
-  Then cost low to high
-  Then alphabetical.
-
-  The deck only changes order when Sort is clicked.
-*/
-
-function cardTypeRank(card) {
-  const type = normalise(card.type);
-
-  if (type.includes("unit")) return 0;
-  if (type.includes("action")) return 1;
-  if (type.includes("tool")) return 2;
-
-  return 3;
+function getCard(id) {
+  return cards.find(card => card.id === id);
 }
 
-function compareCards(a,b) {
-  const typeDifference =
-    cardTypeRank(a)-cardTypeRank(b);
-
-  if (typeDifference !== 0) {
-    return typeDifference;
-  }
-
-  if (a.cost == null && b.cost != null) return 1;
-  if (b.cost == null && a.cost != null) return -1;
-
-  const costDifference =
-    (a.cost ?? 0)-(b.cost ?? 0);
-
-  if (costDifference !== 0) {
-    return costDifference;
-  }
-
-  return a.name.localeCompare(
-    b.name,
-    undefined,
-    {numeric:true,sensitivity:"base"}
-  );
+function updateStatus(message) {
+  $("deckStatus").textContent = message;
 }
 
 function setDeckOrder(ids) {
-  const valid = ids.slice(0,MAX_CARDS);
+  const valid = ids.slice(0, MAX_CARDS);
 
   deck = [
     ...valid,
-    ...Array(MAX_CARDS-valid.length).fill(null)
+    ...Array(MAX_CARDS - valid.length).fill(null)
   ];
 
   renderDeck();
@@ -993,46 +593,40 @@ function sortDeck() {
   const sorted = deck
     .filter(Boolean)
     .filter(id => getCard(id))
-    .sort((a,b) => compareCards(getCard(a),getCard(b)));
+    .sort((a, b) => compareCards(getCard(a), getCard(b)));
 
   setDeckOrder(sorted);
-
   updateStatus("Deck sorted successfully.");
 }
-
-/* FILTERS */
 
 function uniqueValues(field) {
   const values = cards.flatMap(card => {
     const value = card[field];
 
-    if (Array.isArray(value)) return value;
-
-    return value === null ||
-      value === undefined ||
-      value === "" ? [] : [value];
+    return Array.isArray(value)
+      ? value
+      : value === null || value === undefined || value === ""
+        ? []
+        : [value];
   });
 
   const unique = new Map();
 
   values.forEach(value => {
     const key = normalise(value);
-
-    if (!unique.has(key)) {
-      unique.set(key,value);
-    }
+    if (!unique.has(key)) unique.set(key, value);
   });
 
-  return [...unique.values()].sort((a,b) =>
+  return [...unique.values()].sort((a, b) =>
     typeof a === "number" && typeof b === "number"
-      ? a-b
-      : String(a).localeCompare(String(b),undefined,{
-          sensitivity:"base"
+      ? a - b
+      : String(a).localeCompare(String(b), undefined, {
+          sensitivity: "base"
         })
   );
 }
 
-function fillSelect(id,values,allLabel) {
+function fillSelect(id, values, allLabel) {
   const select = $(id);
   const previous = select.value;
 
@@ -1045,10 +639,8 @@ function fillSelect(id,values,allLabel) {
 
   values.forEach(value => {
     const option = document.createElement("option");
-
     option.value = String(value);
     option.textContent = value;
-
     select.appendChild(option);
   });
 
@@ -1058,47 +650,21 @@ function fillSelect(id,values,allLabel) {
 }
 
 function setupFilters() {
-  fillSelect("cost",uniqueValues("cost"),"Any cost");
-  fillSelect("power",uniqueValues("power"),"Any power");
-  fillSelect("health",uniqueValues("health"),"Any health");
+  fillSelect("cost", uniqueValues("cost"), "Any cost");
+  fillSelect("power", uniqueValues("power"), "Any power");
+  fillSelect("health", uniqueValues("health"), "Any health");
 
-  const cardTypes = cards.flatMap(card =>
-    splitValues(card.type)
-  );
+  const types = [...new Map(
+    cards
+      .flatMap(card => splitValues(card.type))
+      .map(t => [normalise(t), t])
+  ).values()].sort((a, b) => a.localeCompare(b));
 
-  const individualCardTypes = [...new Map(
-    cardTypes.map(type => [normalise(type),type])
-  ).values()];
-
-  fillSelect(
-    "type",
-    individualCardTypes.sort((a,b) => a.localeCompare(b)),
-    "All card types"
-  );
-
-  fillSelect(
-    "unitType",
-    uniqueValues("unitTypes"),
-    "All unit types"
-  );
-
-  fillSelect(
-    "keyword",
-    uniqueValues("keywords"),
-    "All keywords"
-  );
-
-  fillSelect(
-    "rarity",
-    uniqueValues("rarity"),
-    "All rarities"
-  );
-
-  fillSelect(
-    "lifeTrigger",
-    ["Yes","No"],
-    "Any life trigger"
-  );
+  fillSelect("type", types, "All card types");
+  fillSelect("unitType", uniqueValues("unitTypes"), "All unit types");
+  fillSelect("keyword", uniqueValues("keywords"), "All keywords");
+  fillSelect("rarity", uniqueValues("rarity"), "All rarities");
+  fillSelect("lifeTrigger", ["Yes", "No"], "Any life trigger");
 
   if (setupFilters.ready) return;
   setupFilters.ready = true;
@@ -1129,49 +695,38 @@ function matchesFilters(card) {
   }
 
   const comparisons = [
-    ["cost",card.cost],
-    ["power",card.power],
-    ["health",card.health],
-    ["type",splitValues(card.type)],
-    ["unitType",card.unitTypes],
-    ["keyword",card.keywords],
-    ["rarity",card.rarity],
-    [
-      "lifeTrigger",
-      card.lifeTrigger.trim() ? "Yes" : "No"
-    ]
+    ["cost", card.cost],
+    ["power", card.power],
+    ["health", card.health],
+    ["type", splitValues(card.type)],
+    ["unitType", card.unitTypes],
+    ["keyword", card.keywords],
+    ["rarity", card.rarity],
+    ["lifeTrigger", card.lifeTrigger.trim() ? "Yes" : "No"]
   ];
 
-  const normalFiltersMatch = comparisons.every(
-    ([id,value]) => {
-      const filter = $(id).value;
+  if (!comparisons.every(([id, value]) => {
+    const filter = $(id).value;
+    if (!filter) return true;
 
-      if (!filter) return true;
+    return Array.isArray(value)
+      ? value.some(item => normalise(item) === normalise(filter))
+      : normalise(value) === normalise(filter);
+  })) {
+    return false;
+  }
 
-      if (Array.isArray(value)) {
-        return value.some(item =>
-          normalise(item) === normalise(filter)
-        );
-      }
-
-      return normalise(value) === normalise(filter);
-    }
-  );
-
-  if (!normalFiltersMatch) return false;
-
-  if (activeColours.size > 0) {
-    const matchesColour = card.colours.some(
-      colour => activeColours.has(normalise(colour))
-    );
-
-    if (!matchesColour) return false;
+  if (
+    activeColours.size &&
+    !card.colours.some(colour =>
+      activeColours.has(normalise(colour))
+    )
+  ) {
+    return false;
   }
 
   return true;
 }
-
-/* CRYSTAL COLOUR DOTS */
 
 function renderCrystalFilters() {
   const container = $("crystalFilters");
@@ -1188,9 +743,7 @@ function renderCrystalFilters() {
     const selected = activeColours.has(normalise(name));
 
     button.type = "button";
-
-    button.className =
-      "crystal-button" + (selected ? " active" : "");
+    button.className = "crystal-button" + (selected ? " active" : "");
 
     button.style.setProperty(
       "--crystal",
@@ -1198,15 +751,10 @@ function renderCrystalFilters() {
     );
 
     button.title = name;
+    button.setAttribute("aria-label", `Filter by ${name}`);
+    button.setAttribute("aria-pressed", String(selected));
 
-    button.setAttribute(
-      "aria-label",
-      `Filter by ${name}`
-    );
-
-    button.setAttribute("aria-pressed",String(selected));
-
-    button.addEventListener("click",() => {
+    button.addEventListener("click", () => {
       const key = normalise(name);
 
       if (activeColours.has(key)) {
@@ -1223,16 +771,6 @@ function renderCrystalFilters() {
   });
 }
 
-/* CARD SELECTION AND LIBRARY */
-
-function getCard(id) {
-  return cards.find(card => card.id === id);
-}
-
-function updateStatus(message) {
-  $("deckStatus").textContent = message;
-}
-
 function selectCard(card) {
   selectedCard = card.id;
 
@@ -1242,11 +780,6 @@ function selectCard(card) {
       card.mainEffect || "No main effect listed yet."
     )}</p>
   `;
-}
-
-function addNextCard(card) {
-  selectCard(card);
-  addCard(card.id);
 }
 
 function removeOneCopy(card) {
@@ -1276,8 +809,8 @@ function renderLibrary() {
 
     item.className = "library-card";
     item.tabIndex = 0;
-    item.setAttribute("role","button");
-    item.setAttribute("aria-label",`Add ${card.name} to deck`);
+    item.setAttribute("role", "button");
+    item.setAttribute("aria-label", `Add ${card.name} to deck`);
     item.draggable = true;
 
     if (selectedCard === card.id) {
@@ -1291,27 +824,24 @@ function renderLibrary() {
     name.textContent = card.name;
     item.appendChild(name);
 
-    item.addEventListener("mouseenter",() => {
+    item.addEventListener("mouseenter", () => selectCard(card));
+    item.addEventListener("focus", () => selectCard(card));
+
+    item.addEventListener("click", () => {
       selectCard(card);
+      addCard(card.id);
     });
 
-    item.addEventListener("focus",() => {
-      selectCard(card);
-    });
-
-    item.addEventListener("click",() => {
-      addNextCard(card);
-    });
-
-    item.addEventListener("contextmenu",event => {
+    item.addEventListener("contextmenu", event => {
       event.preventDefault();
       removeOneCopy(card);
     });
 
-    item.addEventListener("keydown",event => {
+    item.addEventListener("keydown", event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        addNextCard(card);
+        selectCard(card);
+        addCard(card.id);
       }
 
       if (event.key === "Backspace" || event.key === "Delete") {
@@ -1320,21 +850,19 @@ function renderLibrary() {
       }
     });
 
-    item.addEventListener("dragstart",event => {
+    item.addEventListener("dragstart", event => {
       draggingCard = card.id;
-      event.dataTransfer.setData("text/plain",card.id);
+      event.dataTransfer.setData("text/plain", card.id);
       event.dataTransfer.effectAllowed = "copy";
     });
 
-    item.addEventListener("dragend",() => {
+    item.addEventListener("dragend", () => {
       draggingCard = null;
     });
 
     grid.appendChild(item);
   });
 }
-
-/* DECK RULES AND CARD MANAGEMENT */
 
 function cardLimit(card) {
   return card.singleton ? 1 : 3;
@@ -1362,19 +890,15 @@ function addCard(cardId) {
     return;
   }
 
-  // Keep identical cards together without sorting
-  // the rest of the deck automatically.
-
   const lastCopy = filled.lastIndexOf(cardId);
 
   if (lastCopy >= 0) {
-    filled.splice(lastCopy+1,0,cardId);
+    filled.splice(lastCopy + 1, 0, cardId);
   } else {
     filled.push(cardId);
   }
 
   setDeckOrder(filled);
-
   updateStatus(`${card.name} added to your deck.`);
 }
 
@@ -1384,49 +908,42 @@ function removeCard(index) {
   const card = getCard(deck[index]);
   const filled = deck.filter(Boolean);
 
-  filled.splice(index,1);
+  filled.splice(index, 1);
 
   setDeckOrder(filled);
-
-  updateStatus(
-    `${card?.name || "Card"} removed from your deck.`
-  );
+  updateStatus(`${card?.name || "Card"} removed from your deck.`);
 }
-
-/* DECK BUILDER */
 
 function renderDeck() {
   const slots = $("deckSlots");
   slots.innerHTML = "";
 
-  deck.forEach((cardId,index) => {
+  deck.forEach((cardId, index) => {
     const slot = document.createElement("div");
 
     slot.className = "slot";
     slot.tabIndex = 0;
-    slot.setAttribute("role","button");
+    slot.setAttribute("role", "button");
 
     slot.setAttribute(
       "aria-label",
       cardId
         ? `Remove ${getCard(cardId)?.name || cardId} from deck`
-        : `Empty slot ${index+1}`
+        : `Empty slot ${index + 1}`
     );
 
     const number = document.createElement("span");
     number.className = "slot-number";
-    number.textContent = index+1;
+    number.textContent = index + 1;
     slot.appendChild(number);
 
     if (cardId) {
       slot.classList.add("filled");
-
       const card = getCard(cardId);
 
       if (card) {
         slot.appendChild(cardArtwork(card));
       }
-
     } else {
       const plus = document.createElement("span");
       plus.className = "slot-plus";
@@ -1434,7 +951,7 @@ function renderDeck() {
       slot.appendChild(plus);
     }
 
-    function activateSlot() {
+    const activateSlot = () => {
       if (cardId) {
         removeCard(index);
       } else if (selectedCard) {
@@ -1442,35 +959,32 @@ function renderDeck() {
       } else {
         updateStatus("Select a card from the library first.");
       }
-    }
+    };
 
-    slot.addEventListener("click",activateSlot);
+    slot.addEventListener("click", activateSlot);
 
-    slot.addEventListener("contextmenu",event => {
+    slot.addEventListener("contextmenu", event => {
       event.preventDefault();
-
-      if (cardId) {
-        removeCard(index);
-      }
+      if (cardId) removeCard(index);
     });
 
-    slot.addEventListener("keydown",event => {
+    slot.addEventListener("keydown", event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         activateSlot();
       }
     });
 
-    slot.addEventListener("dragover",event => {
+    slot.addEventListener("dragover", event => {
       event.preventDefault();
       slot.classList.add("drag-over");
     });
 
-    slot.addEventListener("dragleave",() => {
+    slot.addEventListener("dragleave", () => {
       slot.classList.remove("drag-over");
     });
 
-    slot.addEventListener("drop",event => {
+    slot.addEventListener("drop", event => {
       event.preventDefault();
       slot.classList.remove("drag-over");
 
@@ -1489,22 +1003,17 @@ function renderDeck() {
 
   const count = deck.filter(Boolean).length;
 
-  $("deckCount").textContent =
-    `${count} / ${MAX_CARDS}`;
-
-  $("progress").style.width =
-    `${count/MAX_CARDS*100}%`;
+  $("deckCount").textContent = `${count} / ${MAX_CARDS}`;
+  $("progress").style.width = `${count / MAX_CARDS * 100}%`;
 }
-
-/* SAVE, LOAD, EXPORT AND IMPORT */
 
 function deckPayload() {
   return {
-    game:"Fractured Realms",
-    version:1,
-    name:$("deckName").value.trim() || "Untitled Deck",
-    slots:[...deck],
-    cards:deck.filter(Boolean).map(
+    game: "Fractured Realms",
+    version: 1,
+    name: $("deckName").value.trim() || "Untitled Deck",
+    slots: [...deck],
+    cards: deck.filter(Boolean).map(
       id => getCard(id)?.name || id
     )
   };
@@ -1516,9 +1025,7 @@ function saveDeck() {
       STORAGE_KEY,
       JSON.stringify(deckPayload())
     );
-
     updateStatus("Deck saved on this device.");
-
   } catch {
     updateStatus("Unable to save in this browser.");
   }
@@ -1526,14 +1033,14 @@ function saveDeck() {
 
 function restoreDeck(data) {
   if (!data || !Array.isArray(data.slots)) {
-    throw new Error("Invalid deck format");
+    throw Error("Invalid deck format");
   }
 
   const counts = new Map();
 
   const restored = Array.from(
-    {length:MAX_CARDS},
-    (_,index) => {
+    { length: MAX_CARDS },
+    (_, index) => {
       const id = data.slots[index];
       const card = getCard(id);
 
@@ -1541,19 +1048,14 @@ function restoreDeck(data) {
 
       const count = counts.get(id) || 0;
 
-      if (count >= cardLimit(card)) {
-        return null;
-      }
+      if (count >= cardLimit(card)) return null;
 
-      counts.set(id,count+1);
+      counts.set(id, count + 1);
       return id;
     }
   ).filter(Boolean);
 
-  $("deckName").value =
-    data.name || "My Fractured Deck";
-
-  // Restore saved order without automatically sorting.
+  $("deckName").value = data.name || "My Fractured Deck";
   setDeckOrder(restored);
 }
 
@@ -1568,7 +1070,6 @@ function loadDeck() {
 
     restoreDeck(JSON.parse(saved));
     updateStatus("Saved deck loaded.");
-
   } catch {
     updateStatus("Unable to load the saved deck.");
   }
@@ -1576,8 +1077,8 @@ function loadDeck() {
 
 function exportDeck() {
   const blob = new Blob(
-    [JSON.stringify(deckPayload(),null,2)],
-    {type:"application/json"}
+    [JSON.stringify(deckPayload(), null, 2)],
+    { type: "application/json" }
   );
 
   const url = URL.createObjectURL(blob);
@@ -1585,23 +1086,17 @@ function exportDeck() {
 
   link.href = url;
   link.download =
-    slugify(
-      $("deckName").value.trim() || "fractured-deck"
-    ) + ".json";
+    slugify($("deckName").value.trim() || "fractured-deck") + ".json";
 
   document.body.appendChild(link);
   link.click();
   link.remove();
 
-  URL.revokeObjectURL(url);
-
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
   updateStatus("Deck exported as JSON.");
 }
 
-/* BUTTON CONTROLS */
-
 $("sortDeckButton").onclick = sortDeck;
-
 $("saveDeck").onclick = saveDeck;
 $("loadDeck").onclick = loadDeck;
 $("exportDeck").onclick = exportDeck;
@@ -1641,15 +1136,11 @@ $("importDeck").onclick = () => {
 
 $("importFile").onchange = async event => {
   const file = event.target.files[0];
-
   if (!file) return;
 
   try {
-    const data = JSON.parse(await file.text());
-
-    restoreDeck(data);
+    restoreDeck(JSON.parse(await file.text()));
     updateStatus("Deck imported successfully.");
-
   } catch {
     updateStatus("Could not import that deck file.");
   }
@@ -1657,11 +1148,8 @@ $("importFile").onchange = async event => {
   event.target.value = "";
 };
 
-/* INITIALISE WEBSITE */
-
 renderDeck();
 loadCards();
-
 </script>
 </body>
 </html>
