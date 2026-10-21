@@ -57,8 +57,59 @@ select option{background:#343641;color:#fff}
 .slot .mini-name{font-size:clamp(5px,.65vw,10px)}
 .slot .gem-icon{font-size:clamp(10px,1.5vw,22px)}
 .slot .mini-cost,.slot .mini-stats{font-size:8px}
-.selected-info{padding:10px;border:1px solid #fff;border-radius:9px;background:#20232ba6;font-size:12px;line-height:1.5}
-.selected-info p{margin:5px 0;color:#ededf2;white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* LARGE CARD PREVIEW */
+.card-preview-area{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:12px;
+  margin:12px 0 15px;
+  border:1px solid #fff;
+  border-radius:12px;
+  background:#20232ba6;
+}
+.card-preview-image{
+  width:100%;
+  max-width:300px;
+  aspect-ratio:63/88;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:8px;
+  background:#15172388;
+}
+.card-preview-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.card-preview-image .mini-card{
+  width:100%;
+  height:100%;
+}
+.card-preview-placeholder{
+  text-align:center;
+  color:#eee;
+  font-size:13px;
+  line-height:1.6;
+  padding:20px;
+}
+.card-preview-caption{
+  text-align:center;
+  font-size:11px;
+  color:#eee;
+}
+.preview-card-name{
+  text-align:center;
+  font-size:13px;
+  font-weight:bold;
+  overflow-wrap:anywhere;
+}
+
 .empty{padding:25px 8px;text-align:center;font-size:13px}
 .empty[hidden]{display:none}
 .build-panel{grid-column:1/-1}
@@ -93,6 +144,7 @@ body{background-attachment:scroll}
 .crystal-filters{gap:13px}
 .crystal-button{width:30px;height:30px}
 .hero{padding:20px 10px}
+.card-preview-image{max-width:260px}
 }
 </style>
 </head>
@@ -153,10 +205,20 @@ body{background-attachment:scroll}
     <h2>Card Library</h2>
     <span class="count" id="libraryCount">Loading...</span>
   </div>
-  <div id="selectedInfo" class="selected-info">
-    <strong>No card selected</strong>
-    <p>Hover over a card to view its Main Effect. Click to add it to your deck.</p>
+
+  <!-- LARGE PREVIEW ABOVE CARD LIBRARY -->
+  <div class="card-preview-area">
+    <div class="card-preview-image" id="largeCardPreview">
+      <div class="card-preview-placeholder">
+        Hover over a card to see an enlarged version here.
+      </div>
+    </div>
+    <div class="preview-card-name" id="previewCardName"></div>
+    <div class="card-preview-caption">
+      Hover over a card in the library or deck to preview it.
+    </div>
   </div>
+
   <p class="crystal-label">Filter by crystal colour · Select multiple</p>
   <div id="crystalFilters" class="crystal-filters"
        role="group" aria-label="Filter cards by crystal colour"></div>
@@ -297,11 +359,7 @@ function parseCSV(text) {
   return rows;
 }
 
-/*
- IMAGE MATCHING
- Tries curly apostrophes, straight apostrophes,
- no apostrophes, and common image extensions.
-*/
+/* IMAGE MATCHING */
 
 function imageCandidates(name) {
   const original = String(name ?? "")
@@ -570,6 +628,20 @@ function cardArtwork(card) {
   return wrapper;
 }
 
+/* ENLARGED CARD PREVIEW */
+
+function previewCard(card) {
+  if (!card) return;
+
+  selectedCard = card.id;
+
+  const preview = $("largeCardPreview");
+  preview.innerHTML = "";
+  preview.appendChild(cardArtwork(card));
+
+  $("previewCardName").textContent = card.name;
+}
+
 function getCard(id) {
   return cards.find(card => card.id === id);
 }
@@ -771,19 +843,8 @@ function renderCrystalFilters() {
   });
 }
 
-function selectCard(card) {
-  selectedCard = card.id;
-
-  $("selectedInfo").innerHTML = `
-    <strong>${escapeHTML(card.name)}</strong>
-    <p>${escapeHTML(
-      card.mainEffect || "No main effect listed yet."
-    )}</p>
-  `;
-}
-
 function removeOneCopy(card) {
-  selectCard(card);
+  previewCard(card);
 
   const index = deck.lastIndexOf(card.id);
 
@@ -824,11 +885,11 @@ function renderLibrary() {
     name.textContent = card.name;
     item.appendChild(name);
 
-    item.addEventListener("mouseenter", () => selectCard(card));
-    item.addEventListener("focus", () => selectCard(card));
+    item.addEventListener("mouseenter", () => previewCard(card));
+    item.addEventListener("focus", () => previewCard(card));
 
     item.addEventListener("click", () => {
-      selectCard(card);
+      previewCard(card);
       addCard(card.id);
     });
 
@@ -840,7 +901,7 @@ function renderLibrary() {
     item.addEventListener("keydown", event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        selectCard(card);
+        previewCard(card);
         addCard(card.id);
       }
 
@@ -943,6 +1004,10 @@ function renderDeck() {
 
       if (card) {
         slot.appendChild(cardArtwork(card));
+
+        // Preview cards in deck slots too
+        slot.addEventListener("mouseenter", () => previewCard(card));
+        slot.addEventListener("focus", () => previewCard(card));
       }
     } else {
       const plus = document.createElement("span");
@@ -953,6 +1018,8 @@ function renderDeck() {
 
     const activateSlot = () => {
       if (cardId) {
+        const card = getCard(cardId);
+        if (card) previewCard(card);
         removeCard(index);
       } else if (selectedCard) {
         addCard(selectedCard);
@@ -992,6 +1059,8 @@ function renderDeck() {
         event.dataTransfer.getData("text/plain");
 
       if (id && getCard(id)) {
+        const card = getCard(id);
+        previewCard(card);
         addCard(id);
       }
 
