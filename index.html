@@ -58,15 +58,15 @@ select option{background:#343641;color:#fff}
 .slot .gem-icon{font-size:clamp(10px,1.5vw,22px)}
 .slot .mini-cost,.slot .mini-stats{font-size:8px}
 
-/* LARGE CARD PREVIEW */
+/* LARGE CARD PREVIEW AT TOP OF FILTERS */
 .card-preview-area{
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:8px;
-  padding:12px;
-  margin:12px 0 15px;
+  padding:10px;
+  margin:0 0 18px;
   border:1px solid #fff;
   border-radius:12px;
   background:#20232ba6;
@@ -96,7 +96,7 @@ select option{background:#343641;color:#fff}
   color:#eee;
   font-size:13px;
   line-height:1.6;
-  padding:20px;
+  padding:12px;
 }
 .card-preview-caption{
   text-align:center;
@@ -157,7 +157,21 @@ body{background-attachment:scroll}
 
 <main class="layout">
 
+<!-- LEFT: PREVIEW AND FILTERS -->
 <aside class="panel filters-panel">
+
+  <div class="card-preview-area">
+    <div class="card-preview-image" id="largeCardPreview">
+      <div class="card-preview-placeholder">
+        Hover over a card to see an enlarged version here.
+      </div>
+    </div>
+    <div class="preview-card-name" id="previewCardName"></div>
+    <div class="card-preview-caption">
+      Hover over a card in the library or deck to preview it.
+    </div>
+  </div>
+
   <h2>Card Filters</h2>
   <label for="search">Search card name</label>
   <input id="search" type="search" placeholder="Search cards...">
@@ -182,6 +196,7 @@ body{background-attachment:scroll}
   </div>
 </aside>
 
+<!-- CENTRE: DECK -->
 <section class="panel deck-panel">
   <div class="section-top">
     <h2>Deck Builder</h2>
@@ -200,23 +215,11 @@ body{background-attachment:scroll}
   <div class="deck-slots" id="deckSlots"></div>
 </section>
 
+<!-- RIGHT: CARD LIBRARY -->
 <section class="panel library-panel">
   <div class="section-top">
     <h2>Card Library</h2>
     <span class="count" id="libraryCount">Loading...</span>
-  </div>
-
-  <!-- LARGE PREVIEW ABOVE CARD LIBRARY -->
-  <div class="card-preview-area">
-    <div class="card-preview-image" id="largeCardPreview">
-      <div class="card-preview-placeholder">
-        Hover over a card to see an enlarged version here.
-      </div>
-    </div>
-    <div class="preview-card-name" id="previewCardName"></div>
-    <div class="card-preview-caption">
-      Hover over a card in the library or deck to preview it.
-    </div>
   </div>
 
   <p class="crystal-label">Filter by crystal colour · Select multiple</p>
@@ -229,6 +232,7 @@ body{background-attachment:scroll}
   </div>
 </section>
 
+<!-- BOTTOM: YOUR BUILD -->
 <section class="panel build-panel">
   <div class="build-inner">
     <h2>Your Build</h2>
