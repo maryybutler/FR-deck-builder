@@ -5,258 +5,887 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fractured Realms Deck Builder</title>
+
 <style>
-:root{--panel:rgba(255,255,255,.28);--text:#fff}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--text);font-family:Arial,Helvetica,sans-serif;background:#8a897e url('frbackground.png') center/cover fixed no-repeat}
-button,input,select{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible,.library-card:focus-visible,.slot:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.hero{text-align:center;padding:25px 20px 22px;border-bottom:1px solid #fff;background:#ffffff1a;backdrop-filter:blur(4px)}
-.logo-text{display:block;width:min(600px,90%);height:auto;margin:auto;object-fit:contain;filter:drop-shadow(0 4px 8px #0004)}
-.hero-subtitle{margin:5px 0 0;font-family:Georgia,serif;font-size:clamp(19px,2.5vw,29px);font-weight:900;letter-spacing:5px}
-.layout{
-  display:grid;
-  grid-template-columns:430px minmax(0,2.2fr) minmax(270px,.85fr);
-  gap:15px;
-  max-width:1900px;
-  margin:20px auto;
-  padding:0 16px;
-  align-items:start;
-}
-.panel{min-width:0;padding:16px;border:1px solid #fff;border-radius:15px;background:var(--panel);backdrop-filter:blur(9px);box-shadow:0 8px 25px #0004}
-h2{margin:0 0 12px;font-size:20px}
-.section-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.count{font-weight:bold;white-space:nowrap}
-label{display:block;font-size:12px;margin:13px 0 5px}
-input,select{width:100%;min-width:0;padding:10px;color:white;background:#20232bad;border:1px solid white;border-radius:8px}
-input::placeholder{color:#ddd}
-select option{background:#343641;color:#fff}
-.btn{padding:10px 12px;border:1px solid #fff;border-radius:9px;background:#505364bf;color:white;font-size:12px;font-weight:bold}
-.btn:hover{filter:brightness(1.15)}
-.btn.gold{color:#151515;background:linear-gradient(180deg,#fff4af,#f7ca52 55%,#c68b22)}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
-.actions .btn{flex:1}
-.hint{font-size:12px;line-height:1.6}
-.divider{height:1px;background:#fffa;margin:18px 0}
-.progress{height:7px;border:1px solid white;border-radius:20px;overflow:hidden;background:#0005;margin-bottom:12px}
-.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#b8b8bd,#fff,#f4f4f4)}
-.deck-status{font-size:12px;margin:8px 0 13px;min-height:16px}
-.deck-slots{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
-.slot{aspect-ratio:63/88;min-width:0;padding:2px;border:1px dashed #fff;border-radius:6px;background:#2326328c;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}
-.slot:hover,.slot.drag-over{box-shadow:0 0 12px #fffa}
-.slot.filled{border-style:solid}
-.slot img{width:100%;height:100%;object-fit:contain}
-.slot-number{position:absolute;top:3px;left:3px;font-size:9px;color:white;text-shadow:0 1px 3px black;z-index:2}
-.slot.filled .slot-number{background:#000a;padding:2px 3px;border-radius:3px}
-.slot-plus{font-size:21px}
-.library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-height:75vh;overflow-y:auto;padding:5px}
-.library-card{min-width:0;cursor:pointer;padding:5px;border:1px solid #fff;border-radius:9px;background:#20232ba6;transition:transform .15s,box-shadow .15s}
-.library-card:hover{transform:translateY(-3px);box-shadow:0 0 14px #fff8}
-.library-card.selected{box-shadow:0 0 16px #fffd}
-.card-image{width:100%;aspect-ratio:63/88;border-radius:6px;object-fit:contain;display:block}
-.card-name{font-size:12px;font-weight:bold;margin-top:7px;overflow-wrap:anywhere}
-.mini-card{display:flex;flex-direction:column;justify-content:space-between;padding:10%;text-align:center;background:radial-gradient(circle at 50% 35%,var(--gem),transparent 55%),linear-gradient(145deg,#3b3d52,#161723);border:1px solid #fff;color:white;aspect-ratio:63/88;width:100%;border-radius:6px}
-.gem-icon{font-size:clamp(15px,3vw,33px);filter:drop-shadow(0 0 9px var(--gem))}
-.mini-name{font-size:clamp(8px,1vw,13px);font-weight:bold;overflow-wrap:anywhere;text-shadow:0 2px 4px black}
-.mini-cost{align-self:flex-start;background:#000a;border:1px solid #fff;padding:3px 6px;border-radius:5px;font-weight:bold;font-size:11px}
-.mini-stats{font-size:11px;font-weight:bold}
-.slot .mini-card{width:100%;height:100%;padding:5%}
-.slot .mini-name{font-size:clamp(5px,.65vw,10px)}
-.slot .gem-icon{font-size:clamp(10px,1.5vw,22px)}
-.slot .mini-cost,.slot .mini-stats{font-size:8px}
-
-/* LARGE CARD PREVIEW AT TOP OF FILTERS */
-.card-preview-area{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px;
-  margin:0 0 18px;
-  border:1px solid #fff;
-  border-radius:12px;
-  background:#20232ba6;
-}
-.card-preview-image{
-  width:100%;
-  max-width:300px;
-  aspect-ratio:63/88;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  border-radius:8px;
-  background:#15172388;
-}
-.card-preview-image img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-}
-.card-preview-image .mini-card{
-  width:100%;
-  height:100%;
-}
-.card-preview-placeholder{
-  text-align:center;
-  color:#eee;
-  font-size:13px;
-  line-height:1.6;
-  padding:12px;
-}
-.card-preview-caption{
-  text-align:center;
-  font-size:11px;
-  color:#eee;
-}
-.preview-card-name{
-  text-align:center;
-  font-size:13px;
-  font-weight:bold;
-  overflow-wrap:anywhere;
+:root {
+  --panel: rgba(255,255,255,.28);
+  --text: #fff;
 }
 
-.empty{padding:25px 8px;text-align:center;font-size:13px}
-.empty[hidden]{display:none}
-.build-panel{grid-column:1/-1}
-.build-inner{max-width:650px;margin:auto}
-.sort-area{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:12px 0}
-.sort-area .btn{min-width:90px;font-size:14px}
-.sort-area .hint{margin:0}
-.crystal-filters{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;padding:14px 8px;margin:12px 0;border:1px solid #ffffffa6;border-radius:10px;background:#20232b59}
-.crystal-button{width:34px;height:34px;padding:0;border:2px solid #ffffffa6;border-radius:50%;background:var(--crystal);box-shadow:inset 0 0 8px #ffffff55,0 2px 7px #0005}
-.crystal-button:hover{transform:scale(1.12)}
-.crystal-button.active{transform:scale(1.1);border:3px solid #fff;box-shadow:0 0 0 3px #222a,0 0 0 5px #fff,0 0 16px var(--crystal)}
-.crystal-label{text-align:center;font-size:11px;margin:6px 0 2px}
-footer{text-align:center;font-size:11px;padding:15px 10px 30px}
-@media(max-width:1050px){
-.layout{grid-template-columns:190px minmax(0,1fr)}
-.library-panel{grid-column:2}
-.build-panel{grid-column:1/-1}
+* {
+  box-sizing: border-box;
 }
-@media(max-width:650px){
-body{background-attachment:scroll}
-.layout{grid-template-columns:1fr;padding:0 10px}
-.filters-panel{grid-column:1;grid-row:1}
-.deck-panel{grid-column:1;grid-row:2}
-.library-panel{grid-column:1;grid-row:3}
-.build-panel{grid-column:1;grid-row:4}
-.deck-slots{gap:3px}
-.slot{padding:1px;border-radius:3px}
-.slot-number{font-size:7px}
-.slot-plus{font-size:13px}
-.panel{padding:10px}
-.library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-.crystal-filters{gap:13px}
-.crystal-button{width:30px;height:30px}
-.hero{padding:20px 10px}
-.card-preview-image{max-width:260px}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  background: #8a897e url('frbackground.png') center/cover fixed no-repeat;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.library-card:focus-visible,
+.slot:focus-visible,
+.advanced-filters summary:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* HEADER */
+
+.hero {
+  text-align: center;
+  padding: 25px 20px 22px;
+  border-bottom: 1px solid #fff;
+  background: #ffffff1a;
+  backdrop-filter: blur(4px);
+}
+
+.logo-text {
+  display: block;
+  width: min(600px, 90%);
+  height: auto;
+  margin: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px #0004);
+}
+
+.hero-subtitle {
+  margin: 5px 0 0;
+  font-family: Georgia, serif;
+  font-size: clamp(19px, 2.5vw, 29px);
+  font-weight: 900;
+  letter-spacing: 5px;
+}
+
+/* MAIN LAYOUT */
+
+.layout {
+  display: grid;
+  grid-template-columns:
+    430px
+    minmax(0, 2.2fr)
+    minmax(270px, .85fr);
+  gap: 15px;
+  max-width: 1900px;
+  margin: 20px auto;
+  padding: 0 16px;
+  align-items: stretch;
+}
+
+.panel {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #fff;
+  border-radius: 15px;
+  background: var(--panel);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 8px 25px #0004;
+}
+
+.filters-panel,
+.deck-panel,
+.library-panel {
+  height: 100%;
+  min-height: 0;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.section-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.count {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* INPUTS */
+
+label {
+  display: block;
+  font-size: 12px;
+  margin: 13px 0 5px;
+}
+
+input, select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  color: white;
+  background: #20232bad;
+  border: 1px solid white;
+  border-radius: 8px;
+}
+
+input::placeholder {
+  color: #ddd;
+}
+
+select option {
+  background: #343641;
+  color: #fff;
+}
+
+/* BUTTONS */
+
+.btn {
+  padding: 10px 12px;
+  border: 1px solid #fff;
+  border-radius: 9px;
+  background: #505364bf;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.btn:hover {
+  filter: brightness(1.15);
+}
+
+.btn.gold {
+  color: #151515;
+  background: linear-gradient(
+    180deg,
+    #fff4af,
+    #f7ca52 55%,
+    #c68b22
+  );
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 13px 0;
+}
+
+.actions .btn {
+  flex: 1;
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.divider {
+  height: 1px;
+  background: #fffa;
+  margin: 18px 0;
+}
+
+/* LARGE CARD PREVIEW */
+
+.card-preview-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  margin: 0 0 18px;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  background: #20232ba6;
+}
+
+.card-preview-image {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 63/88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #15172388;
+}
+
+.card-preview-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card-preview-image .mini-card {
+  width: 100%;
+  height: 100%;
+}
+
+.card-preview-placeholder {
+  text-align: center;
+  color: #eee;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 12px;
+}
+
+.card-preview-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #eee;
+}
+
+.preview-card-name {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+/* ADVANCED FILTERS */
+
+.advanced-filters {
+  margin-top: 15px;
+}
+
+.advanced-filters summary {
+  display: block;
+  padding: 12px;
+  border: 1px solid #fff;
+  border-radius: 9px;
+  background: #505364bf;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  list-style: none;
+}
+
+.advanced-filters summary:hover {
+  background: #666a7bcf;
+}
+
+.advanced-filters summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-filters summary::after {
+  content: "  ▾";
+}
+
+.advanced-filters[open] summary::after {
+  content: "  ▴";
+}
+
+.advanced-filters-content {
+  padding-top: 8px;
+}
+
+/* DECK BUILDER */
+
+.progress {
+  height: 7px;
+  border: 1px solid white;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0005;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    #b8b8bd,
+    #fff,
+    #f4f4f4
+  );
+}
+
+.deck-status {
+  font-size: 12px;
+  margin: 8px 0 13px;
+  min-height: 16px;
+}
+
+.deck-slots {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.slot {
+  aspect-ratio: 63/88;
+  min-width: 0;
+  padding: 2px;
+  border: 1px dashed #fff;
+  border-radius: 6px;
+  background: #2326328c;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.slot:hover,
+.slot.drag-over {
+  box-shadow: 0 0 12px #fffa;
+}
+
+.slot.filled {
+  border-style: solid;
+}
+
+.slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.slot-number {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  font-size: 9px;
+  color: white;
+  text-shadow: 0 1px 3px black;
+  z-index: 2;
+}
+
+.slot.filled .slot-number {
+  background: #000a;
+  padding: 2px 3px;
+  border-radius: 3px;
+}
+
+.slot-plus {
+  font-size: 21px;
+}
+
+.sort-area {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.sort-area .btn {
+  min-width: 90px;
+  font-size: 14px;
+}
+
+.sort-area .hint {
+  margin: 0;
+}
+
+/* CARD LIBRARY */
+
+.library-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 5px;
+  align-content: start;
+}
+
+.library-card {
+  min-width: 0;
+  cursor: pointer;
+  padding: 5px;
+  border: 1px solid #fff;
+  border-radius: 9px;
+  background: #20232ba6;
+  transition: transform .15s, box-shadow .15s;
+}
+
+.library-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 14px #fff8;
+}
+
+.library-card.selected {
+  box-shadow: 0 0 16px #fffd;
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 63/88;
+  border-radius: 6px;
+  object-fit: contain;
+  display: block;
+}
+
+.card-name {
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  padding: 25px 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.empty[hidden] {
+  display: none;
+}
+
+/* CRYSTAL FILTERS */
+
+.crystal-filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 8px;
+  margin: 12px 0;
+  border: 1px solid #ffffffa6;
+  border-radius: 10px;
+  background: #20232b59;
+}
+
+.crystal-button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 2px solid #ffffffa6;
+  border-radius: 50%;
+  background: var(--crystal);
+  box-shadow:
+    inset 0 0 8px #ffffff55,
+    0 2px 7px #0005;
+}
+
+.crystal-button:hover {
+  transform: scale(1.12);
+}
+
+.crystal-button.active {
+  transform: scale(1.1);
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px #222a,
+    0 0 0 5px #fff,
+    0 0 16px var(--crystal);
+}
+
+.crystal-label {
+  text-align: center;
+  font-size: 11px;
+  margin: 6px 0 2px;
+}
+
+/* PLACEHOLDER CARDS */
+
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10%;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      var(--gem),
+      transparent 55%
+    ),
+    linear-gradient(145deg, #3b3d52, #161723);
+  border: 1px solid #fff;
+  color: white;
+  aspect-ratio: 63/88;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.gem-icon {
+  font-size: clamp(15px, 3vw, 33px);
+  filter: drop-shadow(0 0 9px var(--gem));
+}
+
+.mini-name {
+  font-size: clamp(8px, 1vw, 13px);
+  font-weight: bold;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 4px black;
+}
+
+.mini-cost {
+  align-self: flex-start;
+  background: #000a;
+  border: 1px solid #fff;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.mini-stats {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.slot .mini-card {
+  width: 100%;
+  height: 100%;
+  padding: 5%;
+}
+
+.slot .mini-name {
+  font-size: clamp(5px, .65vw, 10px);
+}
+
+.slot .gem-icon {
+  font-size: clamp(10px, 1.5vw, 22px);
+}
+
+.slot .mini-cost,
+.slot .mini-stats {
+  font-size: 8px;
+}
+
+/* YOUR BUILD */
+
+.build-panel {
+  grid-column: 1 / -1;
+}
+
+.build-inner {
+  max-width: 650px;
+  margin: auto;
+}
+
+/* DESKTOP ALIGNMENT */
+
+@media (min-width: 1101px) {
+  .filters-panel,
+  .deck-panel,
+  .library-panel {
+    align-self: stretch;
+  }
+}
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .filters-panel,
+  .deck-panel,
+  .library-panel,
+  .build-panel {
+    grid-column: 1;
+    height: auto;
+  }
+
+  .card-preview-image {
+    max-width: 400px;
+    margin: auto;
+  }
+
+  .library-grid {
+    max-height: 65vh;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+
+  .filters-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .deck-panel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .library-panel {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .build-panel {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .deck-slots {
+    gap: 3px;
+  }
+
+  .slot {
+    padding: 1px;
+    border-radius: 3px;
+  }
+
+  .slot-number {
+    font-size: 7px;
+  }
+
+  .slot-plus {
+    font-size: 13px;
+  }
+
+  .panel {
+    padding: 10px;
+  }
+
+  .library-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .crystal-filters {
+    gap: 13px;
+  }
+
+  .crystal-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hero {
+    padding: 20px 10px;
+  }
+
+  .card-preview-image {
+    max-width: 260px;
+  }
+}
+
+footer {
+  text-align: center;
+  font-size: 11px;
+  padding: 15px 10px 30px;
 }
 </style>
 </head>
+
 <body>
 
 <header class="hero">
-  <img src="frlogotext.png" alt="Fractured Realms" class="logo-text">
+  <img
+    src="frlogotext.png"
+    alt="Fractured Realms"
+    class="logo-text"
+  >
   <p class="hero-subtitle">DECK BUILDER</p>
 </header>
 
 <main class="layout">
 
-<!-- LEFT: PREVIEW AND FILTERS -->
+<!-- LEFT: CARD PREVIEW AND FILTERS -->
+
 <aside class="panel filters-panel">
 
   <div class="card-preview-area">
+
     <div class="card-preview-image" id="largeCardPreview">
       <div class="card-preview-placeholder">
         Hover over a card to see an enlarged version here.
       </div>
     </div>
+
     <div class="preview-card-name" id="previewCardName"></div>
+
     <div class="card-preview-caption">
       Hover over a card in the library or deck to preview it.
     </div>
+
   </div>
 
   <h2>Card Filters</h2>
+
   <label for="search">Search card name</label>
-  <input id="search" type="search" placeholder="Search cards...">
+  <input
+    id="search"
+    type="search"
+    placeholder="Search cards..."
+  >
+
   <label for="cost">Cost</label>
   <select id="cost"></select>
+
   <label for="power">Power</label>
   <select id="power"></select>
+
   <label for="health">Health</label>
   <select id="health"></select>
-  <label for="type">Card type</label>
-  <select id="type"></select>
-  <label for="unitType">Unit type</label>
-  <select id="unitType"></select>
-  <label for="keyword">Keyword</label>
-  <select id="keyword"></select>
-  <label for="lifeTrigger">Life trigger</label>
-  <select id="lifeTrigger"></select>
-  <label for="rarity">Rarity</label>
-  <select id="rarity"></select>
+
+  <!-- COLLAPSIBLE ADVANCED FILTERS -->
+
+  <details class="advanced-filters">
+
+    <summary>Advanced Filters</summary>
+
+    <div class="advanced-filters-content">
+
+      <label for="type">Card type</label>
+      <select id="type"></select>
+
+      <label for="unitType">Unit type</label>
+      <select id="unitType"></select>
+
+      <label for="keyword">Keyword</label>
+      <select id="keyword"></select>
+
+      <label for="lifeTrigger">Life trigger</label>
+      <select id="lifeTrigger"></select>
+
+      <label for="rarity">Rarity</label>
+      <select id="rarity"></select>
+
+    </div>
+
+  </details>
+
   <div class="actions">
-    <button class="btn" id="resetFilters">Reset filters</button>
+    <button class="btn" id="resetFilters">
+      Reset filters
+    </button>
   </div>
+
 </aside>
 
-<!-- CENTRE: DECK -->
+<!-- CENTRE: DECK BUILDER -->
+
 <section class="panel deck-panel">
+
   <div class="section-top">
     <h2>Deck Builder</h2>
     <span class="count" id="deckCount">0 / 45</span>
   </div>
+
   <div class="sort-area">
-    <button class="btn gold" id="sortDeckButton">Sort</button>
-    <p class="hint">Units → Actions → Tools · Cost low to high · A–Z</p>
+    <button class="btn gold" id="sortDeckButton">
+      Sort
+    </button>
+
+    <p class="hint">
+      Units → Actions → Tools · Cost low to high · A–Z
+    </p>
   </div>
+
   <div class="progress">
     <div class="progress-fill" id="progress"></div>
   </div>
+
   <p class="deck-status" id="deckStatus" aria-live="polite">
     Loading card database...
   </p>
+
   <div class="deck-slots" id="deckSlots"></div>
+
 </section>
 
 <!-- RIGHT: CARD LIBRARY -->
+
 <section class="panel library-panel">
+
   <div class="section-top">
     <h2>Card Library</h2>
     <span class="count" id="libraryCount">Loading...</span>
   </div>
 
-  <p class="crystal-label">Filter by crystal colour · Select multiple</p>
-  <div id="crystalFilters" class="crystal-filters"
-       role="group" aria-label="Filter cards by crystal colour"></div>
+  <p class="crystal-label">
+    Filter by crystal colour · Select multiple
+  </p>
+
+  <div
+    id="crystalFilters"
+    class="crystal-filters"
+    role="group"
+    aria-label="Filter cards by crystal colour"
+  ></div>
+
   <div class="divider"></div>
+
   <div class="library-grid" id="cardGrid"></div>
+
   <div class="empty" id="emptyResults" hidden>
     No cards match your filters.
   </div>
+
 </section>
 
 <!-- BOTTOM: YOUR BUILD -->
+
 <section class="panel build-panel">
+
   <div class="build-inner">
+
     <h2>Your Build</h2>
+
     <label for="deckName">Deck name</label>
-    <input id="deckName" value="My Fractured Deck">
+
+    <input
+      id="deckName"
+      value="My Fractured Deck"
+    >
+
     <div class="actions">
       <button class="btn gold" id="saveDeck">Save</button>
       <button class="btn" id="loadDeck">Load</button>
     </div>
+
     <div class="actions">
-      <button class="btn" id="exportDeck">Export JSON</button>
-      <button class="btn" id="importDeck">Import JSON</button>
+      <button class="btn" id="exportDeck">
+        Export JSON
+      </button>
+      <button class="btn" id="importDeck">
+        Import JSON
+      </button>
     </div>
-    <input type="file" id="importFile"
-           accept=".json,application/json" hidden>
-    <button class="btn" id="clearDeck">Clear Deck</button>
+
+    <input
+      type="file"
+      id="importFile"
+      accept=".json,application/json"
+      hidden
+    >
+
+    <button class="btn" id="clearDeck">
+      Clear Deck
+    </button>
+
     <p class="hint">
       Click a library card to add it to your deck.
       Tap a card in your deck to remove one copy.
@@ -265,14 +894,21 @@ body{background-attachment:scroll}
       Press Sort whenever you want to organise your cards.
       Maximum three copies per card, or one if Singleton.
     </p>
+
   </div>
+
 </section>
 
 </main>
 
-<footer>Fractured Realms · Deck Builder</footer>
+<footer>
+  Fractured Realms · Deck Builder
+</footer>
 
 <script>
+
+/* CONFIGURATION */
+
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQs1xYztQEt5X7N_g0qyC6mH3bJp-ygo9jlf_1MHFeoaKvQji0tZrj23nVDQ-JBwgG6cZfyF-FYPsND/pub?output=csv";
 
@@ -287,6 +923,8 @@ let draggingCard = null;
 
 const activeColours = new Set();
 const $ = id => document.getElementById(id);
+
+/* HELPERS */
 
 function slugify(value) {
   return String(value ?? "")
@@ -324,10 +962,14 @@ function splitValues(value) {
 
 function numberOrNull(value) {
   const text = String(value ?? "").trim();
+
   if (!text) return null;
+
   const number = Number(text);
   return Number.isFinite(number) ? number : null;
 }
+
+/* CSV PARSER */
 
 function parseCSV(text) {
   const rows = [];
@@ -350,8 +992,17 @@ function parseCSV(text) {
     } else if (char === "," && !quoted) {
       row.push(field);
       field = "";
-    } else if ((char === "\n" || char === "\r") && !quoted) {
-      if (char === "\r" && text[i + 1] === "\n") i++;
+    } else if (
+      (char === "\n" || char === "\r") &&
+      !quoted
+    ) {
+      if (
+        char === "\r" &&
+        text[i + 1] === "\n"
+      ) {
+        i++;
+      }
+
       row.push(field);
       rows.push(row);
       row = [];
@@ -361,7 +1012,9 @@ function parseCSV(text) {
     }
   }
 
-  if (quoted) throw Error("Unclosed CSV quotation mark");
+  if (quoted) {
+    throw Error("Unclosed CSV quotation mark");
+  }
 
   if (field !== "" || row.length) {
     row.push(field);
@@ -378,10 +1031,20 @@ function imageCandidates(name) {
     .trim()
     .normalize("NFC");
 
-  const straight = original.replace(/[\u2018\u2019]/g, "'");
-  const curly = straight.replace(/'/g, "\u2019");
+  const straight = original.replace(
+    /[\u2018\u2019]/g,
+    "'"
+  );
+
+  const curly = straight.replace(
+    /'/g,
+    "\u2019"
+  );
+
   const none = straight.replace(/'/g, "");
-  const spaced = straight.replace(/'/g, " ")
+
+  const spaced = straight
+    .replace(/'/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -403,10 +1066,13 @@ function imageCandidates(name) {
 
   return names.flatMap(filename =>
     extensions.map(ext =>
-      IMAGE_FOLDER + encodeURIComponent(filename + ext)
+      IMAGE_FOLDER +
+      encodeURIComponent(filename + ext)
     )
   );
 }
+
+/* KEYWORDS */
 
 const knownKeywords = [
   "Alt Summon",
@@ -436,13 +1102,17 @@ function extractKeywords(row) {
 
   if (
     String(row["Life Trigger"] ?? "").trim() &&
-    !found.some(k => normalise(k) === "life trigger")
+    !found.some(
+      k => normalise(k) === "life trigger"
+    )
   ) {
     found.push("Life Trigger");
   }
 
   return [...new Set(found)];
 }
+
+/* SORTING */
 
 function cardTypeRank(card) {
   const type = normalise(card.type);
@@ -456,25 +1126,42 @@ function cardTypeRank(card) {
 
 function compareCards(a, b) {
   const t = cardTypeRank(a) - cardTypeRank(b);
+
   if (t) return t;
 
-  if (a.cost == null && b.cost != null) return 1;
-  if (b.cost == null && a.cost != null) return -1;
+  if (
+    a.cost == null &&
+    b.cost != null
+  ) return 1;
+
+  if (
+    b.cost == null &&
+    a.cost != null
+  ) return -1;
 
   const c = (a.cost ?? 0) - (b.cost ?? 0);
 
-  return c || a.name.localeCompare(b.name, undefined, {
-    numeric: true,
-    sensitivity: "base"
-  });
+  return c || a.name.localeCompare(
+    b.name,
+    undefined,
+    {
+      numeric: true,
+      sensitivity: "base"
+    }
+  );
 }
+
+/* GOOGLE SHEETS TO CARDS */
 
 function sheetToCards(csv) {
   const rows = parseCSV(csv);
-  const headers = (rows.shift() || []).map(h => h.trim());
+  const headers = (rows.shift() || [])
+    .map(h => h.trim());
 
   if (!headers.includes("Name")) {
-    throw Error("The spreadsheet needs a Name column");
+    throw Error(
+      "The spreadsheet needs a Name column"
+    );
   }
 
   const used = new Set();
@@ -512,22 +1199,30 @@ function sheetToCards(csv) {
       singleton: /\bsingleton\b/i.test(mainEffect),
       images: imageCandidates(name)
     };
+
   }).filter(Boolean).sort(compareCards);
 }
 
+/* LOAD CARD DATABASE */
+
 async function loadCards() {
-  updateStatus("Loading cards from Google Sheets...");
+  updateStatus(
+    "Loading cards from Google Sheets..."
+  );
 
   try {
-    const response = await fetch(SHEET_CSV_URL, {
-      cache: "no-store"
-    });
+    const response = await fetch(
+      SHEET_CSV_URL,
+      { cache: "no-store" }
+    );
 
     if (!response.ok) {
       throw Error("HTTP " + response.status);
     }
 
-    const loaded = sheetToCards(await response.text());
+    const loaded = sheetToCards(
+      await response.text()
+    );
 
     if (!loaded.length) {
       throw Error("No cards found");
@@ -542,16 +1237,24 @@ async function loadCards() {
     let saved = null;
 
     try {
-      saved = localStorage.getItem(STORAGE_KEY);
+      saved = localStorage.getItem(
+        STORAGE_KEY
+      );
     } catch (e) {
-      console.warn("Local storage unavailable", e);
+      console.warn(
+        "Local storage unavailable",
+        e
+      );
     }
 
     if (saved) {
       try {
         restoreDeck(JSON.parse(saved));
       } catch (error) {
-        console.warn("Saved deck could not be restored", error);
+        console.warn(
+          "Saved deck could not be restored",
+          error
+        );
         renderDeck();
       }
     } else {
@@ -561,13 +1264,21 @@ async function loadCards() {
     updateStatus("");
 
   } catch (error) {
-    console.error("Google Sheets loading error:", error);
-    $("libraryCount").textContent = "Unavailable";
+    console.error(
+      "Google Sheets loading error:",
+      error
+    );
+
+    $("libraryCount").textContent =
+      "Unavailable";
+
     updateStatus(
       "Unable to load Google Sheets. Please refresh to try again."
     );
   }
 }
+
+/* CRYSTAL COLOURS */
 
 const crystalColours = {
   Red: "#f16c80",
@@ -580,30 +1291,50 @@ const crystalColours = {
 };
 
 function crystalColour(card) {
-  const match = Object.keys(crystalColours).find(
-    key => normalise(key) === normalise(card.colours[0])
+  const match = Object.keys(
+    crystalColours
+  ).find(
+    key =>
+      normalise(key) ===
+      normalise(card.colours[0])
   );
 
   return crystalColours[match] || "#f5dfff";
 }
 
+/* CARD ARTWORK */
+
 function cardPlaceholder(card) {
   return `
-    <div class="mini-card" style="--gem:${crystalColour(card)}">
-      <span class="mini-cost">${card.cost ?? "✦"}</span>
+    <div class="mini-card"
+         style="--gem:${crystalColour(card)}">
+
+      <span class="mini-cost">
+        ${card.cost ?? "✦"}
+      </span>
+
       <span class="gem-icon">◆</span>
-      <span class="mini-name">${escapeHTML(card.name)}</span>
-      <span class="mini-stats">${
-        card.power == null
-          ? ""
-          : `${card.power} / ${card.health ?? "–"}`
-      }</span>
+
+      <span class="mini-name">
+        ${escapeHTML(card.name)}
+      </span>
+
+      <span class="mini-stats">
+        ${
+          card.power == null
+            ? ""
+            : `${card.power} / ${card.health ?? "–"}`
+        }
+      </span>
+
     </div>
   `;
 }
 
 function cardArtwork(card) {
-  const wrapper = document.createElement("div");
+  const wrapper = document.createElement(
+    "div"
+  );
 
   wrapper.style.width = "100%";
   wrapper.style.height = "100%";
@@ -617,7 +1348,9 @@ function cardArtwork(card) {
 
   let attempt = 0;
 
-  const candidates = card.images || imageCandidates(card.name);
+  const candidates =
+    card.images ||
+    imageCandidates(card.name);
 
   img.onerror = () => {
     attempt++;
@@ -625,7 +1358,8 @@ function cardArtwork(card) {
     if (attempt < candidates.length) {
       img.src = candidates[attempt];
     } else {
-      wrapper.innerHTML = cardPlaceholder(card);
+      wrapper.innerHTML =
+        cardPlaceholder(card);
     }
   };
 
@@ -634,13 +1368,14 @@ function cardArtwork(card) {
   if (candidates.length) {
     img.src = candidates[0];
   } else {
-    wrapper.innerHTML = cardPlaceholder(card);
+    wrapper.innerHTML =
+      cardPlaceholder(card);
   }
 
   return wrapper;
 }
 
-/* ENLARGED CARD PREVIEW */
+/* LARGE CARD PREVIEW */
 
 function previewCard(card) {
   if (!card) return;
@@ -648,14 +1383,20 @@ function previewCard(card) {
   selectedCard = card.id;
 
   const preview = $("largeCardPreview");
+
   preview.innerHTML = "";
   preview.appendChild(cardArtwork(card));
 
-  $("previewCardName").textContent = card.name;
+  $("previewCardName").textContent =
+    card.name;
 }
 
+/* DECK HELPERS */
+
 function getCard(id) {
-  return cards.find(card => card.id === id);
+  return cards.find(
+    card => card.id === id
+  );
 }
 
 function updateStatus(message) {
@@ -667,7 +1408,9 @@ function setDeckOrder(ids) {
 
   deck = [
     ...valid,
-    ...Array(MAX_CARDS - valid.length).fill(null)
+    ...Array(
+      MAX_CARDS - valid.length
+    ).fill(null)
   ];
 
   renderDeck();
@@ -677,11 +1420,22 @@ function sortDeck() {
   const sorted = deck
     .filter(Boolean)
     .filter(id => getCard(id))
-    .sort((a, b) => compareCards(getCard(a), getCard(b)));
+    .sort(
+      (a, b) =>
+        compareCards(
+          getCard(a),
+          getCard(b)
+        )
+    );
 
   setDeckOrder(sorted);
-  updateStatus("Deck sorted successfully.");
+
+  updateStatus(
+    "Deck sorted successfully."
+  );
 }
+
+/* FILTER SETUP */
 
 function uniqueValues(field) {
   const values = cards.flatMap(card => {
@@ -689,7 +1443,9 @@ function uniqueValues(field) {
 
     return Array.isArray(value)
       ? value
-      : value === null || value === undefined || value === ""
+      : value === null ||
+        value === undefined ||
+        value === ""
         ? []
         : [value];
   });
@@ -698,15 +1454,22 @@ function uniqueValues(field) {
 
   values.forEach(value => {
     const key = normalise(value);
-    if (!unique.has(key)) unique.set(key, value);
+
+    if (!unique.has(key)) {
+      unique.set(key, value);
+    }
   });
 
-  return [...unique.values()].sort((a, b) =>
-    typeof a === "number" && typeof b === "number"
-      ? a - b
-      : String(a).localeCompare(String(b), undefined, {
-          sensitivity: "base"
-        })
+  return [...unique.values()].sort(
+    (a, b) =>
+      typeof a === "number" &&
+      typeof b === "number"
+        ? a - b
+        : String(a).localeCompare(
+            String(b),
+            undefined,
+            { sensitivity: "base" }
+          )
   );
 }
 
@@ -716,41 +1479,96 @@ function fillSelect(id, values, allLabel) {
 
   select.innerHTML = "";
 
-  const all = document.createElement("option");
+  const all = document.createElement(
+    "option"
+  );
+
   all.value = "";
   all.textContent = allLabel;
+
   select.appendChild(all);
 
   values.forEach(value => {
-    const option = document.createElement("option");
+    const option = document.createElement(
+      "option"
+    );
+
     option.value = String(value);
     option.textContent = value;
+
     select.appendChild(option);
   });
 
-  if ([...select.options].some(o => o.value === previous)) {
+  if (
+    [...select.options].some(
+      o => o.value === previous
+    )
+  ) {
     select.value = previous;
   }
 }
 
 function setupFilters() {
-  fillSelect("cost", uniqueValues("cost"), "Any cost");
-  fillSelect("power", uniqueValues("power"), "Any power");
-  fillSelect("health", uniqueValues("health"), "Any health");
+  fillSelect(
+    "cost",
+    uniqueValues("cost"),
+    "Any cost"
+  );
+
+  fillSelect(
+    "power",
+    uniqueValues("power"),
+    "Any power"
+  );
+
+  fillSelect(
+    "health",
+    uniqueValues("health"),
+    "Any health"
+  );
 
   const types = [...new Map(
     cards
-      .flatMap(card => splitValues(card.type))
+      .flatMap(card =>
+        splitValues(card.type)
+      )
       .map(t => [normalise(t), t])
-  ).values()].sort((a, b) => a.localeCompare(b));
+  ).values()].sort(
+    (a, b) => a.localeCompare(b)
+  );
 
-  fillSelect("type", types, "All card types");
-  fillSelect("unitType", uniqueValues("unitTypes"), "All unit types");
-  fillSelect("keyword", uniqueValues("keywords"), "All keywords");
-  fillSelect("rarity", uniqueValues("rarity"), "All rarities");
-  fillSelect("lifeTrigger", ["Yes", "No"], "Any life trigger");
+  fillSelect(
+    "type",
+    types,
+    "All card types"
+  );
+
+  fillSelect(
+    "unitType",
+    uniqueValues("unitTypes"),
+    "All unit types"
+  );
+
+  fillSelect(
+    "keyword",
+    uniqueValues("keywords"),
+    "All keywords"
+  );
+
+  fillSelect(
+    "rarity",
+    uniqueValues("rarity"),
+    "All rarities"
+  );
+
+  fillSelect(
+    "lifeTrigger",
+    ["Yes", "No"],
+    "Any life trigger"
+  );
 
   if (setupFilters.ready) return;
+
   setupFilters.ready = true;
 
   [
@@ -765,16 +1583,25 @@ function setupFilters() {
     "lifeTrigger"
   ].forEach(id => {
     $(id).addEventListener(
-      id === "search" ? "input" : "change",
+      id === "search"
+        ? "input"
+        : "change",
       renderLibrary
     );
   });
 }
 
-function matchesFilters(card) {
-  const query = normalise($("search").value);
+/* FILTER MATCHING */
 
-  if (query && !normalise(card.name).includes(query)) {
+function matchesFilters(card) {
+  const query = normalise(
+    $("search").value
+  );
+
+  if (
+    query &&
+    !normalise(card.name).includes(query)
+  ) {
     return false;
   }
 
@@ -786,24 +1613,40 @@ function matchesFilters(card) {
     ["unitType", card.unitTypes],
     ["keyword", card.keywords],
     ["rarity", card.rarity],
-    ["lifeTrigger", card.lifeTrigger.trim() ? "Yes" : "No"]
+    [
+      "lifeTrigger",
+      card.lifeTrigger.trim()
+        ? "Yes"
+        : "No"
+    ]
   ];
 
-  if (!comparisons.every(([id, value]) => {
-    const filter = $(id).value;
-    if (!filter) return true;
+  if (!comparisons.every(
+    ([id, value]) => {
+      const filter = $(id).value;
 
-    return Array.isArray(value)
-      ? value.some(item => normalise(item) === normalise(filter))
-      : normalise(value) === normalise(filter);
-  })) {
+      if (!filter) return true;
+
+      return Array.isArray(value)
+        ? value.some(
+            item =>
+              normalise(item) ===
+              normalise(filter)
+          )
+        : normalise(value) ===
+          normalise(filter);
+    }
+  )) {
     return false;
   }
 
   if (
     activeColours.size &&
-    !card.colours.some(colour =>
-      activeColours.has(normalise(colour))
+    !card.colours.some(
+      colour =>
+        activeColours.has(
+          normalise(colour)
+        )
     )
   ) {
     return false;
@@ -812,149 +1655,260 @@ function matchesFilters(card) {
   return true;
 }
 
+/* CRYSTAL FILTER BUTTONS */
+
 function renderCrystalFilters() {
   const container = $("crystalFilters");
+
   container.innerHTML = "";
 
   const available = new Set(
-    cards.flatMap(card => card.colours.map(normalise))
+    cards.flatMap(
+      card =>
+        card.colours.map(normalise)
+    )
   );
 
-  Object.keys(crystalColours).forEach(name => {
-    if (!available.has(normalise(name))) return;
-
-    const button = document.createElement("button");
-    const selected = activeColours.has(normalise(name));
-
-    button.type = "button";
-    button.className = "crystal-button" + (selected ? " active" : "");
-
-    button.style.setProperty(
-      "--crystal",
-      crystalColours[name]
-    );
-
-    button.title = name;
-    button.setAttribute("aria-label", `Filter by ${name}`);
-    button.setAttribute("aria-pressed", String(selected));
-
-    button.addEventListener("click", () => {
-      const key = normalise(name);
-
-      if (activeColours.has(key)) {
-        activeColours.delete(key);
-      } else {
-        activeColours.add(key);
+  Object.keys(crystalColours).forEach(
+    name => {
+      if (
+        !available.has(normalise(name))
+      ) {
+        return;
       }
 
-      renderCrystalFilters();
-      renderLibrary();
-    });
+      const button =
+        document.createElement("button");
 
-    container.appendChild(button);
-  });
+      const selected =
+        activeColours.has(
+          normalise(name)
+        );
+
+      button.type = "button";
+
+      button.className =
+        "crystal-button" +
+        (selected ? " active" : "");
+
+      button.style.setProperty(
+        "--crystal",
+        crystalColours[name]
+      );
+
+      button.title = name;
+
+      button.setAttribute(
+        "aria-label",
+        `Filter by ${name}`
+      );
+
+      button.setAttribute(
+        "aria-pressed",
+        String(selected)
+      );
+
+      button.addEventListener(
+        "click",
+        () => {
+          const key = normalise(name);
+
+          if (
+            activeColours.has(key)
+          ) {
+            activeColours.delete(key);
+          } else {
+            activeColours.add(key);
+          }
+
+          renderCrystalFilters();
+          renderLibrary();
+        }
+      );
+
+      container.appendChild(button);
+    }
+  );
 }
+
+/* REMOVE CARD FROM LIBRARY */
 
 function removeOneCopy(card) {
   previewCard(card);
 
-  const index = deck.lastIndexOf(card.id);
+  const index = deck.lastIndexOf(
+    card.id
+  );
 
   if (index < 0) {
-    updateStatus(`${card.name} is not in your deck.`);
+    updateStatus(
+      `${card.name} is not in your deck.`
+    );
     return;
   }
 
   removeCard(index);
 }
 
+/* RENDER LIBRARY */
+
 function renderLibrary() {
   const grid = $("cardGrid");
+
   grid.innerHTML = "";
 
-  const filtered = cards.filter(matchesFilters);
+  const filtered =
+    cards.filter(matchesFilters);
 
-  $("libraryCount").textContent = `${filtered.length} cards`;
-  $("emptyResults").hidden = filtered.length > 0;
+  $("libraryCount").textContent =
+    `${filtered.length} cards`;
+
+  $("emptyResults").hidden =
+    filtered.length > 0;
 
   filtered.forEach(card => {
-    const item = document.createElement("div");
+    const item =
+      document.createElement("div");
 
     item.className = "library-card";
     item.tabIndex = 0;
-    item.setAttribute("role", "button");
-    item.setAttribute("aria-label", `Add ${card.name} to deck`);
+
+    item.setAttribute(
+      "role",
+      "button"
+    );
+
+    item.setAttribute(
+      "aria-label",
+      `Add ${card.name} to deck`
+    );
+
     item.draggable = true;
 
-    if (selectedCard === card.id) {
+    if (
+      selectedCard === card.id
+    ) {
       item.classList.add("selected");
     }
 
-    item.appendChild(cardArtwork(card));
+    item.appendChild(
+      cardArtwork(card)
+    );
 
-    const name = document.createElement("div");
+    const name =
+      document.createElement("div");
+
     name.className = "card-name";
     name.textContent = card.name;
+
     item.appendChild(name);
 
-    item.addEventListener("mouseenter", () => previewCard(card));
-    item.addEventListener("focus", () => previewCard(card));
+    item.addEventListener(
+      "mouseenter",
+      () => previewCard(card)
+    );
 
-    item.addEventListener("click", () => {
-      previewCard(card);
-      addCard(card.id);
-    });
+    item.addEventListener(
+      "focus",
+      () => previewCard(card)
+    );
 
-    item.addEventListener("contextmenu", event => {
-      event.preventDefault();
-      removeOneCopy(card);
-    });
-
-    item.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
+    item.addEventListener(
+      "click",
+      () => {
         previewCard(card);
         addCard(card.id);
       }
+    );
 
-      if (event.key === "Backspace" || event.key === "Delete") {
+    item.addEventListener(
+      "contextmenu",
+      event => {
         event.preventDefault();
         removeOneCopy(card);
       }
-    });
+    );
 
-    item.addEventListener("dragstart", event => {
-      draggingCard = card.id;
-      event.dataTransfer.setData("text/plain", card.id);
-      event.dataTransfer.effectAllowed = "copy";
-    });
+    item.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          previewCard(card);
+          addCard(card.id);
+        }
 
-    item.addEventListener("dragend", () => {
-      draggingCard = null;
-    });
+        if (
+          event.key === "Backspace" ||
+          event.key === "Delete"
+        ) {
+          event.preventDefault();
+          removeOneCopy(card);
+        }
+      }
+    );
+
+    item.addEventListener(
+      "dragstart",
+      event => {
+        draggingCard = card.id;
+
+        event.dataTransfer.setData(
+          "text/plain",
+          card.id
+        );
+
+        event.dataTransfer.effectAllowed =
+          "copy";
+      }
+    );
+
+    item.addEventListener(
+      "dragend",
+      () => {
+        draggingCard = null;
+      }
+    );
 
     grid.appendChild(item);
   });
 }
 
+/* CARD LIMITS */
+
 function cardLimit(card) {
   return card.singleton ? 1 : 3;
 }
 
+/* ADD CARD */
+
 function addCard(cardId) {
   const card = getCard(cardId);
+
   if (!card) return;
 
-  const filled = deck.filter(Boolean);
+  const filled =
+    deck.filter(Boolean);
 
-  if (filled.length >= MAX_CARDS) {
-    updateStatus("Deck is full (45 cards).");
+  if (
+    filled.length >= MAX_CARDS
+  ) {
+    updateStatus(
+      "Deck is full (45 cards)."
+    );
     return;
   }
 
-  const copies = filled.filter(id => id === cardId).length;
+  const copies = filled.filter(
+    id => id === cardId
+  ).length;
 
-  if (copies >= cardLimit(card)) {
+  if (
+    copies >= cardLimit(card)
+  ) {
     updateStatus(
       card.singleton
         ? `${card.name} is Singleton: only 1 copy per deck.`
@@ -963,40 +1917,64 @@ function addCard(cardId) {
     return;
   }
 
-  const lastCopy = filled.lastIndexOf(cardId);
+  const lastCopy =
+    filled.lastIndexOf(cardId);
 
   if (lastCopy >= 0) {
-    filled.splice(lastCopy + 1, 0, cardId);
+    filled.splice(
+      lastCopy + 1,
+      0,
+      cardId
+    );
   } else {
     filled.push(cardId);
   }
 
   setDeckOrder(filled);
-  updateStatus(`${card.name} added to your deck.`);
+
+  updateStatus(
+    `${card.name} added to your deck.`
+  );
 }
+
+/* REMOVE CARD */
 
 function removeCard(index) {
   if (!deck[index]) return;
 
-  const card = getCard(deck[index]);
-  const filled = deck.filter(Boolean);
+  const card =
+    getCard(deck[index]);
+
+  const filled =
+    deck.filter(Boolean);
 
   filled.splice(index, 1);
 
   setDeckOrder(filled);
-  updateStatus(`${card?.name || "Card"} removed from your deck.`);
+
+  updateStatus(
+    `${card?.name || "Card"} removed from your deck.`
+  );
 }
+
+/* RENDER DECK */
 
 function renderDeck() {
   const slots = $("deckSlots");
+
   slots.innerHTML = "";
 
   deck.forEach((cardId, index) => {
-    const slot = document.createElement("div");
+    const slot =
+      document.createElement("div");
 
     slot.className = "slot";
     slot.tabIndex = 0;
-    slot.setAttribute("role", "button");
+
+    slot.setAttribute(
+      "role",
+      "button"
+    );
 
     slot.setAttribute(
       "aria-label",
@@ -1005,98 +1983,176 @@ function renderDeck() {
         : `Empty slot ${index + 1}`
     );
 
-    const number = document.createElement("span");
-    number.className = "slot-number";
-    number.textContent = index + 1;
+    const number =
+      document.createElement("span");
+
+    number.className =
+      "slot-number";
+
+    number.textContent =
+      index + 1;
+
     slot.appendChild(number);
 
     if (cardId) {
       slot.classList.add("filled");
+
       const card = getCard(cardId);
 
       if (card) {
-        slot.appendChild(cardArtwork(card));
+        slot.appendChild(
+          cardArtwork(card)
+        );
 
-        // Preview cards in deck slots too
-        slot.addEventListener("mouseenter", () => previewCard(card));
-        slot.addEventListener("focus", () => previewCard(card));
+        slot.addEventListener(
+          "mouseenter",
+          () => previewCard(card)
+        );
+
+        slot.addEventListener(
+          "focus",
+          () => previewCard(card)
+        );
       }
+
     } else {
-      const plus = document.createElement("span");
-      plus.className = "slot-plus";
+      const plus =
+        document.createElement("span");
+
+      plus.className =
+        "slot-plus";
+
       plus.textContent = "+";
+
       slot.appendChild(plus);
     }
 
     const activateSlot = () => {
       if (cardId) {
         const card = getCard(cardId);
-        if (card) previewCard(card);
+
+        if (card) {
+          previewCard(card);
+        }
+
         removeCard(index);
+
       } else if (selectedCard) {
         addCard(selectedCard);
+
       } else {
-        updateStatus("Select a card from the library first.");
+        updateStatus(
+          "Select a card from the library first."
+        );
       }
     };
 
-    slot.addEventListener("click", activateSlot);
+    slot.addEventListener(
+      "click",
+      activateSlot
+    );
 
-    slot.addEventListener("contextmenu", event => {
-      event.preventDefault();
-      if (cardId) removeCard(index);
-    });
-
-    slot.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
+    slot.addEventListener(
+      "contextmenu",
+      event => {
         event.preventDefault();
-        activateSlot();
+
+        if (cardId) {
+          removeCard(index);
+        }
       }
-    });
+    );
 
-    slot.addEventListener("dragover", event => {
-      event.preventDefault();
-      slot.classList.add("drag-over");
-    });
-
-    slot.addEventListener("dragleave", () => {
-      slot.classList.remove("drag-over");
-    });
-
-    slot.addEventListener("drop", event => {
-      event.preventDefault();
-      slot.classList.remove("drag-over");
-
-      const id = draggingCard ||
-        event.dataTransfer.getData("text/plain");
-
-      if (id && getCard(id)) {
-        const card = getCard(id);
-        previewCard(card);
-        addCard(id);
+    slot.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          activateSlot();
+        }
       }
+    );
 
-      draggingCard = null;
-    });
+    slot.addEventListener(
+      "dragover",
+      event => {
+        event.preventDefault();
+        slot.classList.add(
+          "drag-over"
+        );
+      }
+    );
+
+    slot.addEventListener(
+      "dragleave",
+      () => {
+        slot.classList.remove(
+          "drag-over"
+        );
+      }
+    );
+
+    slot.addEventListener(
+      "drop",
+      event => {
+        event.preventDefault();
+
+        slot.classList.remove(
+          "drag-over"
+        );
+
+        const id =
+          draggingCard ||
+          event.dataTransfer.getData(
+            "text/plain"
+          );
+
+        if (
+          id &&
+          getCard(id)
+        ) {
+          const card = getCard(id);
+
+          previewCard(card);
+          addCard(id);
+        }
+
+        draggingCard = null;
+      }
+    );
 
     slots.appendChild(slot);
   });
 
-  const count = deck.filter(Boolean).length;
+  const count =
+    deck.filter(Boolean).length;
 
-  $("deckCount").textContent = `${count} / ${MAX_CARDS}`;
-  $("progress").style.width = `${count / MAX_CARDS * 100}%`;
+  $("deckCount").textContent =
+    `${count} / ${MAX_CARDS}`;
+
+  $("progress").style.width =
+    `${count / MAX_CARDS * 100}%`;
 }
+
+/* SAVE / LOAD */
 
 function deckPayload() {
   return {
     game: "Fractured Realms",
     version: 1,
-    name: $("deckName").value.trim() || "Untitled Deck",
+    name:
+      $("deckName").value.trim() ||
+      "Untitled Deck",
     slots: [...deck],
-    cards: deck.filter(Boolean).map(
-      id => getCard(id)?.name || id
-    )
+    cards: deck
+      .filter(Boolean)
+      .map(
+        id =>
+          getCard(id)?.name || id
+      )
   };
 }
 
@@ -1106,15 +2162,26 @@ function saveDeck() {
       STORAGE_KEY,
       JSON.stringify(deckPayload())
     );
-    updateStatus("Deck saved on this device.");
+
+    updateStatus(
+      "Deck saved on this device."
+    );
+
   } catch {
-    updateStatus("Unable to save in this browser.");
+    updateStatus(
+      "Unable to save in this browser."
+    );
   }
 }
 
 function restoreDeck(data) {
-  if (!data || !Array.isArray(data.slots)) {
-    throw Error("Invalid deck format");
+  if (
+    !data ||
+    !Array.isArray(data.slots)
+  ) {
+    throw Error(
+      "Invalid deck format"
+    );
   }
 
   const counts = new Map();
@@ -1122,73 +2189,147 @@ function restoreDeck(data) {
   const restored = Array.from(
     { length: MAX_CARDS },
     (_, index) => {
-      const id = data.slots[index];
-      const card = getCard(id);
+      const id =
+        data.slots[index];
+
+      const card =
+        getCard(id);
 
       if (!card) return null;
 
-      const count = counts.get(id) || 0;
+      const count =
+        counts.get(id) || 0;
 
-      if (count >= cardLimit(card)) return null;
+      if (
+        count >= cardLimit(card)
+      ) {
+        return null;
+      }
 
-      counts.set(id, count + 1);
+      counts.set(
+        id,
+        count + 1
+      );
+
       return id;
     }
   ).filter(Boolean);
 
-  $("deckName").value = data.name || "My Fractured Deck";
+  $("deckName").value =
+    data.name ||
+    "My Fractured Deck";
+
   setDeckOrder(restored);
 }
 
 function loadDeck() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
 
     if (!saved) {
-      updateStatus("No saved deck found on this device.");
+      updateStatus(
+        "No saved deck found on this device."
+      );
       return;
     }
 
-    restoreDeck(JSON.parse(saved));
-    updateStatus("Saved deck loaded.");
+    restoreDeck(
+      JSON.parse(saved)
+    );
+
+    updateStatus(
+      "Saved deck loaded."
+    );
+
   } catch {
-    updateStatus("Unable to load the saved deck.");
+    updateStatus(
+      "Unable to load the saved deck."
+    );
   }
 }
 
+/* EXPORT DECK */
+
 function exportDeck() {
   const blob = new Blob(
-    [JSON.stringify(deckPayload(), null, 2)],
-    { type: "application/json" }
+    [
+      JSON.stringify(
+        deckPayload(),
+        null,
+        2
+      )
+    ],
+    {
+      type: "application/json"
+    }
   );
 
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
 
   link.href = url;
+
   link.download =
-    slugify($("deckName").value.trim() || "fractured-deck") + ".json";
+    slugify(
+      $("deckName").value.trim() ||
+      "fractured-deck"
+    ) + ".json";
 
   document.body.appendChild(link);
+
   link.click();
   link.remove();
 
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  updateStatus("Deck exported as JSON.");
+  setTimeout(
+    () => URL.revokeObjectURL(url),
+    1000
+  );
+
+  updateStatus(
+    "Deck exported as JSON."
+  );
 }
 
-$("sortDeckButton").onclick = sortDeck;
-$("saveDeck").onclick = saveDeck;
-$("loadDeck").onclick = loadDeck;
-$("exportDeck").onclick = exportDeck;
+/* BUTTON EVENTS */
+
+$("sortDeckButton").onclick =
+  sortDeck;
+
+$("saveDeck").onclick =
+  saveDeck;
+
+$("loadDeck").onclick =
+  loadDeck;
+
+$("exportDeck").onclick =
+  exportDeck;
 
 $("clearDeck").onclick = () => {
-  if (!confirm("Clear all 45 deck slots?")) return;
+  if (
+    !confirm(
+      "Clear all 45 deck slots?"
+    )
+  ) {
+    return;
+  }
 
-  deck = Array(MAX_CARDS).fill(null);
+  deck =
+    Array(MAX_CARDS).fill(null);
+
   renderDeck();
-  updateStatus("Deck cleared.");
+
+  updateStatus(
+    "Deck cleared."
+  );
 };
+
+/* RESET FILTERS */
 
 $("resetFilters").onclick = () => {
   $("search").value = "";
@@ -1207,30 +2348,50 @@ $("resetFilters").onclick = () => {
   });
 
   activeColours.clear();
+
   renderCrystalFilters();
   renderLibrary();
 };
+
+/* IMPORT DECK */
 
 $("importDeck").onclick = () => {
   $("importFile").click();
 };
 
-$("importFile").onchange = async event => {
-  const file = event.target.files[0];
-  if (!file) return;
+$("importFile").onchange =
+  async event => {
+    const file =
+      event.target.files[0];
 
-  try {
-    restoreDeck(JSON.parse(await file.text()));
-    updateStatus("Deck imported successfully.");
-  } catch {
-    updateStatus("Could not import that deck file.");
-  }
+    if (!file) return;
 
-  event.target.value = "";
-};
+    try {
+      restoreDeck(
+        JSON.parse(
+          await file.text()
+        )
+      );
+
+      updateStatus(
+        "Deck imported successfully."
+      );
+
+    } catch {
+      updateStatus(
+        "Could not import that deck file."
+      );
+    }
+
+    event.target.value = "";
+  };
+
+/* START WEBSITE */
 
 renderDeck();
 loadCards();
+
 </script>
+
 </body>
 </html>
