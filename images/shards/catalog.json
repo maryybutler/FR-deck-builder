@@ -1,0 +1,33 @@
+
+[
+  {
+    "name": "Blue Shard",
+    "colour": "Blue",
+    "file": "Blue Shard.png"
+  },
+  {
+    "name": "Green Shard",
+    "colour": "Green",
+    "file": "Green Shard.png"
+  },
+  {
+    "name": "Yellow Shard",
+    "colour": "Yellow",
+    "file": "Yellow Shard.png"
+  },
+  {
+    "name": "Purple Shard",
+    "colour": "Purple",
+    "file": "Purple Shard.png"
+  },
+  {
+    "name": "Red Shard",
+    "colour": "Red",
+    "file": "Red Shard.png"
+  },
+  {
+    "name": "Black Shard",
+    "colour": "Black",
+    "file": "Black Shard.png"
+  }
+]
