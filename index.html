@@ -9,8 +9,8 @@
 <style>
 :root {
   --panel: #ffffff47;
-  --text: #fff;
   --gold: #f7ca52;
+  --text: #ffffff;
 }
 
 * { box-sizing: border-box; }
@@ -30,8 +30,7 @@ button { cursor: pointer; }
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
-.slot:focus-visible,
-.library-card:focus-visible {
+[tabindex]:focus-visible {
   outline: 2px solid white;
   outline-offset: 2px;
 }
@@ -81,7 +80,10 @@ select:focus-visible,
   box-shadow: 0 8px 25px #0004;
 }
 
-h2 { margin: 0 0 12px; font-size: 20px; }
+h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
 
 .section-top {
   display: flex;
@@ -295,7 +297,7 @@ select option { background: #343641; }
   color: #eee;
 }
 
-/* LARGER CATALYST */
+/* LARGE CATALYST */
 
 .special-zone {
   min-width: 0;
@@ -332,13 +334,6 @@ select option { background: #343641; }
 
 .special-card .plus { font-size: 40px; }
 .special-card .small { font-size: 12px; }
-
-.special-card-name {
-  font-size: 11px;
-  min-height: 14px;
-  margin-top: 5px;
-  overflow-wrap: anywhere;
-}
 
 /* SHARD FAN */
 
@@ -678,7 +673,7 @@ select option { background: #343641; }
   margin: 6px 0 2px;
 }
 
-/* DEFAULT ARTWORK WHEN PNG IS MISSING */
+/* DEFAULT ARTWORK */
 
 .mini-card {
   display: flex;
@@ -796,7 +791,6 @@ select option { background: #343641; }
   .library-panel { grid-row: 3; }
 
   .panel { padding: 10px; }
-
   .deck-slots { gap: 3px; }
 
   .slot {
@@ -1019,8 +1013,6 @@ footer {
           <span class="plus">+</span>
           <span class="small">Select Catalyst</span>
         </button>
-
-        <div class="special-card-name" id="catalystName"></div>
       </div>
 
       <!-- SHARD DECK -->
@@ -1112,7 +1104,6 @@ const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQs1xYztQEt5X7N_g0qyC6mH3bJp-ygo9jlf_1MHFeoaKvQji0tZrj23nVDQ-JBwgG6cZfyF-FYPsND/pub?output=csv";
 
 const IMAGE_FOLDER = "images/";
-const CATALYST_CATALOG = "images/catalysts/catalog.json";
 const SHARD_CATALOG = "images/shards/catalog.json";
 
 const MAX_CARDS = 45;
@@ -1445,65 +1436,126 @@ function previewCard(card) {
   $("previewCardName").textContent = card.name;
 }
 
-/* CATALYST AND SHARD CATALOGUES */
+/* NUMBERED CATALYSTS: 1.PNG THROUGH 30.PNG */
 
-async function loadCatalogue(url, folder, needsColour = false) {
-  const response = await fetch(url, { cache: "no-store" });
+/*
+  No Catalyst catalog.json required.
 
-  if (!response.ok) throw Error("HTTP " + response.status);
+  The website checks:
+    images/catalyst/1.png
+    images/catalysts/1.png
+
+  and repeats for all 30 cards.
+
+  Only images that actually load are shown.
+*/
+
+function checkImage(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+async function loadNumberedCatalysts() {
+  const numbers = Array.from(
+    { length: 30 },
+    (_, i) => i + 1
+  );
+
+  const results = await Promise.all(
+    numbers.map(async number => {
+      const paths = [
+        `images/catalyst/${number}.png`,
+        `images/catalysts/${number}.png`
+      ];
+
+      for (const src of paths) {
+        if (await checkImage(src)) {
+          return {
+            id: String(number),
+            name: "",
+            file: `${number}.png`,
+            colour: "",
+            src
+          };
+        }
+      }
+
+      return null;
+    })
+  );
+
+  return results.filter(Boolean);
+}
+
+/* SHARD CATALOGUE */
+
+async function loadShardCatalogue() {
+  const response = await fetch(
+    SHARD_CATALOG,
+    { cache: "no-store" }
+  );
+
+  if (!response.ok) {
+    throw Error("Shard catalogue HTTP " + response.status);
+  }
 
   const data = await response.json();
 
   if (!Array.isArray(data)) {
-    throw Error("Catalogue must be a JSON array");
+    throw Error("Shard catalogue must be a JSON array");
   }
 
   return data.filter(item =>
     item &&
     typeof item.name === "string" &&
     typeof item.file === "string" &&
-    (!needsColour || typeof item.colour === "string")
+    typeof item.colour === "string"
   ).map(item => ({
     name: item.name.trim(),
     file: item.file.trim(),
-    colour: needsColour ? item.colour.trim() : "",
+    colour: item.colour.trim(),
     id: slugify(item.name + "-" + item.file),
-    src: imagePath(folder, item.file.trim())
-  })).filter(item => item.name && item.file);
+    src: imagePath("images/shards/", item.file.trim())
+  })).filter(item =>
+    item.name &&
+    item.file &&
+    shardOrder.some(
+      c => normalise(c) === normalise(item.colour)
+    )
+  );
 }
 
 async function loadSpecialCards() {
   const results = await Promise.allSettled([
-    loadCatalogue(
-      CATALYST_CATALOG,
-      "images/catalysts/"
-    ),
-    loadCatalogue(
-      SHARD_CATALOG,
-      "images/shards/",
-      true
-    )
+    loadNumberedCatalysts(),
+    loadShardCatalogue()
   ]);
 
   if (results[0].status === "fulfilled") {
     catalysts = results[0].value;
+
     $("catalystMessage").textContent =
-      catalysts.length ? "" : "No Catalyst cards listed yet.";
+      catalysts.length
+        ? ""
+        : "No numbered Catalyst images found. Check images/catalyst/ or images/catalysts/.";
   } else {
     $("catalystMessage").textContent =
-      "Catalyst catalogue not found. Upload images/catalysts/catalog.json.";
+      "Unable to load Catalyst images.";
   }
 
   if (results[1].status === "fulfilled") {
-    shards = results[1].value.filter(s =>
-      shardOrder.some(c => normalise(c) === normalise(s.colour))
-    );
+    shards = results[1].value;
 
     $("shardMessage").textContent =
       shards.length ? "" : "No Shard cards listed yet.";
   } else {
     $("shardMessage").textContent =
-      "Shard catalogue not found. Upload images/shards/catalog.json.";
+      "Shard catalogue not found. Check images/shards/catalog.json.";
   }
 
   renderSpecialDecks();
@@ -1549,11 +1601,13 @@ function makeMissingImage(name) {
 function makeSpecialImage(item) {
   const img = document.createElement("img");
   img.src = item.src;
-  img.alt = item.name;
+  img.alt = item.name || "Catalyst artwork";
   img.loading = "lazy";
 
   img.onerror = () => {
-    img.replaceWith(makeMissingImage(item.name));
+    img.replaceWith(
+      makeMissingImage(item.name || "Catalyst")
+    );
   };
 
   return img;
@@ -1571,13 +1625,19 @@ function renderCatalyst() {
 
   if (chosen) {
     button.appendChild(makeSpecialImage(chosen));
-    $("catalystName").textContent = chosen.name;
+    button.setAttribute(
+      "aria-label",
+      "Selected Catalyst " + chosen.id + ". Click to change."
+    );
   } else {
     button.innerHTML =
       '<span class="plus">+</span>' +
       '<span class="small">Select Catalyst</span>';
 
-    $("catalystName").textContent = "";
+    button.setAttribute(
+      "aria-label",
+      "Choose Catalyst"
+    );
   }
 
   const grid = $("catalystOptions");
@@ -1590,19 +1650,21 @@ function renderCatalyst() {
       "gallery-option" +
       (selectedCatalyst === card.id ? " active" : "");
 
+    option.title = "Catalyst " + card.id;
+    option.setAttribute(
+      "aria-label",
+      "Select Catalyst " + card.id
+    );
+
     option.appendChild(makeSpecialImage(card));
 
-    const name = document.createElement("div");
-    name.className = "gallery-option-name";
-    name.textContent = card.name;
-
-    option.appendChild(name);
+    /* No extra name or number below the PNG. */
 
     option.onclick = () => {
       selectedCatalyst = card.id;
       $("catalystGallery").hidden = true;
       renderCatalyst();
-      updateStatus(card.name + " selected as Catalyst.");
+      updateStatus("Catalyst selected.");
     };
 
     grid.appendChild(option);
@@ -1698,7 +1760,8 @@ function renderShardGallery() {
     if (!options.length) {
       const msg = document.createElement("div");
       msg.className = "gallery-empty";
-      msg.textContent = "No " + colour + " Shard PNG listed yet.";
+      msg.textContent =
+        "No " + colour + " Shard PNG listed yet.";
       grid.appendChild(msg);
     }
 
@@ -1850,10 +1913,26 @@ function setupFilters() {
   ].sort((a, b) => a.localeCompare(b));
 
   fillSelect("type", types, "All card types");
-  fillSelect("unitType", uniqueValues("unitTypes"), "All unit types");
-  fillSelect("keyword", uniqueValues("keywords"), "All keywords");
-  fillSelect("rarity", uniqueValues("rarity"), "All rarities");
-  fillSelect("lifeTrigger", ["Yes", "No"], "Any life trigger");
+  fillSelect(
+    "unitType",
+    uniqueValues("unitTypes"),
+    "All unit types"
+  );
+  fillSelect(
+    "keyword",
+    uniqueValues("keywords"),
+    "All keywords"
+  );
+  fillSelect(
+    "rarity",
+    uniqueValues("rarity"),
+    "All rarities"
+  );
+  fillSelect(
+    "lifeTrigger",
+    ["Yes", "No"],
+    "Any life trigger"
+  );
 
   if (setupFilters.ready) return;
   setupFilters.ready = true;
@@ -1884,7 +1963,10 @@ function matchesFilters(card) {
     ["unitType", card.unitTypes],
     ["keyword", card.keywords],
     ["rarity", card.rarity],
-    ["lifeTrigger", card.lifeTrigger.trim() ? "Yes" : "No"]
+    [
+      "lifeTrigger",
+      card.lifeTrigger.trim() ? "Yes" : "No"
+    ]
   ];
 
   if (!comparisons.every(([id, value]) => {
@@ -1900,7 +1982,9 @@ function matchesFilters(card) {
 
   if (
     activeColours.size &&
-    !card.colours.some(c => activeColours.has(normalise(c)))
+    !card.colours.some(
+      c => activeColours.has(normalise(c))
+    )
   ) {
     return false;
   }
@@ -1933,7 +2017,10 @@ function renderCrystalFilters() {
 
     button.title = name;
     button.setAttribute("aria-label", "Filter by " + name);
-    button.setAttribute("aria-pressed", String(selected));
+    button.setAttribute(
+      "aria-pressed",
+      String(selected)
+    );
 
     button.onclick = () => {
       const key = normalise(name);
@@ -1973,7 +2060,9 @@ function renderLibrary() {
 
   const filtered = cards.filter(matchesFilters);
 
-  $("libraryCount").textContent = filtered.length + " cards";
+  $("libraryCount").textContent =
+    filtered.length + " cards";
+
   $("emptyResults").hidden = filtered.length > 0;
 
   filtered.forEach(card => {
@@ -2027,7 +2116,10 @@ function renderLibrary() {
         addCard(card.id);
       }
 
-      if (e.key === "Backspace" || e.key === "Delete") {
+      if (
+        e.key === "Backspace" ||
+        e.key === "Delete"
+      ) {
         e.preventDefault();
         removeOneCopy(card);
       }
@@ -2035,7 +2127,10 @@ function renderLibrary() {
 
     item.ondragstart = e => {
       draggingCard = card.id;
-      e.dataTransfer.setData("text/plain", card.id);
+      e.dataTransfer.setData(
+        "text/plain",
+        card.id
+      );
       e.dataTransfer.effectAllowed = "copy";
     };
 
@@ -2069,8 +2164,10 @@ function addCard(id) {
   if (copies >= cardLimit(card)) {
     updateStatus(
       card.singleton
-        ? card.name + " is Singleton: only 1 copy per deck."
-        : "Maximum 3 copies of " + card.name + " per deck."
+        ? card.name +
+          " is Singleton: only 1 copy per deck."
+        : "Maximum 3 copies of " +
+          card.name + " per deck."
     );
     return;
   }
@@ -2097,7 +2194,8 @@ function removeCard(index) {
   setDeckOrder(filled);
 
   updateStatus(
-    (card?.name || "Card") + " removed from your deck."
+    (card?.name || "Card") +
+    " removed from your deck."
   );
 }
 
@@ -2117,7 +2215,9 @@ function renderDeck() {
     slot.setAttribute(
       "aria-label",
       id
-        ? "Remove " + (getCard(id)?.name || id) + " from deck"
+        ? "Remove " +
+          (getCard(id)?.name || id) +
+          " from deck"
         : "Empty slot " + (index + 1)
     );
 
@@ -2225,7 +2325,9 @@ function deckPayload() {
   return {
     game: "Fractured Realms",
     version: 2,
-    name: $("deckName").value.trim() || "Untitled Deck",
+    name:
+      $("deckName").value.trim() ||
+      "Untitled Deck",
     slots: [...deck],
     cards: deck.filter(Boolean).map(
       id => getCard(id)?.name || id
@@ -2246,7 +2348,9 @@ function saveDeck() {
       "Deck saved on this device, including Catalyst and Shard artwork."
     );
   } catch {
-    updateStatus("Unable to save in this browser.");
+    updateStatus(
+      "Unable to save in this browser."
+    );
   }
 }
 
@@ -2279,7 +2383,10 @@ function restoreDeck(data) {
   $("deckName").value =
     data.name || "My Fractured Deck";
 
-  selectedCatalyst = data.catalyst || null;
+  selectedCatalyst =
+    data.catalyst == null
+      ? null
+      : String(data.catalyst);
 
   selectedShardArt =
     data.shardArtwork &&
@@ -2294,17 +2401,22 @@ function restoreDeck(data) {
 
 function loadDeck() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved =
+      localStorage.getItem(STORAGE_KEY);
 
     if (!saved) {
-      updateStatus("No saved deck found on this device.");
+      updateStatus(
+        "No saved deck found on this device."
+      );
       return;
     }
 
     restoreDeck(JSON.parse(saved));
     updateStatus("Saved deck loaded.");
   } catch {
-    updateStatus("Unable to load the saved deck.");
+    updateStatus(
+      "Unable to load the saved deck."
+    );
   }
 }
 
@@ -2320,14 +2432,18 @@ function exportDeck() {
   link.href = url;
   link.download =
     slugify(
-      $("deckName").value.trim() || "fractured-deck"
+      $("deckName").value.trim() ||
+      "fractured-deck"
     ) + ".json";
 
   document.body.appendChild(link);
   link.click();
   link.remove();
 
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setTimeout(
+    () => URL.revokeObjectURL(url),
+    1000
+  );
 
   updateStatus("Deck exported as JSON.");
 }
@@ -2340,7 +2456,9 @@ $("loadDeck").onclick = loadDeck;
 $("exportDeck").onclick = exportDeck;
 
 $("clearDeck").onclick = () => {
-  if (!confirm("Clear all 45 deck slots?")) return;
+  if (!confirm("Clear all 45 deck slots?")) {
+    return;
+  }
 
   deck = Array(MAX_CARDS).fill(null);
   renderDeck();
@@ -2355,7 +2473,8 @@ $("resetFilters").onclick = () => {
 
   [
     "cost", "power", "health", "type",
-    "unitType", "keyword", "rarity", "lifeTrigger"
+    "unitType", "keyword", "rarity",
+    "lifeTrigger"
   ].forEach(id => {
     $(id).value = "";
   });
@@ -2374,10 +2493,16 @@ $("importFile").onchange = async e => {
   if (!file) return;
 
   try {
-    restoreDeck(JSON.parse(await file.text()));
-    updateStatus("Deck imported successfully.");
+    restoreDeck(
+      JSON.parse(await file.text())
+    );
+    updateStatus(
+      "Deck imported successfully."
+    );
   } catch {
-    updateStatus("Could not import that deck file.");
+    updateStatus(
+      "Could not import that deck file."
+    );
   }
 
   e.target.value = "";
@@ -2386,7 +2511,9 @@ $("importFile").onchange = async e => {
 /* GOOGLE SHEETS LOADING */
 
 async function loadCards() {
-  updateStatus("Loading cards from Google Sheets...");
+  updateStatus(
+    "Loading cards from Google Sheets..."
+  );
 
   try {
     const response = await fetch(
@@ -2395,10 +2522,14 @@ async function loadCards() {
     );
 
     if (!response.ok) {
-      throw Error("HTTP " + response.status);
+      throw Error(
+        "HTTP " + response.status
+      );
     }
 
-    const loaded = sheetToCards(await response.text());
+    const loaded = sheetToCards(
+      await response.text()
+    );
 
     if (!loaded.length) {
       throw Error("No cards found");
@@ -2413,14 +2544,20 @@ async function loadCards() {
     let saved = null;
 
     try {
-      saved = localStorage.getItem(STORAGE_KEY);
+      saved =
+        localStorage.getItem(STORAGE_KEY);
     } catch (e) {
-      console.warn("Local storage unavailable", e);
+      console.warn(
+        "Local storage unavailable",
+        e
+      );
     }
 
     if (saved) {
       try {
-        restoreDeck(JSON.parse(saved));
+        restoreDeck(
+          JSON.parse(saved)
+        );
       } catch (e) {
         console.warn(
           "Saved deck could not be restored",
@@ -2439,7 +2576,8 @@ async function loadCards() {
       error
     );
 
-    $("libraryCount").textContent = "Unavailable";
+    $("libraryCount").textContent =
+      "Unavailable";
 
     updateStatus(
       "Unable to load Google Sheets. Please refresh to try again."
