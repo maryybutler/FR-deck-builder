@@ -176,7 +176,7 @@ select option {
   margin: 18px 0;
 }
 
-/* CARD FILTERS */
+/* CARD FILTERS AND PREVIEW */
 
 .card-preview-area {
   display: flex;
@@ -436,6 +436,12 @@ select option {
   font-size: 12px;
 }
 
+/* NO DOTTED BORDER WHEN CATALYST IS SELECTED */
+
+.special-card:has(img) {
+  border: none;
+}
+
 /* SHARD DECK */
 
 .shard-zone {
@@ -597,7 +603,6 @@ select option {
   font-size: 11px;
   text-align: center;
   margin-top: 6px;
-  overflow-wrap: anywhere;
 }
 
 .gallery-empty {
@@ -1064,12 +1069,6 @@ footer {
   font-size: 11px;
   padding: 15px 10px 30px;
 }
-  
-/* Remove dotted border when Catalyst is selected */
-.special-card:has(img) {
-  border: none;
-}
-
 </style>
 </head>
 
@@ -1100,7 +1099,7 @@ footer {
       <div class="preview-card-name" id="previewCardName"></div>
 
       <div class="card-preview-caption">
-        Hover over a card in the library or deck to preview it.
+        Hover over a card in the library, deck or Catalyst selection to preview it.
       </div>
     </div>
 
@@ -1777,20 +1776,33 @@ function previewCard(card) {
   $("previewCardName").textContent = card.name;
 }
 
+/* NEW: PREVIEW CATALYST IN EXISTING CARD PREVIEW */
+
+function previewCatalyst(catalyst) {
+  if (!catalyst) return;
+
+  const preview = $("largeCardPreview");
+
+  const img = document.createElement("img");
+
+  img.src = catalyst.src;
+  img.alt = "Catalyst artwork";
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "contain";
+
+  img.onerror = () => {
+    preview.textContent =
+      "Catalyst image unavailable.";
+  };
+
+  preview.replaceChildren(img);
+
+  // The Catalyst names are already printed on the PNGs.
+  $("previewCardName").textContent = "";
+}
+
 /* NUMBERED CATALYSTS */
-
-/*
-  Checks:
-  images/catalysts/2.png
-  images/catalysts/4.png
-  ...
-  images/catalysts/30.png
-
-  Also supports the singular folder:
-  images/catalyst/
-
-  No catalog.json required.
-*/
 
 function checkImage(url) {
   return new Promise(resolve => {
@@ -2001,6 +2013,16 @@ function renderCatalyst() {
       chosen.id +
       ". Click to change."
     );
+
+    // NEW: Hover or focus selected Catalyst to preview it.
+    button.onmouseenter = () => {
+      previewCatalyst(chosen);
+    };
+
+    button.onfocus = () => {
+      previewCatalyst(chosen);
+    };
+
   } else {
     button.innerHTML =
       '<span class="plus">+</span>' +
@@ -2010,6 +2032,9 @@ function renderCatalyst() {
       "aria-label",
       "Choose Catalyst"
     );
+
+    button.onmouseenter = null;
+    button.onfocus = null;
   }
 
   const grid = $("catalystOptions");
@@ -2038,11 +2063,21 @@ function renderCatalyst() {
       makeSpecialImage(card)
     );
 
+    // NEW: Hovering over gallery options updates the preview.
+    option.onmouseenter = () => {
+      previewCatalyst(card);
+    };
+
+    option.onfocus = () => {
+      previewCatalyst(card);
+    };
+
     option.onclick = () => {
       selectedCatalyst = card.id;
 
       $("catalystGallery").hidden = true;
 
+      previewCatalyst(card);
       renderCatalyst();
 
       updateStatus("Catalyst selected.");
@@ -3066,21 +3101,47 @@ $("loadDeck").onclick = loadDeck;
 
 $("exportDeck").onclick = exportDeck;
 
+/* UPDATED: CLEAR DECK ALSO CLEARS CATALYST */
+
 $("clearDeck").onclick = () => {
   if (
     !confirm(
-      "Clear all 45 deck slots?"
+      "Clear all 45 deck slots and your selected Catalyst?"
     )
   ) {
     return;
   }
 
+  // Clear all 45 card slots.
   deck = Array(MAX_CARDS).fill(null);
 
+  // Clear selected Catalyst.
+  selectedCatalyst = null;
+
+  // Reset selected Shard artwork too.
+  selectedShardArt = {};
+
+  // Close any open selection galleries.
+  $("catalystGallery").hidden = true;
+  $("shardGallery").hidden = true;
+
+  // Reset card selected for adding to the deck.
+  selectedCard = null;
+
+  // Refresh all deck artwork and counters.
   renderDeck();
+  renderSpecialDecks();
+
+  // Reset the large preview.
+  $("largeCardPreview").innerHTML =
+    '<div class="card-preview-placeholder">' +
+    'Hover over a card to preview it.' +
+    '</div>';
+
+  $("previewCardName").textContent = "";
 
   updateStatus(
-    "Deck cleared. Catalyst selection remains unchanged."
+    "Deck cleared, including Catalyst and Shard selections."
   );
 };
 
