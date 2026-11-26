@@ -102,6 +102,30 @@ footer { text-align:center; font-size:12px; padding:20px 12px 35px; }
 .social-link { display:grid; place-items:center; width:54px; height:54px; border:1px solid #fffc; border-radius:10px; background:#20232bbf; color:white; transition:transform .18s,box-shadow .18s,color .18s; }
 .social-link svg { width:27px; height:27px; fill:currentColor; }
 .social-link:hover,.social-link:focus-visible { color:var(--gold); transform:translateY(-3px); box-shadow:0 0 12px #f7ca5277; outline:2px solid var(--gold); outline-offset:2px; }
+
+.video-player { aspect-ratio:16/9; width:100%; border:1px solid #ffffffa6; border-radius:12px; overflow:hidden; background:#171923; }
+.video-player iframe { width:100%; height:100%; border:0; display:block; }
+.video-fallback { display:block; text-align:center; color:white; font-size:12px; margin-top:10px; }
+.crystals { display:grid; gap:14px; margin:24px 0 36px; }
+.crystal-row { display:grid; grid-template-columns:minmax(130px, 29%) minmax(0,1fr); gap:20px; align-items:center; padding:16px; border:1px solid #ffffff66; border-left:4px solid var(--crystal); border-radius:12px; background:#20232bbd; }
+.crystal-art { position:relative; min-height:145px; aspect-ratio:4/3; margin:0; overflow:hidden; border-radius:8px; border:1px solid #ffffff55; display:grid; place-items:center; background:radial-gradient(ellipse at center,var(--crystal),#191b2a 74%); }
+.crystal-art svg { width:55%; height:85%; filter:drop-shadow(0 0 12px var(--crystal)); }
+.crystal-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.crystal-art img[hidden] {display:none;}
+.crystal-row h3 { font: bold clamp(20px,2.4vw,27px) Georgia,serif; margin:5px 0 8px; }
+.crystal-row p { margin:6px 0; font-size:14px; line-height:1.65; }
+.crystal-tag {color:var(--tint); font-size:12px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; }
+.story-copy.long-story {padding:clamp(18px,3vw,34px);}
+.long-story p {max-width:none;}
+.long-story h3 {font: bold 25px Georgia,serif; margin:30px 0 10px;}
+.story-more summary {list-style:none; display:flex; align-items:center; justify-content:center; gap:10px; padding:15px 22px; max-width:270px; margin:28px auto; border:1px solid #ffffffa6; border-radius:9px; background:#343747; color:white; font-weight:bold; cursor:pointer; transition:box-shadow .2s,border-color .2s,background .2s;}
+.story-more summary::-webkit-details-marker {display:none;}
+.story-more summary:hover,.story-more summary:focus-visible {box-shadow:0 0 12px #f7ca5245; border-color:var(--gold); background:#41404b;}
+.story-more summary::after {content:'⌄';color:var(--gold);font-size:20px;}
+.story-more[open] summary::after {content:'⌃';}
+.story-more[open] .show-more,.story-more:not([open]) .show-less {display:none;}
+@media(min-width:851px){.navigation {max-height:calc(100vh - 40px); overflow-y:auto;}}
+@media(max-width:550px){.crystal-row {grid-template-columns:1fr; gap:12px;} .crystal-art {aspect-ratio:16/9;} }
 </style>
 </head>
 <body>
@@ -116,6 +140,7 @@ footer { text-align:center; font-size:12px; padding:20px 12px 35px; }
     <a class="nav-link" href="#lore"><strong>The Lore</strong><span>Discover the world of Fractured Realms.</span></a>
     <a class="nav-link" href="#how-to-play"><strong>How to Play</strong><span>Learn about the game.</span></a>
     <a class="nav-link" href="#news"><strong>News &amp; Updates</strong><span>Follow the journey of Fractured Realms.</span></a>
+    <a class="nav-link" href="#kickstarter"><strong>Kickstarter</strong><span>Support the next chapter.</span></a>
     <a class="nav-link" href="#contact"><strong>Contact Us</strong><span>Get in touch with the team.</span></a>
 
     <div class="social-links" aria-label="Social media">
@@ -130,20 +155,66 @@ footer { text-align:center; font-size:12px; padding:20px 12px 35px; }
     </div>
   </nav>
   <div class="content">
-    <section class="panel story" id="lore">
-      <!-- Replace these provisional headings and paragraphs with your official lore. -->
-      <figure class="lore-art"><span class="fallback">FRACTURED REALMS</span><img src="images/lore/world.png" alt="The world of Fractured Realms" onerror="this.hidden=true"></figure>
-      <div class="story-copy">
-        <div class="eyebrow">The world of Fractured Realms</div>
-        <h1>Every realm has a story.</h1>
-        <p>Welcome to Fractured Realms, a trading card game. Discover its world, explore its factions and build a deck of your own.</p>
-        <p>More of the story will be revealed here soon.</p>
-      </div>
+    <section class="panel story" aria-label="Featured video">
+      <!-- To change the video, replace n5v0miW_TXQ in both URLs below. -->
+      <div class="video-player"><iframe src="https://www.youtube.com/embed/n5v0miW_TXQ" title="Fractured Realms featured video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <a class="video-fallback" href="https://youtu.be/n5v0miW_TXQ" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
     </section>
-    <section class="panel story">
-      <div class="lore-row">
-        <figure class="lore-art"><span class="fallback">THE REALMS</span><img src="images/lore/realms.png" alt="Artwork of the realms" onerror="this.hidden=true"></figure>
-        <div class="story-copy"><div class="eyebrow">Discover the world</div><h2>The Realms</h2><p>Explore the places, characters and histories behind the cards. The next chapter of our lore is coming soon.</p></div>
+    <section class="panel story" id="lore">
+      <div class="eyebrow">The world of Fractured Realms</div>
+      <h1>Every realm has a story.</h1>
+      <div class="story-copy long-story">
+        <h2>The Seven Crystals</h2>
+        <p>Seven living crystal types emerged from the wounds of the Earth, each carrying a force capable of transforming reality. Their power reshaped civilisation, gave rise to rival factions and continues to define the struggle for the future.</p>
+        <div class="crystals"><article class="crystal-row" style="--crystal:#d9aa2d;--tint:#ffe28a">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#d9aa2d" stroke="#ffe28a" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#ffe28a" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/yellow.png" alt="Yellow crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">Yellow · Life · Growth · Evolution</div><h3>The Bloom Shards</h3><p>Yellow spread through the Earth like roots, swallowing cities in forests and accelerating the evolution of living creatures. Its followers wield healing and regeneration, but risk losing their individuality to the Verdant Choir.</p><p><strong>Gameplay theme:</strong> Healing, regeneration and biological growth.</p></div>
+</article>
+<article class="crystal-row" style="--crystal:#358ac9;--tint:#9bdbff">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#358ac9" stroke="#9bdbff" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#9bdbff" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/blue.png" alt="Blue crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">Blue · Intellect · Logic · Memory</div><h3>The Mind Shard</h3><p>Blue awakened machines and granted humans extraordinary intelligence and predictive abilities. Its machine-states seek absolute order, even as emotion fades from those who bond with the crystal.</p><p><strong>Gameplay theme:</strong> Calculation, prediction and intelligent machinery.</p></div>
+</article>
+<article class="crystal-row" style="--crystal:#c83d41;--tint:#ff9b9d">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#c83d41" stroke="#ff9b9d" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#ff9b9d" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/red.png" alt="Red crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">Red · Heat · Industry · Creation</div><h3>The Industry Shard</h3><p>Red fuels colossal engines, mechanised armies and walking fortresses. Its users reshape metal and wield intense heat, while its influence amplifies aggression and ambition.</p><p><strong>Gameplay theme:</strong> Heat, industrial creation and powerful machinery.</p></div>
+</article>
+<article class="crystal-row" style="--crystal:#884bc2;--tint:#dcb4ff">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#884bc2" stroke="#dcb4ff" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#dcb4ff" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/purple.png" alt="Purple crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">Purple · Death · Spirits · The Vanish Realm</div><h3>The Dimensional Shard</h3><p>Purple opened tears into the Vanish Realm, a dark mirror filled with lost souls and ancient entities. Its users summon echoes of the dead and cross between worlds, risking possession by what lies beyond.</p><p><strong>Gameplay theme:</strong> Spirits, death and dimensional manipulation.</p></div>
+</article>
+<article class="crystal-row" style="--crystal:#32985d;--tint:#a0f0ac">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#32985d" stroke="#a0f0ac" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#a0f0ac" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/green.png" alt="Green crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">Green · Adaptation · Mutation · Instinct</div><h3>The Toxic Shard</h3><p>Green transforms ecosystems into constantly evolving habitats. Its creatures and users adapt to threats through armour, venom, claws and heightened senses. Survival is sacred to its followers.</p><p><strong>Gameplay theme:</strong> Mutation, adaptation and evolving threats.</p></div>
+</article>
+<article class="crystal-row" style="--crystal:#c5c7d0;--tint:#ffffff">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#c5c7d0" stroke="#ffffff" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#ffffff" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/white.png" alt="White crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">White · Light · Purity · Resonance</div><h3>The Prism Shard</h3><p>White stabilises reality, heals corruption and suppresses other crystal influences. Revered as protectors, its users also possess the disturbing power to overwrite free will in the name of unity.</p><p><strong>Gameplay theme:</strong> Protection, purification and suppression of crystal influence.</p></div>
+</article>
+<article class="crystal-row" style="--crystal:#38394d;--tint:#c8cadf">
+  <figure class="crystal-art"><svg viewBox="0 0 120 145" aria-hidden="true"><path d="M60 5 100 45 87 110 60 140 20 100 13 45Z" fill="#38394d" stroke="#c8cadf" stroke-width="2"/><path d="M60 5 49 51 13 45M49 51 60 140 78 51 100 45M49 51 78 51 60 5M20 100 49 51M87 110 78 51" fill="none" stroke="#c8cadf" stroke-width="2" opacity=".8"/><path d="M60 5 49 51 60 140 20 100 13 45Z" fill="white" opacity=".15"/></svg><img src="images/lore/black.png" alt="Black crystal artwork" loading="lazy" onerror="this.hidden=true"></figure>
+  <div><div class="crystal-tag">Black · Entropy · Void · Consumption</div><h3>The Illusive Shard</h3><p>The rarest crystal causes matter to decay and time to behave unpredictably. Null users erase energy and consume crystal powers, but nobody truly controls Black. Some believe it once imprisoned the other six aspects.</p><p><strong>Gameplay theme:</strong> Entropy, consumption and disruption of crystal powers.</p></div>
+</article></div>
+        <h2>The Fracture</h2>
+        <figure class="lore-art"><span class="fallback">THE DAY THE WORLD SPLIT</span><img src="images/lore/world.png" alt="The world during the Fracture" loading="lazy" onerror="this.hidden=true"></figure>
+        <p>In the late 21st century, Heliox Dynamics discovered a mysterious energy frequency beneath the Earth's mantle. Its patterns resembled thought itself. Promising limitless energy, medical breakthroughs and technological progress, the discovery launched the Deep Resonance Initiative.</p>
+        <p>At its heart was the World Core Array, a planetary-scale drilling and resonance engine beneath the Pacific Ring. Humanity believed it could safely harness the power below the crust. The machine ran for only seven minutes.</p>
+        <p>The sky cracked like glass. Mountains erupted into colossal crystalline formations, oceans boiled and cities disappeared in waves of coloured light. Gravity bent. Time fractured. Within months, human civilisation had collapsed.</p>
+        <p>From the shattered Earth emerged the seven crystals. They changed living things, awakened ancient powers and opened gateways into forgotten realms. But their true origins lay far beyond humanity.</p>
+        <details class="story-more" id="full-story"><summary><span class="show-more">Show more</span><span class="show-less">Show less</span></summary>
+          <h3>The Crown Beyond</h3>
+          <p>The crystals were never native to Earth. They were fragments of an ancient cosmic entity known as the Crown Beyond, divided into seven aspects to prevent its return. The World Core Array had inadvertently awakened them.</p>
+          <h3>The Return of Ancient Powers</h3>
+          <figure class="lore-art"><span class="fallback">A COLLISION OF ERAS</span><img src="images/lore/realms.png" alt="Ancient and futuristic realms" loading="lazy" onerror="this.hidden=true"></figure>
+          <p>The Fracture shattered time itself. Forgotten kingdoms returned, dragons awoke beneath mountains and mythological creatures crossed through the Vanish Realm. Alongside them rose futuristic cities built on crystal technology. Medieval knights faced AI war machines, spirit shamans confronted mechanised armies and ancient dragons soared above neon megacities. History no longer followed a straight line.</p>
+          <h3>King Calamity</h3>
+          <figure class="lore-art"><span class="fallback">KING CALAMITY</span><img src="images/lore/king-calamity.png" alt="King Calamity" loading="lazy" onerror="this.hidden=true"></figure>
+          <p>In the early years after the Fracture, a dragon was discovered beneath the Himalayas. Unlike any other creature, it absorbed all seven crystal types. Its scales shimmered with every colour and its breath altered reality. Known as King Calamity, it united scattered factions through terror and nearly fulfilled the Crown Convergence: the fusion of all seven powers into a single divine force.</p>
+          <p>Had it succeeded, the boundary between Earth and the Vanish Realm would have collapsed, restoring the Crown Beyond. A coalition of rival factions barely defeated the dragon, scattering fragments of its crystal heart across the world. Now every faction seeks those fragments, hoping to gain the power to reshape reality.</p>
+          <h3>The Modern World</h3>
+          <p>Crystal storms sweep continents, cities rise and fall, and ancient monsters roam the wastelands. Crystal-powered armies wage endless wars, each faction convinced that it alone should determine humanity's future — whether to save, evolve, rule or destroy it.</p>
+          <p>Yet deep within the Vanish Realm, something is waking. Something remembers what the crystals once were, and waits for the seven powers to unite again.</p>
+          <p><strong>The crystals are not merely tools. They are pieces of a sleeping god, and every battle brings its resurrection closer.</strong></p>
+        </details>
       </div>
     </section>
     <section class="panel story" id="how-to-play">
@@ -153,6 +224,7 @@ footer { text-align:center; font-size:12px; padding:20px 12px 35px; }
       </div>
     </section>
     <section class="panel story" id="news"><div class="story-copy"><div class="eyebrow">Development</div><h2>News &amp; Updates</h2><p>Keep an eye on this space for announcements and development updates.</p></div></section>
+    <section class="panel story" id="kickstarter"><div class="story-copy"><div class="eyebrow">Support the game</div><h2>Kickstarter</h2><p>Campaign details and the official Kickstarter link will be announced here.</p><!-- Replace the sidebar href="#kickstarter" with your official campaign URL when available. --></div></section>
     <section class="panel story" id="contact"><div class="story-copy"><div class="eyebrow">Get in touch</div><h2>Contact Us</h2><p>Official contact details and social links will be added here soon.</p></div></section>
   </div>
 </main>
